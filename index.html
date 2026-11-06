@@ -1,0 +1,3691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CardDesk — Scan &amp; Identify</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1c1a'/%3E%3Crect x='7' y='9' width='18' height='14' rx='2' fill='none' stroke='%23e0a64b' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.2' fill='none' stroke='%237de0c0' stroke-width='2'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
+<style>
+  :root{
+    --felt-900:#132018;
+    --felt-800:#1c2e22;
+    --felt-700:#28402f;
+    --stock-100:#f7f3e8;
+    --stock-200:#ece5d3;
+    --ink-900:#12140f;
+    --ink-600:#4a4c40;
+    --amber-500:#e0a64b;
+    --foil-1:#7de0c0;
+    --foil-2:#c79ef2;
+    --foil-3:#f2c6d8;
+    --pika-500:#f5c542;
+    --ygo-500:#a970e0;
+    --bb-500:#a32d24;
+    --ball-500:#e08a2b;
+    --fb-500:#4f8a5b;
+    --radius-card: 14px;
+    --shadow-1: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(125,224,192,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 110% 10%, rgba(199,158,242,0.14), transparent 55%),
+      radial-gradient(ellipse 800px 600px at 50% 120%, rgba(224,166,75,0.08), transparent 60%),
+      linear-gradient(180deg, #0a1420 0%, #0d1c1a 55%, #0a1614 100%);
+    background-attachment: fixed;
+    color: var(--stock-100);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding: 20px 12px 100px;
+  }
+  .phone{
+    width:100%;
+    max-width:420px;
+  }
+  header.app-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+    padding: 0 4px;
+  }
+  .brand{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:26px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    color: var(--stock-100);
+  }
+  .brand span{ color: var(--amber-500); }
+  .brand-sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color: rgba(247,243,232,0.45);
+  }
+
+  .bottom-nav{
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 396px;
+    display:flex;
+    gap:4px;
+    padding:6px;
+    background: rgba(20,26,22,0.7);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:16px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.45);
+    z-index:50;
+  }
+  .bottom-nav-btn{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:9px 4px 8px;
+    border-radius:12px;
+    background:transparent;
+    border:none;
+    color: rgba(247,243,232,0.55);
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    position:relative;
+    transition: background .15s ease, color .15s ease;
+  }
+  .bottom-nav-btn svg{ width:20px; height:20px; }
+  .bottom-nav-btn.active{ background: var(--stock-100); color: var(--ink-900); }
+  .bottom-nav-btn:hover:not(.active){ color: rgba(247,243,232,0.85); }
+  .nav-badge{
+    position:absolute;
+    top:4px; right:22%;
+    min-width:15px; height:15px;
+    padding:0 3px;
+    border-radius:999px;
+    background: var(--amber-500);
+    color:#3a2b00;
+    font-size:9px;
+    font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
+  .nav-badge[data-zero="true"]{ display:none; }
+
+  /* Binder tabs */
+  .tabs{
+    display:flex;
+    gap:2px;
+    margin-bottom:16px;
+    padding:4px;
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:14px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .tab{
+    flex:1;
+    background: transparent;
+    border:none;
+    border-radius: 10px;
+    padding: 9px 2px;
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+    transition: background .2s ease, color .2s ease, transform .15s ease;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.2px;
+    text-transform:uppercase;
+    color: rgba(247,243,232,0.5);
+  }
+  .tab:hover{ background: rgba(255,255,255,0.06); color: rgba(247,243,232,0.8); }
+  .tab .dot{
+    display:block;
+    width:8px;height:8px;
+    border-radius:50%;
+    margin:0 auto 6px;
+    background: currentColor;
+    opacity:0.5;
+  }
+  .tab[data-game="pokemon"]{ color: var(--pika-500); }
+  .tab[data-game="yugioh"]{ color: var(--ygo-500); }
+  .tab[data-game="baseball"]{ color: var(--bb-500); }
+  .tab[data-game="basketball"]{ color: var(--ball-500); }
+  .tab[data-game="football"]{ color: var(--fb-500); }
+  .tab.active{
+    color: var(--ink-900) !important;
+    transform: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .tab.active[data-game="pokemon"]{ background: var(--pika-500); color:#3a2b00 !important; }
+  .tab.active[data-game="yugioh"]{ background: var(--ygo-500); color:#ffffff !important; }
+  .tab.active[data-game="baseball"]{ background: var(--bb-500); color:#ffffff !important; }
+  .tab.active[data-game="basketball"]{ background: var(--ball-500); color:#2c1600 !important; }
+  .tab.active[data-game="football"]{ background: var(--fb-500); color:#ffffff !important; }
+  .tab.active .dot{ opacity:1; background: currentColor; }
+
+  .desk{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--radius-card);
+    color: var(--stock-100);
+    padding: 18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .scan-zone{
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 10px;
+    aspect-ratio: 5 / 7;
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 20px;
+    position:relative;
+    overflow:hidden;
+    background: rgba(255,255,255,0.04);
+    cursor:pointer;
+  }
+  .scan-zone.has-image{
+    border-style:solid;
+    border-color: rgba(255,255,255,0.15);
+    padding:0;
+    aspect-ratio: 5 / 7;
+    min-height:0;
+  }
+  .scan-zone.has-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .scan-zone img{
+    width:100%;
+    max-height:280px;
+    object-fit:contain;
+    display:block;
+  }
+  .rotate-btn{
+    position:absolute;
+    top:10px; right:10px;
+    width:36px; height:36px;
+    border-radius:50%;
+    background: rgba(10,14,10,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border:1px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color: var(--stock-100);
+    z-index:2;
+    transition: background .15s ease, transform .15s ease;
+  }
+  .rotate-btn svg{ width:18px; height:18px; }
+  .rotate-btn:hover{ background: rgba(10,14,10,0.8); }
+  .rotate-btn:active{ transform: scale(0.92); }
+
+  .camera-btn{
+    margin-top:16px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    color: var(--ink-900);
+    background: var(--stock-100);
+    border:none;
+    padding:9px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .camera-btn:hover{ opacity:0.9; }
+  .camera-btn:active{ transform: scale(0.96); }
+
+  .scan-zone.has-camera{
+    border-style:solid;
+    border-color: rgba(255,255,255,0.15);
+    padding:0;
+    aspect-ratio: 5 / 7;
+    min-height:0;
+    background:#000;
+  }
+  .scan-zone.has-camera video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .camera-controls{
+    position:absolute;
+    left:0; right:0; bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:22px;
+    z-index:2;
+  }
+  .camera-icon-btn{
+    width:38px; height:38px;
+    border-radius:50%;
+    background: rgba(10,14,10,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border:1px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color: var(--stock-100);
+    transition: background .15s ease, transform .15s ease;
+  }
+  .camera-icon-btn svg{ width:17px; height:17px; }
+  .camera-icon-btn:hover{ background: rgba(10,14,10,0.8); }
+  .camera-icon-btn:active{ transform: scale(0.92); }
+  .shutter-btn{
+    width:60px; height:60px;
+    border-radius:50%;
+    background: var(--stock-100);
+    border:4px solid rgba(255,255,255,0.45);
+    cursor:pointer;
+    transition: transform .12s ease;
+  }
+  .shutter-btn:active{ transform: scale(0.9); }
+  .shutter-btn:hover{ background: #fff; }
+  .scan-icon{
+    width:46px;height:46px;
+    margin-bottom:10px;
+    opacity:0.4;
+  }
+  .scan-hint{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color: rgba(247,243,232,0.5);
+    letter-spacing:0.3px;
+    max-width:230px;
+    line-height:1.5;
+  }
+  .corner{
+    position:absolute; width:18px; height:18px;
+    border-color: rgba(247,243,232,0.35);
+    pointer-events:none;
+  }
+  .corner.tl{ top:8px; left:8px; border-top:2px solid; border-left:2px solid; }
+  .corner.tr{ top:8px; right:8px; border-top:2px solid; border-right:2px solid; }
+  .corner.bl{ bottom:8px; left:8px; border-bottom:2px solid; border-left:2px solid; }
+  .corner.br{ bottom:8px; right:8px; border-bottom:2px solid; border-right:2px solid; }
+
+  input[type=file]{ display:none; }
+
+  .row{ display:flex; gap:8px; margin-top:12px; }
+  button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    border:none;
+    border-radius:8px;
+    padding:11px 14px;
+    cursor:pointer;
+    transition: opacity .15s ease, transform .1s ease;
+  }
+  button:active{ transform: scale(0.98); }
+  button:disabled{ opacity:0.4; cursor:not-allowed; }
+  .btn-primary{
+    flex:1;
+    background: var(--stock-100);
+    color: var(--ink-900);
+  }
+  .btn-secondary{
+    background: transparent;
+    color: var(--stock-100);
+    border:1px solid rgba(255,255,255,0.2) !important;
+  }
+  .btn-primary:hover{ opacity:0.9; }
+
+  .search-row{
+    margin-top:14px;
+  }
+  .search-row label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color: rgba(247,243,232,0.5);
+    margin-bottom:6px;
+  }
+  .search-row .field{
+    display:flex;
+    gap:8px;
+  }
+  .search-row input[type=text]{
+    flex:1;
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--stock-100);
+  }
+  .search-row input[type=text]::placeholder{ color: rgba(247,243,232,0.35); }
+
+  .status{
+    margin-top:14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color: rgba(247,243,232,0.55);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .spinner{
+    width:12px;height:12px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.15);
+    border-top-color: var(--stock-100);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .progress-track{
+    height:4px;
+    background: rgba(255,255,255,0.12);
+    border-radius:2px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--stock-100);
+    width:0%;
+    transition: width .2s ease;
+  }
+
+  .results{ margin-top:18px; }
+  .results-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .results-head h3{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin:0;
+  }
+  .results-head span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color: rgba(247,243,232,0.5);
+  }
+
+  .card-result{
+    display:flex;
+    gap:12px;
+    background: white;
+    border:1px solid rgba(18,20,15,0.1);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+    position:relative;
+    overflow:hidden;
+    animation: rise .35s ease both;
+  }
+  @keyframes rise{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform:none; }
+  }
+  .card-result::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(115deg, transparent 40%, rgba(125,224,192,0.18) 48%, rgba(199,158,242,0.22) 52%, rgba(242,198,216,0.18) 56%, transparent 64%);
+    background-size: 250% 250%;
+    animation: sheen 2.6s ease-in-out 1;
+    pointer-events:none;
+  }
+  @keyframes sheen{
+    0%{ background-position: 120% 0%; opacity:1; }
+    100%{ background-position: -20% 100%; opacity:0; }
+  }
+  .card-thumb{
+    width:64px; height:88px;
+    border-radius:6px;
+    object-fit:cover;
+    background: var(--stock-200);
+    flex-shrink:0;
+    border:1px solid rgba(18,20,15,0.08);
+  }
+  .card-thumb.placeholder{
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald', sans-serif;
+    font-size:22px;
+    color: rgba(18,20,15,0.25);
+  }
+  .card-info{ flex:1; min-width:0; }
+  .card-name{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    line-height:1.25;
+    margin:0 0 3px;
+  }
+  .card-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color: var(--ink-600);
+    margin:0 0 6px;
+    line-height:1.4;
+  }
+  .card-price{
+    display:inline-flex;
+    align-items:baseline;
+    gap:5px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .card-price .amt{
+    font-size:16px;
+    font-weight:600;
+    color: var(--ink-900);
+  }
+  .card-price .lbl{
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color: var(--ink-600);
+  }
+  .badge-demo{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:8.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background: rgba(224,166,75,0.18);
+    color:#8a6a00;
+    padding:2px 6px;
+    border-radius:4px;
+    margin-left:6px;
+  }
+  .badge-live{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:8.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background: rgba(125,224,192,0.22);
+    color:#1c6b52;
+    padding:2px 6px;
+    border-radius:4px;
+    margin-left:6px;
+  }
+
+  .empty-note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color: rgba(247,243,232,0.55);
+    text-align:center;
+    padding: 14px 8px;
+    line-height:1.6;
+  }
+
+  .source-note{
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px dashed rgba(255,255,255,0.15);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    color: rgba(247,243,232,0.5);
+    line-height:1.6;
+  }
+  .source-note b{ color: var(--stock-100); }
+  .source-note code{
+    font-family:'IBM Plex Mono', monospace;
+    background: rgba(255,255,255,0.1);
+    padding:1px 4px;
+    border-radius:3px;
+    color: var(--stock-100);
+  }
+
+  /* ---------- Cover / splash page ---------- */
+  #coverPage{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 24px;
+    transition: opacity .45s ease, transform .45s ease;
+  }
+  .cover-card{
+    position:relative;
+    width:100%;
+    max-width: 320px;
+    border: 1.5px solid rgba(255,255,255,0.16);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.045);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+    padding: 40px 26px 32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .cover-mark{
+    width:76px; height:76px;
+    border-radius:18px;
+    border:1.5px solid rgba(247,243,232,0.25);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:22px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    animation: floatY 4s ease-in-out infinite;
+  }
+  .cover-mark svg{ width:40px; height:40px; }
+  @keyframes floatY{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-6px); }
+  }
+  .cover-brand{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:40px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    line-height:1;
+    margin-bottom:10px;
+  }
+  .cover-brand .shine{
+    background: linear-gradient(100deg, var(--foil-1) 20%, var(--foil-2) 40%, var(--foil-3) 55%, var(--amber-500) 70%, var(--foil-1) 90%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 5s linear infinite;
+  }
+  @keyframes shine{
+    0%{ background-position: 200% 0; }
+    100%{ background-position: -100% 0; }
+  }
+  .cover-tagline{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color: rgba(247,243,232,0.5);
+    margin-bottom:34px;
+  }
+  .cover-chips{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:38px;
+  }
+  .cover-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    border-radius:999px;
+    background: rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.3px;
+    text-transform:uppercase;
+    color: rgba(247,243,232,0.7);
+  }
+  .cover-chip .dot{ width:7px; height:7px; border-radius:50%; }
+  .cover-cta{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color: var(--ink-900);
+    background: var(--stock-100);
+    border:none;
+    padding:14px 34px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .cover-cta:hover{ transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,0,0,0.4); }
+  .cover-cta:active{ transform: translateY(0); }
+  .cover-foot{
+    margin-top:22px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.5px;
+    color: rgba(247,243,232,0.3);
+  }
+
+  /* ---------- Accessibility & motion ---------- */
+  button:focus-visible,
+  input:focus-visible,
+  .tab:focus-visible,
+  .scan-zone:focus-visible{
+    outline: 2px solid var(--amber-500);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .cover-mark,
+    .cover-brand .shine,
+    .card-result::after,
+    .scan-laser,
+    .skeleton-shimmer,
+    .spinner{
+      animation: none !important;
+    }
+    .desk, #coverPage, #mainApp{
+      transition: none !important;
+    }
+  }
+
+  /* ---------- Scan laser sweep (during OCR) ---------- */
+  .scan-laser{
+    position:absolute;
+    left:0; right:0;
+    top:0;
+    height:2px;
+    background: linear-gradient(90deg, transparent, var(--foil-1), var(--foil-2), transparent);
+    box-shadow: 0 0 12px 2px rgba(125,224,192,0.6);
+    animation: laserSweep 1.6s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes laserSweep{
+    0%{ top:4%; opacity:0.3; }
+    50%{ top:94%; opacity:1; }
+    100%{ top:4%; opacity:0.3; }
+  }
+
+  /* ---------- Skeleton loaders ---------- */
+  .skeleton-card{
+    display:flex;
+    gap:12px;
+    background: white;
+    border:1px solid rgba(18,20,15,0.08);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+  }
+  .skeleton-thumb{
+    width:64px; height:88px;
+    border-radius:6px;
+    flex-shrink:0;
+    background: linear-gradient(100deg, var(--stock-200) 30%, #f5f1e4 45%, var(--stock-200) 60%);
+    background-size:250% 100%;
+    animation: skeletonShimmer 1.3s ease-in-out infinite;
+  }
+  .skeleton-lines{ flex:1; display:flex; flex-direction:column; gap:8px; padding-top:4px; }
+  .skeleton-line{
+    height:10px;
+    border-radius:4px;
+    background: linear-gradient(100deg, var(--stock-200) 30%, #f5f1e4 45%, var(--stock-200) 60%);
+    background-size:250% 100%;
+    animation: skeletonShimmer 1.3s ease-in-out infinite;
+  }
+  .skeleton-line.w60{ width:60%; }
+  .skeleton-line.w80{ width:80%; }
+  .skeleton-line.w40{ width:40%; margin-top:auto; }
+  @keyframes skeletonShimmer{
+    0%{ background-position: 200% 0; }
+    100%{ background-position: -50% 0; }
+  }
+
+  /* ---------- Richer empty state ---------- */
+  .empty-state{
+    text-align:center;
+    padding: 22px 10px 10px;
+  }
+  .empty-state svg{
+    width:34px; height:34px;
+    margin-bottom:10px;
+    opacity:0.3;
+  }
+  .empty-state p{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    line-height:1.6;
+    margin:0;
+  }
+
+  .desk-fade{ animation: deskFade .25s ease; }
+  @keyframes deskFade{
+    from{ opacity:0.3; transform: translateY(3px); }
+    to{ opacity:1; transform:none; }
+  }
+
+  /* ---------- Collection view ---------- */
+  .collection-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:16px;
+    gap:10px;
+  }
+  .collection-head h3{
+    font-family:'Oswald', sans-serif;
+    font-size:19px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin:0 0 3px;
+    color: var(--stock-100);
+  }
+  .collection-head span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color: rgba(247,243,232,0.55);
+  }
+  .collection-item{
+    display:flex;
+    gap:12px;
+    background: white;
+    border:1px solid rgba(18,20,15,0.1);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+    position:relative;
+  }
+  .collection-item .game-dot{
+    position:absolute;
+    top:10px; left:10px;
+    width:8px; height:8px;
+    border-radius:50%;
+    border:1.5px solid white;
+    box-shadow: 0 0 0 1px rgba(18,20,15,0.15);
+  }
+  .remove-btn{
+    position:absolute;
+    top:8px; right:8px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+    padding:5px 10px;
+    border-radius:999px;
+    background: rgba(18,20,15,0.06);
+    border:none;
+    color: var(--ink-600);
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    transition: background .15s ease, color .15s ease;
+  }
+  .remove-btn svg{ width:11px; height:11px; }
+  .remove-btn:hover{ background: rgba(163,45,36,0.15); color:#a32d24; }
+
+  .delete-confirm{
+    position:absolute;
+    inset:0;
+    background: rgba(255,255,255,0.98);
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    z-index:3;
+  }
+  .delete-confirm p{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    color: var(--ink-900);
+    margin:0;
+    text-align:center;
+  }
+  .delete-confirm-actions{ display:flex; gap:8px; }
+  .delete-confirm-actions button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12px;
+    padding:7px 16px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+  }
+  .btn-cancel-delete{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
+  .btn-cancel-delete:hover{ background: rgba(18,20,15,0.14); }
+  .btn-confirm-delete{ background:#a32d24; color:#fff; }
+  .btn-confirm-delete:hover{ opacity:0.9; }
+  .remove-btn svg{ width:13px; height:13px; }
+  .collection-empty{
+    text-align:center;
+    padding: 34px 14px 10px;
+  }
+  .collection-empty svg{
+    width:38px; height:38px;
+    margin-bottom:12px;
+    opacity:0.35;
+    color: var(--stock-100);
+  }
+  .collection-empty p{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color: rgba(247,243,232,0.5);
+    line-height:1.6;
+    max-width:230px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Add-to-collection button on results ---------- */
+  .add-btn{
+    position:absolute;
+    top:8px; right:8px;
+    width:28px; height:28px;
+    border-radius:50%;
+    background: var(--ink-900);
+    border:none;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--stock-100);
+    cursor:pointer;
+    z-index:1;
+    transition: background .15s ease, transform .12s ease;
+  }
+  .add-btn svg{ width:14px; height:14px; }
+  .add-btn:hover{ transform: scale(1.06); }
+  .add-btn:active{ transform: scale(0.94); }
+  .add-btn.is-added{ background: var(--foil-1); color:#0d3327; }
+
+  /* ---------- Grade / centering check view ---------- */
+  .grade-preview-wrap{
+    width:100%;
+    max-width:240px;
+    margin: 0 auto 18px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .grade-preview-wrap img{ width:100%; display:block; }
+
+  .centering-readout{ display:flex; flex-direction:column; gap:14px; margin-bottom:14px; }
+  .centering-axis{ display:flex; flex-direction:column; gap:6px; }
+  .axis-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+    color: rgba(247,243,232,0.55);
+  }
+  .axis-bar{
+    height:10px;
+    border-radius:6px;
+    background: rgba(255,255,255,0.1);
+    overflow:hidden;
+    position:relative;
+  }
+  .axis-fill{
+    position:absolute;
+    top:0; bottom:0; left:0;
+    background: linear-gradient(90deg, var(--foil-1), var(--foil-2));
+    border-radius:6px;
+  }
+  .axis-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    color: var(--stock-100);
+  }
+  .centering-verdict{
+    text-align:center;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    padding:10px;
+    border-radius:8px;
+    background: rgba(255,255,255,0.06);
+    color: var(--stock-100);
+    margin-bottom:20px;
+  }
+
+  .corner-inspector-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color: rgba(247,243,232,0.55);
+    text-align:center;
+    margin: 0 0 10px;
+  }
+  .corner-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .corner-crop{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+  }
+  .corner-crop canvas{
+    width:100%;
+    aspect-ratio:1/1;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+  }
+  .corner-crop span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    color: rgba(247,243,232,0.45);
+  }
+  .corner-crop-wide{ grid-column: span 2; }
+  .corner-crop-wide canvas{ aspect-ratio: auto; }
+
+  .condition-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color: rgba(247,243,232,0.55);
+    text-align:center;
+    margin: 0 0 8px;
+  }
+  .condition-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:8px;
+  }
+  .condition-grid-edges{ margin-bottom:20px; }
+  .condition-chip{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border-radius:8px;
+    background: rgba(255,255,255,0.06);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color: var(--stock-100);
+  }
+  .condition-chip .status-dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .condition-chip .chip-label{ opacity:0.65; margin-right:auto; }
+  .status-dot.clean{ background: var(--foil-1); }
+  .status-dot.wear{ background: #e0714f; }
+  .status-dot.inconclusive{ background: rgba(255,255,255,0.3); }
+
+  /* ---------- Grade / condition check view ---------- */
+  .side-toggle{
+    display:flex; gap:6px;
+    padding:4px;
+    border-radius:12px;
+    background: rgba(255,255,255,0.06);
+    margin: 0 0 14px;
+  }
+  .side-toggle button{
+    flex:1;
+    border:none; background:transparent; cursor:pointer;
+    color: rgba(247,243,232,0.6);
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+    padding:9px 10px;
+    border-radius:9px;
+    transition: background .15s ease, color .15s ease;
+  }
+  .side-toggle button.active{ background: var(--stock-100); color: var(--ink-900); }
+  .side-toggle .side-done{ color: var(--foil-1); margin-left:4px; }
+  .side-toggle button.active .side-done{ color:#0d3327; }
+
+  .quality-head{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px; letter-spacing:0.6px; text-transform:uppercase;
+    color: rgba(247,243,232,0.55);
+    margin: 4px 0 8px;
+  }
+  .quality-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+  .quality-row{
+    display:flex; align-items:flex-start; gap:9px;
+    padding:8px 10px;
+    border-radius:8px;
+    background: rgba(255,255,255,0.05);
+    font-size:12px; line-height:1.4;
+    color: var(--stock-100);
+  }
+  .quality-row .status-dot{ margin-top:4px; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .quality-row b{ font-weight:600; margin-right:6px; }
+  .quality-row span{ color: rgba(247,243,232,0.7); }
+  .quality-row.is-bad{ background: rgba(200,66,58,0.16); }
+  .quality-row.is-warn{ background: rgba(224,113,79,0.12); }
+
+  .step-label{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+    color: var(--stock-100);
+    margin: 0 0 3px;
+  }
+  .step-help{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px; line-height:1.5;
+    color: rgba(247,243,232,0.55);
+    margin: 0 0 8px;
+  }
+  .editor-wrap{
+    position:relative;
+    margin: 0 auto 8px;
+    border-radius:10px;
+    overflow:visible;
+    touch-action:none;
+    user-select:none; -webkit-user-select:none;
+  }
+  .editor-wrap canvas.editor{
+    display:block; width:100%; height:auto;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:#000;
+    cursor:grab;
+    touch-action:none;
+  }
+  .editor-wrap canvas.editor.dragging{ cursor:grabbing; }
+  #borderWrap{ max-width:340px; }
+  .loupe{
+    position:absolute;
+    width:96px; height:96px;
+    border-radius:50%;
+    border:2px solid var(--foil-1);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+    pointer-events:none;
+    display:none;
+    z-index:5;
+    background:#000;
+  }
+  .editor-actions{ display:flex; gap:8px; margin: 0 0 18px; }
+  .editor-actions button{
+    flex:1;
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18);
+    background: transparent; color: rgba(247,243,232,0.8);
+    cursor:pointer;
+  }
+  .editor-actions button:hover{ background: rgba(255,255,255,0.07); }
+
+  .center-summary{
+    display:flex; flex-direction:column; gap:6px;
+    margin: 0 0 14px;
+  }
+  .center-line{
+    display:flex; align-items:baseline; gap:10px;
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    color: var(--stock-100);
+    padding:8px 10px; border-radius:8px; background: rgba(255,255,255,0.05);
+  }
+  .center-line .cl-side{ width:44px; opacity:0.6; font-size:10px; text-transform:uppercase; letter-spacing:0.6px; }
+  .center-line .cl-vals{ margin-right:auto; }
+  .center-line .cl-worst{ opacity:0.65; }
+  .center-line.is-current{ outline:1px solid rgba(125,224,192,0.45); }
+
+  .grader-head{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+    color: var(--stock-100); margin: 4px 0 2px;
+  }
+  .grader-sub-head{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; line-height:1.5;
+    color: rgba(247,243,232,0.55); margin: 0 0 10px;
+  }
+  .grader-grid{ display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+  .grader-row{
+    display:grid; grid-template-columns: 52px 1fr; gap:2px 12px; align-items:center;
+    padding:10px 12px; border-radius:10px; background: rgba(255,255,255,0.06);
+  }
+  .grader-name{
+    grid-row: span 2;
+    font-family:'Oswald', sans-serif; font-size:18px; letter-spacing:0.5px; color: var(--stock-100);
+  }
+  .grader-ceiling{ font-family:'Inter', sans-serif; font-weight:700; font-size:15px; color: var(--foil-1); }
+  .grader-ceiling small{ font-weight:500; font-size:11px; color: rgba(247,243,232,0.6); margin-left:6px; }
+  .grader-sub{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; line-height:1.45; color: rgba(247,243,232,0.6); grid-column:2; }
+  .grader-note{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; line-height:1.55;
+    color: rgba(247,243,232,0.5); margin: 0 0 20px;
+  }
+
+  .status-dot.bad{ background:#d6453b; }
+  .status-dot.na{ background: rgba(255,255,255,0.3); }
+
+  .save-bar{ margin: 8px 0 18px; }
+  .save-form{
+    margin-top:10px; padding:12px;
+    border-radius:10px; background: rgba(255,255,255,0.06);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .save-form label{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase;
+    color: rgba(247,243,232,0.55);
+  }
+  .save-form select, .save-form input{
+    width:100%;
+    padding:10px 12px; border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.3); color: var(--stock-100);
+    font-family:'Inter', sans-serif; font-size:13px;
+  }
+  .save-msg{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--foil-1); margin: 8px 0 0; min-height:14px; }
+  .save-msg.is-error{ color:#e0714f; }
+
+  .grade-chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+  .grade-chip{
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px;
+    padding:3px 7px; border-radius:6px;
+    background: rgba(125,224,192,0.14); color: var(--foil-1);
+  }
+  .grade-chip.muted{ background: rgba(255,255,255,0.08); color: rgba(247,243,232,0.7); }
+</style>
+</head>
+<body>
+
+<div id="coverPage">
+  <div class="cover-card">
+    <div class="cover-mark">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <rect x="9" y="8" width="15" height="21" rx="2.5" fill="#c79ef2" stroke="#f7f3e8" stroke-width="1" transform="rotate(-16 16.5 18.5)"/>
+        <rect x="16" y="8" width="15" height="21" rx="2.5" fill="#7de0c0" stroke="#f7f3e8" stroke-width="1" transform="rotate(16 23.5 18.5)"/>
+        <rect x="12.5" y="6" width="15" height="21" rx="2.5" fill="#e0a64b" stroke="#f7f3e8" stroke-width="1"/>
+        <circle cx="20" cy="16.5" r="3.4" fill="none" stroke="#f7f3e8" stroke-width="1.4"/>
+      </svg>
+    </div>
+    <div class="cover-brand">Card<span class="shine">Desk</span></div>
+    <div class="cover-tagline">Scan · Identify · Price</div>
+    <div class="cover-chips">
+      <div class="cover-chip"><span class="dot" style="background:var(--pika-500)"></span>Pokémon</div>
+      <div class="cover-chip"><span class="dot" style="background:var(--ygo-500)"></span>Yu-Gi-Oh</div>
+      <div class="cover-chip"><span class="dot" style="background:var(--bb-500)"></span>Baseball</div>
+      <div class="cover-chip"><span class="dot" style="background:var(--ball-500)"></span>Basketball</div>
+      <div class="cover-chip"><span class="dot" style="background:var(--fb-500)"></span>Football</div>
+    </div>
+    <button class="cover-cta" id="enterBtn">Start Scanning</button>
+    <div class="cover-foot">Every card in your closet, valued in seconds</div>
+  </div>
+</div>
+
+<div class="phone" id="mainApp" style="display:none;">
+  <header class="app-head">
+    <div>
+      <div class="brand">Card<span>Desk</span></div>
+      <div class="brand-sub">Scan · Identify · Price</div>
+    </div>
+  </header>
+
+  <div id="scannerView">
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-game="pokemon"><span class="dot"></span>Pokémon</div>
+      <div class="tab" data-game="yugioh"><span class="dot"></span>Yu-Gi-Oh</div>
+      <div class="tab" data-game="baseball"><span class="dot"></span>Baseball</div>
+      <div class="tab" data-game="basketball"><span class="dot"></span>Basketball</div>
+      <div class="tab" data-game="football"><span class="dot"></span>Football</div>
+    </div>
+
+    <div class="desk">
+      <div class="scan-zone" id="scanZone">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+          <circle cx="12" cy="13" r="3.5"/>
+        </svg>
+        <div class="scan-hint">Snap a photo or upload one — center the card in frame, good light helps a lot.</div>
+        <button type="button" class="camera-btn" id="cameraBtn">Open Camera</button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment">
+
+      <div class="row">
+        <button class="btn-primary" id="scanBtn" disabled>Read Card</button>
+        <button class="btn-secondary" id="clearBtn">Clear</button>
+      </div>
+
+      <div class="search-row">
+        <label for="queryInput">Search text (edit if the scan got it wrong)</label>
+        <div class="field">
+          <input type="text" id="queryInput" placeholder="e.g. Charizard">
+          <button class="btn-primary" id="searchBtn" style="flex:0 0 auto;">Find</button>
+        </div>
+      </div>
+
+      <div class="search-row" id="refineRow">
+        <label for="refineInput" id="refineLabel">Set name or number (optional) — narrows down reprints</label>
+        <div class="field">
+          <input type="text" id="refineInput" placeholder="e.g. Base Set or 4/102">
+        </div>
+      </div>
+
+      <div class="status" id="statusLine" style="display:none;">
+        <div class="spinner"></div>
+        <span id="statusText">Working…</span>
+      </div>
+      <div class="progress-track" id="progressTrack" style="display:none;">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="results" id="results" style="display:none;">
+        <div class="results-head">
+          <h3 id="resultsTitle">Matches</h3>
+          <span id="resultsCount"></span>
+        </div>
+        <div id="resultsList"></div>
+      </div>
+
+      <div class="source-note" id="sourceNote"></div>
+    </div>
+  </div>
+
+  <div id="gradeView" style="display:none;">
+    <div class="desk">
+      <div class="collection-head">
+        <div>
+          <h3>Condition Check</h3>
+          <span>Centering, grader ceilings &amp; wear from your photos</span>
+        </div>
+      </div>
+
+      <div class="side-toggle" id="gradeSideToggle">
+        <button type="button" class="active" data-side="front">Front</button>
+        <button type="button" data-side="back">Back<span class="side-done" id="backDone"></span></button>
+      </div>
+
+      <div class="scan-zone" id="gradeZone">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+          <circle cx="12" cy="13" r="3.5"/>
+        </svg>
+        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
+        <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>
+      </div>
+      <input type="file" id="gradeFileInput" accept="image/*" capture="environment">
+
+      <div class="row">
+        <button class="btn-primary" id="analyzeBtn" disabled>Analyze Front</button>
+        <button class="btn-secondary" id="gradeClearBtn">Clear</button>
+      </div>
+
+      <div class="status" id="gradeStatusLine" style="display:none;">
+        <div class="spinner"></div>
+        <span>Finding the card and measuring borders…</span>
+      </div>
+
+      <div id="gradeResults" style="display:none;">
+        <p class="quality-head" id="qualityHead">Photo quality</p>
+        <div class="quality-list" id="qualityList"></div>
+
+        <p class="step-label">1 · Card outline</p>
+        <p class="step-help">Drag each green corner onto the card's real corner. The magnifier shows exactly where you are.</p>
+        <div class="editor-wrap" id="outlineWrap">
+          <canvas class="editor" id="outlineCanvas"></canvas>
+          <canvas class="loupe" id="outlineLoupe" width="192" height="192"></canvas>
+        </div>
+        <div class="editor-actions">
+          <button type="button" id="useWholePhotoBtn">Use whole photo</button>
+          <button type="button" id="redetectBtn">Re-detect outline</button>
+        </div>
+
+        <p class="step-label">2 · Border lines</p>
+        <p class="step-help">Straightened card. Drag each line onto the inner edge of the border — where the border meets the artwork. Orange lines are ones it wasn't sure about.</p>
+        <div class="editor-wrap" id="borderWrap">
+          <canvas class="editor" id="borderCanvas"></canvas>
+          <canvas class="loupe" id="borderLoupe" width="192" height="192"></canvas>
+        </div>
+        <div class="editor-actions" style="max-width:340px; margin-left:auto; margin-right:auto;">
+          <button type="button" id="resetLinesBtn">Reset lines to auto</button>
+        </div>
+
+        <div class="centering-readout">
+          <div class="centering-axis">
+            <span class="axis-label">Left / Right</span>
+            <div class="axis-bar"><div class="axis-fill" id="lrFill"></div></div>
+            <span class="axis-value" id="lrValue">— / —</span>
+          </div>
+          <div class="centering-axis">
+            <span class="axis-label">Top / Bottom</span>
+            <div class="axis-bar"><div class="axis-fill" id="tbFill"></div></div>
+            <span class="axis-value" id="tbValue">— / —</span>
+          </div>
+        </div>
+        <div class="centering-verdict" id="centeringVerdict"></div>
+        <div class="center-summary" id="centerSummary"></div>
+
+        <p class="grader-head">What centering alone allows</p>
+        <p class="grader-sub-head" id="graderSubHead"></p>
+        <div class="grader-grid" id="graderGrid"></div>
+        <p class="grader-note" id="graderNote"></p>
+
+        <p class="condition-label">Corners &amp; edges — heuristic wear check (this side)</p>
+        <div class="condition-grid" id="cornerGrid"></div>
+        <div class="condition-grid condition-grid-edges" id="edgeGrid"></div>
+
+        <div class="corner-inspector">
+          <p class="corner-inspector-label">Close-ups for your own eyes — corners and center surface</p>
+          <div class="corner-grid">
+            <div class="corner-crop"><canvas id="cropTL"></canvas><span>Top-left</span></div>
+            <div class="corner-crop"><canvas id="cropTR"></canvas><span>Top-right</span></div>
+            <div class="corner-crop"><canvas id="cropBL"></canvas><span>Bottom-left</span></div>
+            <div class="corner-crop"><canvas id="cropBR"></canvas><span>Bottom-right</span></div>
+            <div class="corner-crop corner-crop-wide"><canvas id="cropCenter"></canvas><span>Center surface</span></div>
+          </div>
+        </div>
+
+        <div class="save-bar" id="gradeSaveBar">
+          <button type="button" class="btn-primary" id="gradeSaveOpen" style="width:100%;">Save result to My Desk</button>
+          <div class="save-form" id="gradeSaveForm" style="display:none;">
+            <label for="gradeSaveTarget">Save to</label>
+            <select id="gradeSaveTarget"></select>
+            <div id="gradeNewFields" style="display:flex; flex-direction:column; gap:8px;">
+              <label for="gradeSaveName">Card name</label>
+              <input id="gradeSaveName" type="text" maxlength="80" placeholder="e.g. Charizard 4/102">
+              <label for="gradeSaveGame">Category</label>
+              <select id="gradeSaveGame">
+                <option value="pokemon">Pokémon</option>
+                <option value="yugioh">Yu-Gi-Oh</option>
+                <option value="baseball">Baseball</option>
+                <option value="basketball">Basketball</option>
+                <option value="football">Football</option>
+              </select>
+            </div>
+            <div class="row">
+              <button type="button" class="btn-primary" id="gradeSaveConfirm">Save</button>
+              <button type="button" class="btn-secondary" id="gradeSaveCancel">Cancel</button>
+            </div>
+          </div>
+          <p class="save-msg" id="gradeSaveMsg"></p>
+        </div>
+      </div>
+
+      <div class="source-note">
+        <b>What this can and can't tell you:</b> the straightened-card centering is a real measurement, good to roughly ±2 points on a clean, sharp photo. The PSA / BGS / CGC rows show the best grade your <i>centering</i> would allow under each company's published (or, for BGS, commonly cited) tolerances — a ceiling, not a predicted grade. Corners, edges and surface decide the rest, and a phone photo can't judge those reliably, so there is deliberately no single "you'll get a 9" number. The corner/edge check is a rough heuristic and is inconclusive on light or white-bordered cards. The grading companies don't all publish exact numbers and sources disagree in places — treat these as guidance and confirm against each company's current standards.
+      </div>
+    </div>
+  </div>
+
+  <div id="collectionView" style="display:none;">
+    <div class="desk">
+      <div class="collection-head">
+        <div>
+          <h3>My Desk</h3>
+          <span id="collectionSummary">0 cards</span>
+        </div>
+        <button type="button" class="btn-secondary" id="addTestCardBtn" style="flex:0 0 auto; padding:8px 14px; font-size:12px;">+ Test Card</button>
+      </div>
+      <div class="tabs collection-filter-tabs" id="collectionFilterTabs">
+        <div class="tab active" data-filter="all"><span class="dot"></span>All</div>
+        <div class="tab" data-filter="pokemon" data-game="pokemon"><span class="dot"></span>Pokémon</div>
+        <div class="tab" data-filter="yugioh" data-game="yugioh"><span class="dot"></span>Yu-Gi-Oh</div>
+        <div class="tab" data-filter="baseball" data-game="baseball"><span class="dot"></span>Baseball</div>
+        <div class="tab" data-filter="basketball" data-game="basketball"><span class="dot"></span>Basketball</div>
+        <div class="tab" data-filter="football" data-game="football"><span class="dot"></span>Football</div>
+      </div>
+      <div id="collectionList"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button type="button" class="bottom-nav-btn active" id="navScanBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+        <circle cx="12" cy="13" r="3.2"/>
+      </svg>
+      Scan
+    </button>
+    <button type="button" class="bottom-nav-btn" id="navGradeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="9" r="5.5"/>
+        <path d="M8.5 13.5L7 21l5-2.5L17 21l-1.5-7.5"/>
+      </svg>
+      Grade
+    </button>
+    <button type="button" class="bottom-nav-btn" id="navCollectionBtn" aria-label="View my desk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/>
+        <rect x="6" y="5" width="12" height="16" rx="2"/>
+      </svg>
+      Desk
+      <span class="nav-badge" id="collectionCount" data-zero="true">0</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+const state = {
+  game: 'pokemon',
+  imageFile: null,
+  cameraStream: null,
+  facingMode: 'environment',
+  view: 'scanner',
+  collection: [],
+  gradeImageFile: null,
+  gradeCameraStream: null,
+  gradeFacingMode: 'environment',
+  collectionFilter: 'all',
+};
+
+const STORAGE_KEY = 'carddesk_collection_v1';
+
+function loadCollection(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(err){
+    return [];
+  }
+}
+
+function saveCollection(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.collection));
+  } catch(err){
+    // Storage unavailable (private browsing, sandboxed preview, etc.) — collection
+    // still works for this session, it just won't persist after a reload.
+  }
+}
+
+state.collection = loadCollection();
+
+let confirmDeleteId = null;
+
+const gameDotColors = {
+  pokemon: 'var(--pika-500)',
+  yugioh: 'var(--ygo-500)',
+  baseball: 'var(--bb-500)',
+  basketball: 'var(--ball-500)',
+  football: 'var(--fb-500)',
+};
+
+const IDLE_MARKUP = `
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+      <circle cx="12" cy="13" r="3.5"/>
+    </svg>
+    <div class="scan-hint">Snap a photo or upload one — center the card in frame, good light helps a lot.</div>
+    <button type="button" class="camera-btn" id="cameraBtn">Open Camera</button>`;
+
+document.getElementById('enterBtn').addEventListener('click', () => {
+  const cover = document.getElementById('coverPage');
+  const main = document.getElementById('mainApp');
+  cover.style.opacity = '0';
+  cover.style.transform = 'translateY(-14px)';
+  setTimeout(() => {
+    cover.style.display = 'none';
+    main.style.display = 'block';
+    main.style.opacity = '0';
+    main.style.transform = 'translateY(10px)';
+    requestAnimationFrame(() => {
+      main.style.transition = 'opacity .4s ease, transform .4s ease';
+      main.style.opacity = '1';
+      main.style.transform = 'none';
+    });
+  }, 450);
+});
+
+// Set this once your carddesk-server backend is deployed, e.g.
+// 'https://carddesk-pricing.onrender.com'. Leave empty to keep using demo
+// data for baseball/basketball/football until then — nothing else needs to
+// change, this is the only line to fill in.
+const PRICING_BACKEND_URL = '';
+
+// Optional: eBay category IDs per sport, once you look them up via eBay's
+// category API — narrows results and reduces noise. Safe to leave as null.
+const EBAY_CATEGORY_IDS = {
+  baseball: null,
+  basketball: null,
+  football: null,
+};
+
+const sourceNotes = {
+  pokemon: 'Live TCGplayer market pricing, via the Pokémon TCG API. <b>On the roadmap:</b> eBay sold-comps and TAG pop/price data, once a backend can hold those API keys safely.',
+  yugioh: 'Live lookup via YGOPRODeck\'s public database, with real TCGplayer market pricing attached. <b>On the roadmap:</b> eBay sold-comps and TAG pop/price data, once a backend can hold those API keys safely.',
+  baseball: 'SPORTS_DYNAMIC',
+  basketball: 'SPORTS_DYNAMIC',
+  football: 'SPORTS_DYNAMIC',
+};
+
+// Small illustrative datasets for the two categories without an open API.
+const localDecks = {
+  baseball: [
+    { name: 'Mickey Mantle', meta: '1952 Topps · #311 · Rookie-era icon', price: '38,000 – 5.2M', tag:'PSA-dependent' },
+    { name: 'Babe Ruth', meta: '1933 Goudey · #144', price: '10,000 – 500,000', tag:'PSA-dependent' },
+    { name: 'Willie Mays', meta: '1951 Bowman · #305 · Rookie', price: '5,000 – 250,000', tag:'PSA-dependent' },
+    { name: 'Hank Aaron', meta: '1957 Topps · #20', price: '600 – 40,000', tag:'PSA-dependent' },
+    { name: 'Ken Griffey Jr.', meta: '1989 Upper Deck · #1 · Rookie', price: '25 – 3,500', tag:'PSA-dependent' },
+    { name: 'Derek Jeter', meta: '1993 SP Foil · #279 · Rookie', price: '300 – 30,000', tag:'PSA-dependent' },
+    { name: 'Cal Ripken Jr.', meta: '1982 Topps · #21 · Rookie', price: '30 – 2,000', tag:'PSA-dependent' },
+    { name: 'Nolan Ryan', meta: '1968 Topps · #177 · Rookie', price: '400 – 20,000', tag:'PSA-dependent' },
+    { name: 'Mike Trout', meta: '2011 Topps Update · #US175 · Rookie', price: '150 – 15,000', tag:'PSA-dependent' },
+    { name: 'Shohei Ohtani', meta: '2018 Topps Chrome Update', price: '40 – 2,500', tag:'PSA-dependent' },
+  ],
+  basketball: [
+    { name: 'Michael Jordan', meta: '1986 Fleer · #57 · Rookie', price: '9,000 – 738,000', tag:'PSA-dependent' },
+    { name: 'Kobe Bryant', meta: '1996 Topps · #138 · Rookie', price: '150 – 30,000', tag:'PSA-dependent' },
+    { name: 'LeBron James', meta: '2003 Topps Chrome · #111 · Rookie', price: '400 – 60,000', tag:'PSA-dependent' },
+    { name: 'Magic Johnson', meta: '1980 Topps · #139 · Rookie', price: '80 – 6,000', tag:'PSA-dependent' },
+    { name: 'Larry Bird', meta: '1980 Topps · #34 · Rookie (shared)', price: '80 – 8,000', tag:'PSA-dependent' },
+    { name: 'Shaquille O\'Neal', meta: '1992 Topps · #362 · Rookie', price: '15 – 1,200', tag:'PSA-dependent' },
+    { name: 'Stephen Curry', meta: '2009 Panini · #321 · Rookie', price: '40 – 4,000', tag:'PSA-dependent' },
+    { name: 'Giannis Antetokounmpo', meta: '2013 Panini Prizm · #290 · Rookie', price: '60 – 8,000', tag:'PSA-dependent' },
+    { name: 'Luka Dončić', meta: '2018 Panini Prizm · #280 · Rookie', price: '80 – 12,000', tag:'PSA-dependent' },
+    { name: 'Victor Wembanyama', meta: '2023 Panini Prizm · Rookie', price: '30 – 3,000', tag:'PSA-dependent' },
+  ],
+  football: [
+    { name: 'Tom Brady', meta: '2000 Playoff Contenders · #144 · Rookie Auto', price: '3,000 – 3.1M', tag:'PSA-dependent' },
+    { name: 'Patrick Mahomes', meta: '2017 Panini Prizm · #269 · Rookie', price: '200 – 25,000', tag:'PSA-dependent' },
+    { name: 'Jerry Rice', meta: '1986 Topps · #161 · Rookie', price: '150 – 20,000', tag:'PSA-dependent' },
+    { name: 'Joe Montana', meta: '1981 Topps · #216 · Rookie', price: '300 – 25,000', tag:'PSA-dependent' },
+    { name: 'Peyton Manning', meta: '1998 Playoff Contenders · #101 · Rookie Auto', price: '250 – 20,000', tag:'PSA-dependent' },
+    { name: 'Barry Sanders', meta: '1989 Score · #257 · Rookie', price: '20 – 2,500', tag:'PSA-dependent' },
+    { name: 'Walter Payton', meta: '1976 Topps · #148 · Rookie', price: '150 – 15,000', tag:'PSA-dependent' },
+    { name: 'Justin Jefferson', meta: '2020 Panini Prizm · #398 · Rookie', price: '40 – 3,000', tag:'PSA-dependent' },
+    { name: 'Ja\'Marr Chase', meta: '2021 Panini Prizm · Rookie', price: '30 – 2,500', tag:'PSA-dependent' },
+    { name: 'Caleb Williams', meta: '2024 Panini Prizm · Rookie', price: '20 – 1,500', tag:'PSA-dependent' },
+  ],
+};
+
+const tabs = document.querySelectorAll('.tab');
+const scanZone = document.getElementById('scanZone');
+const fileInput = document.getElementById('fileInput');
+const scanBtn = document.getElementById('scanBtn');
+const clearBtn = document.getElementById('clearBtn');
+const queryInput = document.getElementById('queryInput');
+const searchBtn = document.getElementById('searchBtn');
+const statusLine = document.getElementById('statusLine');
+const statusText = document.getElementById('statusText');
+const progressTrack = document.getElementById('progressTrack');
+const progressFill = document.getElementById('progressFill');
+const results = document.getElementById('results');
+const resultsTitle = document.getElementById('resultsTitle');
+const resultsCount = document.getElementById('resultsCount');
+const resultsList = document.getElementById('resultsList');
+const sourceNote = document.getElementById('sourceNote');
+
+function renderSourceNote(){
+  const raw = sourceNotes[state.game];
+  if(raw === 'SPORTS_DYNAMIC'){
+    sourceNote.innerHTML = PRICING_BACKEND_URL
+      ? '<b>Live eBay asking prices</b> — current listings, not confirmed sold prices. TCGplayer\'s API isn\'t available for this (they\'ve paused new partner approvals).'
+      : '<b>Demo data.</b> A backend is built and ready for eBay pricing here — set <code>PRICING_BACKEND_URL</code> in the code once it\'s deployed to go live automatically.';
+  } else {
+    sourceNote.innerHTML = raw;
+  }
+}
+renderSourceNote();
+
+const deskPanel = document.querySelector('.desk');
+
+const refineConfig = {
+  pokemon: { show: true, label: 'Set name or number (optional) — narrows down reprints', placeholder: 'e.g. Base Set or 4/102' },
+  yugioh: { show: true, label: 'Set name (optional) — narrows down which printing', placeholder: 'e.g. Legend of Blue-Eyes White Dragon' },
+  baseball: { show: false },
+  basketball: { show: false },
+  football: { show: false },
+};
+
+function updateRefineField(){
+  const cfg = refineConfig[state.game] || { show: false };
+  const refineRow = document.getElementById('refineRow');
+  const refineLabel = document.getElementById('refineLabel');
+  const refineInput = document.getElementById('refineInput');
+  if(cfg.show){
+    refineRow.style.display = 'block';
+    refineLabel.textContent = cfg.label;
+    refineInput.placeholder = cfg.placeholder;
+  } else {
+    refineRow.style.display = 'none';
+    refineInput.value = '';
+  }
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    if(tab.classList.contains('active')) return;
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.game = tab.dataset.game;
+    renderSourceNote();
+    hideResults();
+    updateRefineField();
+    deskPanel.classList.remove('desk-fade');
+    void deskPanel.offsetWidth; // restart animation
+    deskPanel.classList.add('desk-fade');
+  });
+});
+updateRefineField();
+
+scanZone.addEventListener('click', (e) => {
+  if(e.target.closest('#rotateBtn')){ e.stopPropagation(); rotateCurrentImage(); return; }
+  if(e.target.closest('#cameraBtn')){ e.stopPropagation(); openCamera(); return; }
+  if(e.target.closest('#cameraCancelBtn')){ e.stopPropagation(); closeCameraToIdle(); return; }
+  if(e.target.closest('#captureBtn')){ e.stopPropagation(); captureFromCamera(); return; }
+  if(e.target.closest('#cameraSwitchBtn')){ e.stopPropagation(); switchCamera(); return; }
+  if(scanZone.classList.contains('has-camera')) return;
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  setImageFile(file);
+});
+
+function setImageFile(file){
+  state.imageFile = file;
+  const url = URL.createObjectURL(file);
+  scanZone.classList.remove('has-camera');
+  scanZone.classList.add('has-image');
+  scanZone.innerHTML = `
+    <img id="cardPreviewImg" src="${url}" alt="card photo">
+    <button type="button" class="rotate-btn" id="rotateBtn" aria-label="Rotate photo 90 degrees">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+        <path d="M21 3v6h-6"/>
+      </svg>
+    </button>`;
+  scanBtn.disabled = false;
+}
+
+async function openCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showCameraError(new Error('this browser doesn\'t support camera access'));
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: state.facingMode } },
+      audio: false,
+    });
+    state.cameraStream = stream;
+    state.imageFile = null;
+    scanZone.classList.remove('has-image');
+    scanZone.classList.add('has-camera');
+    scanZone.innerHTML = `
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <div class="camera-controls">
+        <button type="button" class="camera-icon-btn" id="cameraCancelBtn" aria-label="Cancel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <button type="button" class="shutter-btn" id="captureBtn" aria-label="Capture photo"></button>
+        <button type="button" class="camera-icon-btn" id="cameraSwitchBtn" aria-label="Switch camera">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>`;
+    const videoEl = document.getElementById('cameraVideo');
+    videoEl.srcObject = stream;
+  } catch(err){
+    showCameraError(err);
+  }
+}
+
+function stopCameraStream(){
+  if(state.cameraStream){
+    state.cameraStream.getTracks().forEach(t => t.stop());
+    state.cameraStream = null;
+  }
+}
+
+function closeCameraToIdle(){
+  stopCameraStream();
+  scanZone.classList.remove('has-camera');
+  scanZone.innerHTML = IDLE_MARKUP;
+  scanBtn.disabled = true;
+}
+
+function showCameraError(err){
+  stopCameraStream();
+  scanZone.classList.remove('has-camera');
+  scanZone.innerHTML = IDLE_MARKUP;
+
+  const name = err && err.name;
+  const isPermission = name === 'NotAllowedError' || name === 'PermissionDeniedError' || name === 'SecurityError';
+  const isNoCamera = name === 'NotFoundError' || name === 'DevicesNotFoundError';
+  const isInUse = name === 'NotReadableError' || name === 'TrackStartError';
+
+  let msg;
+  if(isPermission){
+    msg = 'Camera access is turned off for this page. Look for a camera icon in your browser\'s address bar (or Settings → Privacy → Camera on mobile), allow access, then tap "Allow Camera" below to try again.';
+  } else if(isNoCamera){
+    msg = 'No camera was found on this device. You can still upload a photo instead.';
+  } else if(isInUse){
+    msg = 'Your camera seems to be in use by another app. Close it and tap "Allow Camera" to try again, or upload a photo instead.';
+  } else {
+    msg = 'Camera unavailable (' + (err && err.message ? err.message : 'unknown error') + '). You can upload a photo instead.';
+  }
+
+  const hint = scanZone.querySelector('.scan-hint');
+  if(hint) hint.textContent = msg;
+
+  if(isPermission || isInUse){
+    const camBtn = document.getElementById('cameraBtn');
+    if(camBtn) camBtn.textContent = 'Allow Camera';
+  }
+}
+
+function captureFromCamera(){
+  const videoEl = document.getElementById('cameraVideo');
+  if(!videoEl || !videoEl.videoWidth) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = videoEl.videoWidth;
+  canvas.height = videoEl.videoHeight;
+  canvas.getContext('2d').drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+  canvas.toBlob((blob) => {
+    if(!blob) return;
+    stopCameraStream();
+    const file = new File([blob], 'card-capture.jpg', { type: 'image/jpeg' });
+    setImageFile(file);
+  }, 'image/jpeg', 0.92);
+}
+
+async function switchCamera(){
+  state.facingMode = state.facingMode === 'environment' ? 'user' : 'environment';
+  stopCameraStream();
+  await openCamera();
+}
+
+function rotateImageFile(file, degrees){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const swap = (degrees % 180) !== 0;
+      const canvas = document.createElement('canvas');
+      canvas.width = swap ? img.height : img.width;
+      canvas.height = swap ? img.width : img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(degrees * Math.PI / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if(!blob){ reject(new Error('rotate failed')); return; }
+        resolve(new File([blob], file.name || 'card.jpg', { type: file.type || 'image/jpeg' }));
+      }, file.type || 'image/jpeg', 0.92);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+    img.src = url;
+  });
+}
+
+async function rotateCurrentImage(){
+  if(!state.imageFile) return;
+  const rotateBtn = document.getElementById('rotateBtn');
+  if(rotateBtn) rotateBtn.style.opacity = '0.4';
+  try{
+    const rotated = await rotateImageFile(state.imageFile, 90);
+    state.imageFile = rotated;
+    const img = document.getElementById('cardPreviewImg');
+    if(img) img.src = URL.createObjectURL(rotated);
+  } catch(err){
+    // If rotation fails for any reason, leave the original photo as-is.
+  } finally {
+    if(rotateBtn) rotateBtn.style.opacity = '1';
+  }
+}
+
+clearBtn.addEventListener('click', () => {
+  state.imageFile = null;
+  fileInput.value = '';
+  stopCameraStream();
+  scanZone.classList.remove('has-image', 'has-camera');
+  scanZone.innerHTML = IDLE_MARKUP;
+  scanBtn.disabled = true;
+  queryInput.value = '';
+  hideResults();
+});
+
+function showStatus(msg){
+  statusLine.style.display = 'flex';
+  statusText.textContent = msg;
+}
+function hideStatus(){
+  statusLine.style.display = 'none';
+  progressTrack.style.display = 'none';
+}
+function hideResults(){
+  results.style.display = 'none';
+  resultsList.innerHTML = '';
+}
+
+scanBtn.addEventListener('click', async () => {
+  if(!state.imageFile) return;
+  hideResults();
+
+  if(typeof Tesseract === 'undefined'){
+    showEmpty('The text-scanning library didn\'t load (could be an ad blocker, browser extension, or connection issue). You can still type the card name into the search box above.', 'error');
+    return;
+  }
+
+  scanBtn.disabled = true;
+  showStatus('Reading text off the card…');
+  progressTrack.style.display = 'block';
+  progressFill.style.width = '0%';
+  addLaser();
+
+  try{
+    const { data: { text } } = await Tesseract.recognize(state.imageFile, 'eng', {
+      logger: m => {
+        if(m.status === 'recognizing text' && m.progress != null){
+          progressFill.style.width = Math.round(m.progress * 100) + '%';
+        }
+      }
+    });
+    const guess = bestGuessLine(text);
+    queryInput.value = guess;
+    hideStatus();
+    removeLaser();
+    if(guess){
+      runSearch(guess, document.getElementById('refineInput').value.trim());
+    } else {
+      showEmpty('Couldn\'t make out clear text on that photo. Try typing the card name in the search box above.', 'blank');
+    }
+  } catch(err){
+    hideStatus();
+    removeLaser();
+    showEmpty('Scan failed — ' + (err.message || 'try a clearer photo or type the name manually.'), 'error');
+  } finally {
+    scanBtn.disabled = false;
+  }
+});
+
+function addLaser(){
+  if(document.getElementById('scanLaser')) return;
+  const laser = document.createElement('div');
+  laser.className = 'scan-laser';
+  laser.id = 'scanLaser';
+  scanZone.appendChild(laser);
+}
+function removeLaser(){
+  const laser = document.getElementById('scanLaser');
+  if(laser) laser.remove();
+}
+
+function bestGuessLine(rawText){
+  const lines = rawText
+    .split('\n')
+    .map(l => l.replace(/[^a-zA-Z0-9\s'.-]/g, '').trim())
+    .filter(l => l.length > 2 && /[a-zA-Z]/.test(l));
+  if(lines.length === 0) return '';
+  // Prefer the longest alphabetic-heavy line as the likely name/title.
+  lines.sort((a,b) => b.length - a.length);
+  return lines[0];
+}
+
+searchBtn.addEventListener('click', () => {
+  const q = queryInput.value.trim();
+  const refine = document.getElementById('refineInput').value.trim();
+  if(q) runSearch(q, refine);
+});
+queryInput.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){ searchBtn.click(); }
+});
+document.getElementById('refineInput').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){ searchBtn.click(); }
+});
+
+async function runSearch(query, refine){
+  hideResults();
+  showStatus('Searching the ' + gameLabel(state.game) + ' database…');
+  progressTrack.style.display = 'none';
+  showSkeleton();
+
+  try{
+    if(state.game === 'pokemon'){
+      await searchPokemon(query, refine);
+    } else if(state.game === 'yugioh'){
+      await searchYugioh(query, refine);
+    } else {
+      await searchLocalDeck(query);
+    }
+  } catch(err){
+    showEmpty('Couldn\'t reach the card database (' + (err.message || 'network error') + '). Check your connection and try again.', 'error');
+  } finally {
+    hideStatus();
+  }
+}
+
+function gameLabel(g){
+  return { pokemon:'Pokémon', yugioh:'Yu-Gi-Oh', baseball:'baseball', basketball:'basketball', football:'football' }[g];
+}
+
+async function fetchPokemonCards(luceneQuery){
+  const url = 'https://api.pokemontcg.io/v2/cards?q=' + encodeURIComponent(luceneQuery) + '&pageSize=6';
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('lookup failed (' + res.status + ')');
+  const json = await res.json();
+  return json.data || [];
+}
+
+function pokemonCardsToItems(cards){
+  return cards.map(c => {
+    const price = extractPokemonPrice(c);
+    return {
+      name: c.name,
+      meta: [c.set && c.set.name, c.number ? '#' + c.number : null, c.rarity].filter(Boolean).join(' · '),
+      img: c.images && c.images.small,
+      price: price,
+      source: 'TCGPLAYER',
+      demo: false,
+    };
+  });
+}
+
+async function searchPokemon(query, refine){
+  let baseQuery = 'name:"' + query + '*"';
+  let refineDesc = null;
+
+  if(refine){
+    const digitMatch = refine.match(/^\s*(\d+)/);
+    if(digitMatch){
+      baseQuery += ' number:' + digitMatch[1];
+      refineDesc = 'card number ' + digitMatch[1];
+    } else {
+      baseQuery += ' set.name:"' + refine + '*"';
+      refineDesc = 'set "' + refine + '"';
+    }
+  }
+
+  let cards = await fetchPokemonCards(baseQuery);
+
+  if(cards.length === 0 && refine){
+    // The refinement didn't match anything — fall back to name-only and say so.
+    const fallbackCards = await fetchPokemonCards('name:"' + query + '*"');
+    if(fallbackCards.length > 0){
+      renderResults(pokemonCardsToItems(fallbackCards), fallbackCards.length, false,
+        'No match for ' + refineDesc + ' — showing all "' + query + '" results instead.');
+      return;
+    }
+  }
+
+  if(cards.length === 0){
+    showEmpty('No Pokémon card matched "' + query + '"' + (refine ? ' with that set/number' : '') + '. Try a shorter or simpler name.');
+    return;
+  }
+
+  renderResults(pokemonCardsToItems(cards), cards.length);
+}
+
+function extractPokemonPrice(card){
+  const tp = card.tcgplayer && card.tcgplayer.prices;
+  if(!tp) return null;
+  const variant = tp.holofoil || tp.reverseHolofoil || tp.normal || tp['1stEditionHolofoil'] || Object.values(tp)[0];
+  if(variant && typeof variant.market === 'number'){
+    return variant.market.toFixed(2);
+  }
+  return null;
+}
+
+async function fetchYugiohCards(params){
+  const url = 'https://db.ygoprodeck.com/api/v7/cardinfo.php?' + params;
+  const res = await fetch(url);
+  if(!res.ok) return [];
+  const json = await res.json();
+  return (json.data || []).slice(0, 6);
+}
+
+function yugiohCardsToItems(cards){
+  return cards.map(c => {
+    const priceObj = c.card_prices && c.card_prices[0];
+    let price = null, source = 'TCGPLAYER';
+    if(priceObj && parseFloat(priceObj.tcgplayer_price) > 0){
+      price = parseFloat(priceObj.tcgplayer_price).toFixed(2);
+      source = 'TCGPLAYER';
+    } else if(priceObj && parseFloat(priceObj.cardmarket_price) > 0){
+      price = parseFloat(priceObj.cardmarket_price).toFixed(2);
+      source = 'CARDMARKET';
+    }
+    return {
+      name: c.name,
+      meta: [c.type, c.race, c.attribute].filter(Boolean).join(' · '),
+      img: c.card_images && c.card_images[0] && c.card_images[0].image_url_small,
+      price: price,
+      source: source,
+      demo: false,
+    };
+  });
+}
+
+async function searchYugioh(query, refine){
+  let params = 'fname=' + encodeURIComponent(query);
+  if(refine) params += '&cardset=' + encodeURIComponent(refine);
+
+  let cards = await fetchYugiohCards(params);
+
+  if(cards.length === 0 && refine){
+    const fallbackCards = await fetchYugiohCards('fname=' + encodeURIComponent(query));
+    if(fallbackCards.length > 0){
+      renderResults(yugiohCardsToItems(fallbackCards), fallbackCards.length, false,
+        'No match for set "' + refine + '" — showing all "' + query + '" results instead.');
+      return;
+    }
+  }
+
+  if(cards.length === 0){
+    showEmpty('No Yu-Gi-Oh card matched "' + query + '"' + (refine ? ' with that set' : '') + '. Try a shorter or simpler name.');
+    return;
+  }
+
+  renderResults(yugiohCardsToItems(cards), cards.length);
+}
+
+async function tryLiveEbaySearch(query){
+  if(!PRICING_BACKEND_URL) return null;
+
+  try{
+    const url = new URL(PRICING_BACKEND_URL.replace(/\/$/, '') + '/api/pricing/ebay');
+    url.searchParams.set('query', query + ' ' + gameLabel(state.game) + ' card');
+    const categoryId = EBAY_CATEGORY_IDS[state.game];
+    if(categoryId) url.searchParams.set('categoryId', categoryId);
+
+    const res = await fetch(url);
+    if(!res.ok) return null;
+    const json = await res.json();
+    const listings = json.results || [];
+    if(listings.length === 0) return null;
+
+    return listings.map(l => ({
+      name: l.title,
+      meta: l.condition || 'Active eBay listing',
+      img: l.imageUrl || null,
+      price: l.price != null ? l.price.toFixed(2) : null,
+      source: 'EBAY',
+      demo: false,
+      url: l.url,
+    }));
+  } catch(err){
+    return null; // backend unreachable/misconfigured — fall back silently to demo data
+  }
+}
+
+async function searchLocalDeck(query){
+  const liveItems = await tryLiveEbaySearch(query);
+  if(liveItems){
+    renderResults(liveItems, liveItems.length, false,
+      'Live eBay asking prices — not confirmed sold prices.');
+    return;
+  }
+
+  const deck = localDecks[state.game] || [];
+  const q = query.toLowerCase();
+  const matches = deck.filter(c => c.name.toLowerCase().includes(q) || q.includes(c.name.toLowerCase().split(' ')[0]));
+  const finalMatches = matches.length ? matches : deck.slice(0, 4);
+  const note = matches.length === 0
+    ? 'No exact demo match for "' + query + '" — showing sample ' + gameLabel(state.game) + ' cards from the demo set instead.'
+    : null;
+  const items = finalMatches.map(c => ({
+    name: c.name,
+    meta: c.meta,
+    img: null,
+    price: c.price,
+    demo: true,
+  }));
+  renderResults(items, finalMatches.length, true, note);
+}
+
+const emptyIcons = {
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l5 5"/><path d="M10 7v3l2 2"/></svg>',
+  error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l9 16H3L12 3z" stroke-linejoin="round"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.7" fill="currentColor" stroke="none"/></svg>',
+};
+
+function showEmpty(msg, type){
+  results.style.display = 'block';
+  resultsTitle.textContent = type === 'error' ? 'Something went wrong' : 'No match';
+  resultsCount.textContent = '';
+  const icon = emptyIcons[type === 'error' ? 'error' : 'search'];
+  const tint = type === 'error' ? '#ff9382' : 'rgba(247,243,232,0.6)';
+  resultsList.innerHTML = `<div class="empty-state" style="color:${tint}">${icon}<p>${escapeHtml(msg)}</p></div>`;
+}
+
+function showSkeleton(){
+  results.style.display = 'block';
+  resultsTitle.textContent = 'Searching…';
+  resultsCount.textContent = '';
+  resultsList.innerHTML = Array.from({length: 3}).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton-thumb"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line w80"></div>
+        <div class="skeleton-line w60"></div>
+        <div class="skeleton-line w40"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let lastRenderedItems = [];
+
+function isInCollection(item){
+  return state.collection.some(c => c.game === state.game && c.name === item.name && c.meta === (item.meta || ''));
+}
+
+function renderResults(items, count, isDemo, note){
+  lastRenderedItems = items;
+  results.style.display = 'block';
+  resultsTitle.textContent = isDemo ? 'Closest matches' : 'Matches found';
+  resultsCount.textContent = count + ' result' + (count === 1 ? '' : 's');
+  const noteHtml = note ? `<div class="empty-note" style="margin-bottom:8px;">${escapeHtml(note)}</div>` : '';
+  resultsList.innerHTML = noteHtml + items.map((item, i) => {
+    const added = isInCollection(item);
+    return `
+    <div class="card-result">
+      <button type="button" class="add-btn ${added ? 'is-added' : ''}" data-idx="${i}" aria-label="${added ? 'Remove from My Desk' : 'Add to My Desk'}">
+        ${added
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'}
+      </button>
+      ${item.img
+        ? `<img class="card-thumb" src="${item.img}" alt="${escapeHtml(item.name)}">`
+        : `<div class="card-thumb placeholder">${escapeHtml(item.name.charAt(0))}</div>`}
+      <div class="card-info">
+        <p class="card-name">${escapeHtml(item.name)}</p>
+        <p class="card-meta">${escapeHtml(item.meta || '')}</p>
+        <div class="card-price">
+          <span class="lbl">${item.demo ? 'EST. RANGE' : (item.price ? item.source : 'PRICE')}</span>
+          <span class="amt">${item.price ? (item.demo ? '$' + item.price : '$' + item.price) : 'n/a'}</span>
+          ${item.demo ? '<span class="badge-demo">Demo data</span>' : '<span class="badge-live">Live</span>'}
+        </div>
+      </div>
+    </div>
+  `;
+  }).join('');
+}
+
+resultsList.addEventListener('click', (e) => {
+  const btn = e.target.closest('.add-btn');
+  if(!btn) return;
+  const idx = parseInt(btn.dataset.idx, 10);
+  const item = lastRenderedItems[idx];
+  if(!item) return;
+  if(isInCollection(item)){
+    state.collection = state.collection.filter(c => !(c.game === state.game && c.name === item.name && c.meta === (item.meta || '')));
+  } else {
+    state.collection.push({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      game: state.game,
+      name: item.name,
+      meta: item.meta || '',
+      img: item.img || null,
+      price: item.price || null,
+      source: item.source || null,
+      demo: !!item.demo,
+      addedAt: Date.now(),
+    });
+  }
+  saveCollection();
+  updateCollectionBadge();
+  renderResults(lastRenderedItems, lastRenderedItems.length, resultsTitle.textContent === 'Closest matches');
+});
+
+function updateCollectionBadge(){
+  const countEl = document.getElementById('collectionCount');
+  const n = state.collection.length;
+  if(countEl){
+    countEl.textContent = n;
+    countEl.dataset.zero = n === 0 ? 'true' : 'false';
+  }
+}
+
+function updateCollectionSummary(items){
+  const summaryEl = document.getElementById('collectionSummary');
+  if(!summaryEl) return;
+  const n = items.length;
+  const total = items.reduce((sum, c) => sum + (c.price ? parseFloat(c.price) : 0), 0);
+  summaryEl.textContent = n + ' card' + (n === 1 ? '' : 's') + (total > 0 ? ' · $' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' combined (est.)' : '');
+}
+
+const gameNames = {
+  pokemon: 'Pokémon', yugioh: 'Yu-Gi-Oh', baseball: 'baseball', basketball: 'basketball', football: 'football',
+};
+
+function renderCollectionView(){
+  const list = document.getElementById('collectionList');
+  if(!list) return;
+
+  if(state.collection.length === 0){
+    list.innerHTML = `
+      <div class="collection-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/><rect x="6" y="5" width="12" height="16" rx="2"/></svg>
+        <p>Nothing saved yet — tap the + button on a scan result to start filling your desk.</p>
+      </div>`;
+    updateCollectionSummary([]);
+    return;
+  }
+
+  const filtered = state.collectionFilter === 'all'
+    ? state.collection
+    : state.collection.filter(c => c.game === state.collectionFilter);
+
+  updateCollectionSummary(filtered);
+
+  if(filtered.length === 0){
+    list.innerHTML = `
+      <div class="collection-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/><rect x="6" y="5" width="12" height="16" rx="2"/></svg>
+        <p>No ${escapeHtml(gameNames[state.collectionFilter] || state.collectionFilter)} cards saved yet.</p>
+      </div>`;
+    return;
+  }
+
+  const sorted = [...filtered].sort((a, b) => b.addedAt - a.addedAt);
+  list.innerHTML = sorted.map(c => `
+    <div class="collection-item">
+      <span class="game-dot" style="background:${gameDotColors[c.game] || 'var(--amber-500)'}"></span>
+      ${confirmDeleteId === c.id ? `
+      <div class="delete-confirm">
+        <p>Are you sure?</p>
+        <div class="delete-confirm-actions">
+          <button type="button" class="btn-cancel-delete" data-id="${c.id}" data-action="cancel">Cancel</button>
+          <button type="button" class="btn-confirm-delete" data-id="${c.id}" data-action="confirm">Delete</button>
+        </div>
+      </div>` : `
+      <button type="button" class="remove-btn" data-id="${c.id}" data-action="ask" aria-label="Delete from My Desk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6m2 0v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10z"/></svg>
+        Delete
+      </button>`}
+      ${(c.img || c.gradeThumb)
+        ? `<img class="card-thumb" src="${c.img || c.gradeThumb}" alt="${escapeHtml(c.name)}">`
+        : `<div class="card-thumb placeholder">${escapeHtml(c.name.charAt(0))}</div>`}
+      <div class="card-info">
+        <p class="card-name">${escapeHtml(c.name)}</p>
+        <p class="card-meta">${escapeHtml(c.meta || '')}</p>
+        <div class="card-price">
+          <span class="lbl">${c.demo ? 'EST. RANGE' : (c.price ? c.source : 'PRICE')}</span>
+          <span class="amt">${c.price ? '$' + c.price : 'n/a'}</span>
+          ${c.demo ? '<span class="badge-demo">Demo data</span>' : '<span class="badge-live">Live</span>'}
+        </div>
+        ${gradingChipsMarkup(c)}
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('collectionList') && document.getElementById('collectionList').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const action = btn.dataset.action;
+  if(action === 'ask'){
+    confirmDeleteId = id;
+  } else if(action === 'cancel'){
+    confirmDeleteId = null;
+  } else if(action === 'confirm'){
+    state.collection = state.collection.filter(c => c.id !== id);
+    confirmDeleteId = null;
+    saveCollection();
+    updateCollectionBadge();
+  }
+  renderCollectionView();
+});
+
+document.getElementById('collectionFilterTabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if(!tab) return;
+  document.querySelectorAll('#collectionFilterTabs .tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  state.collectionFilter = tab.dataset.filter;
+  confirmDeleteId = null;
+  renderCollectionView();
+});
+
+const testCardSamples = [
+  { game: 'pokemon', name: 'Charizard (Test)', meta: 'Base Set · #4 · Holo Rare', img: null, price: '312.50', source: 'TCGPLAYER', demo: false },
+  { game: 'yugioh', name: 'Dark Magician (Test)', meta: 'Legend of Blue Eyes · Ultra Rare', img: null, price: '48.00', source: 'CARDMARKET', demo: false },
+  { game: 'baseball', name: 'Mickey Mantle (Test)', meta: '1952 Topps · #311 · Sample entry', img: null, price: '38,000 – 5.2M', source: null, demo: true },
+  { game: 'basketball', name: 'Michael Jordan (Test)', meta: '1986 Fleer · #57 · Sample entry', img: null, price: '9,000 – 738,000', source: null, demo: true },
+  { game: 'football', name: 'Tom Brady (Test)', meta: '2000 Playoff Contenders · Sample entry', img: null, price: '3,000 – 3.1M', source: null, demo: true },
+];
+let testCardIdx = 0;
+
+document.getElementById('addTestCardBtn').addEventListener('click', () => {
+  const sample = testCardSamples[testCardIdx % testCardSamples.length];
+  testCardIdx++;
+  state.collection.push({
+    id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    game: sample.game,
+    name: sample.name,
+    meta: sample.meta,
+    img: sample.img,
+    price: sample.price,
+    source: sample.source,
+    demo: sample.demo,
+    addedAt: Date.now(),
+  });
+  saveCollection();
+  updateCollectionBadge();
+  renderCollectionView();
+});
+
+/* ALGO-START */
+const CARD_W = 600, CARD_H = 840;
+const CARD_RATIO = 2.5 / 3.5;
+
+function lumOf(data, n){
+  const l = new Float32Array(n);
+  for(let i = 0; i < n; i++){ const j = i * 4; l[i] = 0.299 * data[j] + 0.587 * data[j + 1] + 0.114 * data[j + 2]; }
+  return l;
+}
+
+function medianOf(arr){
+  const a = Array.from(arr).sort((x, y) => x - y);
+  return a[a.length >> 1];
+}
+
+function distPts(a, b){ return Math.hypot(a.x - b.x, a.y - b.y); }
+
+function polyArea(q){
+  let s = 0;
+  for(let i = 0; i < q.length; i++){ const a = q[i], b = q[(i + 1) % q.length]; s += a.x * b.y - b.x * a.y; }
+  return Math.abs(s) / 2;
+}
+
+/* How sharp is the printed inner-border edge? Ratio of the biggest one-pixel step to
+   the whole step's contrast: ~1 for a crisp edge, falling toward 0 as it blurs.
+   Independent of how much detail the artwork has. Returns null if no usable edge. */
+function edgeSharpness(lum, W, H, lines){
+  const ratios = [];
+  const bandV = [Math.round(H * 0.425), Math.round(H * 0.575)];
+  const bandH = [Math.round(W * 0.425), Math.round(W * 0.575)];
+  const colProfile = (x) => { let t = 0; for(let y = bandV[0]; y < bandV[1]; y++) t += lum[y * W + x]; return t / (bandV[1] - bandV[0]); };
+  const rowProfile = (y) => { let t = 0; for(let x = bandH[0]; x < bandH[1]; x++) t += lum[y * W + x]; return t / (bandH[1] - bandH[0]); };
+  const measure = (get, p, lim) => {
+    if(p < 9 || p > lim - 9) return;
+    const v = []; for(let i = -9; i <= 9; i++) v.push(get(p + i));
+    const m = (a, b) => { let t = 0; for(let i = a; i <= b; i++) t += v[i + 9]; return t / (b - a + 1); };
+    const contrast = Math.abs(m(4, 7) - m(-7, -4));
+    if(contrast < 18) return;
+    let g = 0;
+    for(let i = -4; i <= 4; i++) g = Math.max(g, Math.abs(v[i + 9] - v[i + 8]));
+    ratios.push(Math.min(1, g / contrast));
+  };
+  measure(colProfile, lines.l, W); measure(colProfile, lines.r, W);
+  measure(rowProfile, lines.t, H); measure(rowProfile, lines.b, H);
+  if(!ratios.length) return null;
+  ratios.sort((a, b) => a - b);
+  return ratios[ratios.length >> 1];
+}
+
+/* Finds the card against its background: colour distance from the photo's own
+   border colour -> largest blob -> holes filled -> corners from extreme points,
+   then each side's line is re-fitted to the straight part of the edge so rounded
+   corners don't pull the outline inward. Returns null when it can't tell. */
+function detectCardQuad(data, w, h){
+  const N = w * h;
+  const ring = Math.max(2, Math.round(Math.min(w, h) * 0.03));
+  const R = [], G = [], B = [];
+  for(let y = 0; y < h; y++){
+    const edgeRow = y < ring || y >= h - ring;
+    for(let x = 0; x < w; x++){
+      if(edgeRow || x < ring || x >= w - ring){ const j = (y * w + x) * 4; R.push(data[j]); G.push(data[j + 1]); B.push(data[j + 2]); }
+    }
+  }
+  const mr = medianOf(R), mg = medianOf(G), mb = medianOf(B);
+  const rd = [];
+  for(let i = 0; i < R.length; i++){ const dr = R[i] - mr, dg = G[i] - mg, db = B[i] - mb; rd.push(Math.sqrt(dr * dr + dg * dg + db * db)); }
+  rd.sort((a, b) => a - b);
+  const p90 = rd[Math.floor(rd.length * 0.9)];
+  const T = Math.min(90, Math.max(34, p90 * 1.6 + 14));
+
+  const mask = new Uint8Array(N);
+  for(let i = 0; i < N; i++){
+    const j = i * 4; const dr = data[j] - mr, dg = data[j + 1] - mg, db = data[j + 2] - mb;
+    mask[i] = (dr * dr + dg * dg + db * db) > T * T ? 1 : 0;
+  }
+
+  const label = new Int32Array(N);
+  const stack = new Int32Array(N);
+  let best = 0, bestSize = 0, next = 0;
+  for(let s = 0; s < N; s++){
+    if(!mask[s] || label[s]) continue;
+    next++;
+    let sp = 0, size = 0;
+    stack[sp++] = s; label[s] = next;
+    while(sp){
+      const p = stack[--sp]; size++;
+      const x = p % w, y = (p - x) / w;
+      if(x > 0 && mask[p - 1] && !label[p - 1]){ label[p - 1] = next; stack[sp++] = p - 1; }
+      if(x < w - 1 && mask[p + 1] && !label[p + 1]){ label[p + 1] = next; stack[sp++] = p + 1; }
+      if(y > 0 && mask[p - w] && !label[p - w]){ label[p - w] = next; stack[sp++] = p - w; }
+      if(y < h - 1 && mask[p + w] && !label[p + w]){ label[p + w] = next; stack[sp++] = p + w; }
+    }
+    if(size > bestSize){ bestSize = size; best = next; }
+  }
+  if(!best) return { quad: null, reason: 'none' };
+
+  // fill holes: anything not reachable from the frame edge without crossing the blob
+  const outside = new Uint8Array(N);
+  let sp = 0;
+  const seed = (p) => { if(label[p] !== best && !outside[p]){ outside[p] = 1; stack[sp++] = p; } };
+  for(let x = 0; x < w; x++){ seed(x); seed((h - 1) * w + x); }
+  for(let y = 0; y < h; y++){ seed(y * w); seed(y * w + w - 1); }
+  while(sp){
+    const p = stack[--sp];
+    const x = p % w, y = (p - x) / w;
+    if(x > 0) seed(p - 1);
+    if(x < w - 1) seed(p + 1);
+    if(y > 0) seed(p - w);
+    if(y < h - 1) seed(p + w);
+  }
+  let area = 0;
+  for(let i = 0; i < N; i++) if(!outside[i]) area++;
+  const areaFrac = area / N;
+  if(areaFrac < 0.10) return { quad: null, reason: 'small' };
+  if(areaFrac > 0.985) return { quad: null, reason: 'full' };
+
+  // extreme points
+  let tl = null, tr = null, br = null, bl = null;
+  let minS = Infinity, maxS = -Infinity, minD = Infinity, maxD = -Infinity;
+  let edgeTouch = 0;
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      if(outside[y * w + x]) continue;
+      const s = x + y, d = x - y;
+      if(s < minS){ minS = s; tl = { x, y }; }
+      if(s > maxS){ maxS = s; br = { x, y }; }
+      if(d > maxD){ maxD = d; tr = { x, y }; }
+      if(d < minD){ minD = d; bl = { x, y }; }
+      if(x === 0 || y === 0 || x === w - 1 || y === h - 1) edgeTouch++;
+    }
+  }
+  const clipped = edgeTouch > 0.03 * (2 * w + 2 * h);
+  const C = [tl, tr, br, bl];
+
+  // boundary pixels (in-frame neighbours only)
+  const bpts = [];
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      const p = y * w + x;
+      if(outside[p]) continue;
+      if((x > 0 && outside[p - 1]) || (x < w - 1 && outside[p + 1]) || (y > 0 && outside[p - w]) || (y < h - 1 && outside[p + w])) bpts.push(x, y);
+    }
+  }
+
+  const lines = [];
+  for(let k = 0; k < 4; k++){
+    const a = C[k], b = C[(k + 1) % 4];
+    const vx = b.x - a.x, vy = b.y - a.y;
+    const L2 = vx * vx + vy * vy, L = Math.sqrt(L2);
+    if(L < 8){ lines.push(null); continue; }
+    let n = 0, mx = 0, my = 0;
+    const sel = [];
+    for(let i = 0; i < bpts.length; i += 2){
+      const px = bpts[i] - a.x, py = bpts[i + 1] - a.y;
+      const t = (px * vx + py * vy) / L2;
+      const perp = Math.abs(px * vy - py * vx) / L;
+      if(t >= 0.18 && t <= 0.82 && perp < 0.07 * L){ sel.push(bpts[i], bpts[i + 1]); mx += bpts[i]; my += bpts[i + 1]; n++; }
+    }
+    if(n < 12){ lines.push(null); continue; }
+    mx /= n; my /= n;
+    let sxx = 0, syy = 0, sxy = 0;
+    for(let i = 0; i < sel.length; i += 2){ const dx = sel[i] - mx, dy = sel[i + 1] - my; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; }
+    const th = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+    lines.push({ x: mx, y: my, dx: Math.cos(th), dy: Math.sin(th) });
+  }
+
+  const quad = [];
+  for(let k = 0; k < 4; k++){
+    // corner k sits between side (k-1) and side k
+    const l1 = lines[(k + 3) % 4], l2 = lines[k];
+    let pt = C[k];
+    if(l1 && l2){
+      const det = l1.dx * (-l2.dy) - l1.dy * (-l2.dx);
+      if(Math.abs(det) > 1e-6){
+        const rx = l2.x - l1.x, ry = l2.y - l1.y;
+        const s = (rx * (-l2.dy) - ry * (-l2.dx)) / det;
+        const cand = { x: l1.x + s * l1.dx, y: l1.y + s * l1.dy };
+        const lim = 0.12 * Math.hypot(C[(k + 1) % 4].x - C[k].x, C[(k + 1) % 4].y - C[k].y);
+        if(distPts(cand, C[k]) < Math.max(6, lim)) pt = cand;
+      }
+    }
+    quad.push(pt);
+  }
+
+  const ratio = polyArea(quad) / area;
+  const conf = ratio > 0.8 && ratio < 1.25 ? 'ok' : 'low';
+  return { quad, clipped, areaFrac, conf };
+}
+
+/* Make sure the quad runs TL, TR, BR, BL for a portrait card. */
+function orientQuad(q){
+  const w = (distPts(q[0], q[1]) + distPts(q[3], q[2])) / 2;
+  const h = (distPts(q[0], q[3]) + distPts(q[1], q[2])) / 2;
+  if(w > h * 1.1) return [q[3], q[0], q[1], q[2]];
+  return q;
+}
+
+function solveHomography(q, W, H){
+  const us = [0, W, W, 0], vs = [0, 0, H, H];
+  const A = [], b = [];
+  for(let i = 0; i < 4; i++){
+    const u = us[i], v = vs[i], x = q[i].x, y = q[i].y;
+    A.push([u, v, 1, 0, 0, 0, -u * x, -v * x]); b.push(x);
+    A.push([0, 0, 0, u, v, 1, -u * y, -v * y]); b.push(y);
+  }
+  const n = 8;
+  for(let c = 0; c < n; c++){
+    let p = c;
+    for(let r = c + 1; r < n; r++) if(Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    const tA = A[c]; A[c] = A[p]; A[p] = tA;
+    const tb = b[c]; b[c] = b[p]; b[p] = tb;
+    const piv = A[c][c];
+    if(Math.abs(piv) < 1e-12) return null;
+    for(let r = c + 1; r < n; r++){
+      const f = A[r][c] / piv;
+      for(let k = c; k < n; k++) A[r][k] -= f * A[c][k];
+      b[r] -= f * b[c];
+    }
+  }
+  const h = new Array(n);
+  for(let r = n - 1; r >= 0; r--){
+    let s = b[r];
+    for(let k = r + 1; k < n; k++) s -= A[r][k] * h[k];
+    h[r] = s / A[r][r];
+  }
+  return h;
+}
+
+/* Sample a homography over the flat-space rectangle [u0,u0+W) x [v0,v0+H) (bilinear). */
+function warpH(src, sw, sh, hm, u0, v0, W, H){
+  const out = new Uint8ClampedArray(W * H * 4);
+  if(!hm) return out;
+  for(let v = 0; v < H; v++){
+    for(let u = 0; u < W; u++){
+      const uu = u0 + u + 0.5, vv = v0 + v + 0.5;
+      const d = hm[6] * uu + hm[7] * vv + 1;
+      let x = (hm[0] * uu + hm[1] * vv + hm[2]) / d - 0.5;
+      let y = (hm[3] * uu + hm[4] * vv + hm[5]) / d - 0.5;
+      x = Math.min(sw - 1.001, Math.max(0, x));
+      y = Math.min(sh - 1.001, Math.max(0, y));
+      const x0 = Math.floor(x), y0 = Math.floor(y);
+      const fx = x - x0, fy = y - y0;
+      const i00 = (y0 * sw + x0) * 4, i10 = i00 + 4, i01 = i00 + sw * 4, i11 = i01 + 4;
+      const o = (v * W + u) * 4;
+      for(let c = 0; c < 4; c++){
+        out[o + c] = src[i00 + c] * (1 - fx) * (1 - fy) + src[i10 + c] * fx * (1 - fy) + src[i01 + c] * (1 - fx) * fy + src[i11 + c] * fx * fy;
+      }
+    }
+  }
+  return out;
+}
+
+/* Perspective-correct the quad into a flat W x H RGBA buffer. */
+function warpQuad(src, sw, sh, quad, W, H){
+  return warpH(src, sw, sh, solveHomography(quad, W, H), 0, 0, W, H);
+}
+
+/* The silhouette-based quad is good to a pixel or two, which is several centering
+   points on a ~5% border. Warp with padding, find where the card edge really sits
+   on each side (strongest brightness step near the expected spot, sub-pixel), and
+   move the quad sides there. */
+function refineQuadToCardEdge(src, sw, sh, quad){
+  const hm = solveHomography(quad, CARD_W, CARD_H);
+  if(!hm) return quad;
+  const P = 24, PW = CARD_W + 2 * P, PH = CARD_H + 2 * P;
+  const pad = warpH(src, sw, sh, hm, -P, -P, PW, PH);
+  const lum = lumOf(pad, PW * PH);
+  const x0 = Math.round(PW * 0.3), x1 = Math.round(PW * 0.7), y0 = Math.round(PH * 0.3), y1 = Math.round(PH * 0.7);
+  const rowAvg = new Float32Array(PH), colAvg = new Float32Array(PW);
+  for(let y = 0; y < PH; y++){ let t = 0; for(let x = x0; x < x1; x++) t += lum[y * PW + x]; rowAvg[y] = t / (x1 - x0); }
+  for(let x = 0; x < PW; x++){ let t = 0; for(let y = y0; y < y1; y++) t += lum[y * PW + x]; colAvg[x] = t / (y1 - y0); }
+  const step = (a, i) => Math.abs((a[i] + a[i + 1] + a[i + 2]) / 3 - (a[i - 1] + a[i - 2] + a[i - 3]) / 3);
+  // offset (in flat px) of the true card edge from the expected one, scanning from one side
+  function edgeOffset(arr, fromEnd){
+    const a = fromEnd ? Float32Array.from(arr).reverse() : arr;
+    const lo = P - 14, hi = P + 10;
+    let bi = -1, bs = 0;
+    for(let i = lo; i <= hi; i++){ const sv = step(a, i); if(sv > bs){ bs = sv; bi = i; } }
+    if(bi < 0 || bs < 12) return 0;
+    const s0 = step(a, bi - 1), s1 = bs, s2 = step(a, bi + 1);
+    const den = s0 - 2 * s1 + s2;
+    const sub = Math.abs(den) > 1e-6 ? Math.max(-0.5, Math.min(0.5, 0.5 * (s0 - s2) / den)) : 0;
+    return bi + sub - P;
+  }
+  const eT = edgeOffset(rowAvg, false), eB = edgeOffset(rowAvg, true);
+  const eL = edgeOffset(colAvg, false), eR = edgeOffset(colAvg, true);
+  const mapPt = (u, v) => {
+    const d = hm[6] * u + hm[7] * v + 1;
+    return { x: (hm[0] * u + hm[1] * v + hm[2]) / d, y: (hm[3] * u + hm[4] * v + hm[5]) / d };
+  };
+  return [
+    mapPt(eL, eT), mapPt(CARD_W - eR, eT), mapPt(CARD_W - eR, CARD_H - eB), mapPt(eL, CARD_H - eB),
+  ];
+}
+
+/* Row/column luminance profiles over the middle half of the card. */
+function cardProfiles(lum, W, H){
+  const x0 = Math.round(W * 0.25), x1 = Math.round(W * 0.75);
+  const y0 = Math.round(H * 0.25), y1 = Math.round(H * 0.75);
+  const rowAvg = new Float32Array(H), colAvg = new Float32Array(W);
+  for(let y = 0; y < H; y++){ let s = 0; for(let x = x0; x < x1; x++) s += lum[y * W + x]; rowAvg[y] = s / (x1 - x0); }
+  for(let x = 0; x < W; x++){ let s = 0; for(let y = y0; y < y1; y++) s += lum[y * W + x]; colAvg[x] = s / (y1 - y0); }
+  return { rowAvg, colAvg };
+}
+
+/* First strong brightness step inward from one side of the flattened card. */
+function findMargin(arr, fromEnd){
+  const n = arr.length;
+  const a = fromEnd ? Float32Array.from(arr).reverse() : arr;
+  const skip = Math.round(n * 0.012), maxScan = Math.round(n * 0.22);
+  const THR = 11;
+  const stepAt = (i) => {
+    const after = (a[i] + a[i + 1] + a[i + 2]) / 3;
+    const before = (a[i - 1] + a[i - 2] + a[i - 3]) / 3;
+    return Math.abs(after - before);
+  };
+  for(let i = skip + 3; i < maxScan; i++){
+    if(stepAt(i) > THR){
+      let bestI = i, bestD = stepAt(i);
+      for(let j = i + 1; j < Math.min(maxScan, i + 9); j++){ const d = stepAt(j); if(d > bestD){ bestD = d; bestI = j; } }
+      return { px: bestI, found: true };
+    }
+  }
+  return { px: Math.round(n * 0.045), found: false };
+}
+
+function autoBorders(lum, W, H){
+  const { rowAvg, colAvg } = cardProfiles(lum, W, H);
+  const t = findMargin(rowAvg, false), b = findMargin(rowAvg, true);
+  const l = findMargin(colAvg, false), r = findMargin(colAvg, true);
+  return {
+    lines: { l: l.px, r: W - r.px, t: t.px, b: H - b.px },
+    conf: { l: l.found, r: r.found, t: t.found, b: b.found },
+  };
+}
+
+/* Percent split on each axis from the four border lines. */
+function centeringFromLines(lines, W, H){
+  const L = lines.l, R = W - lines.r, T = lines.t, B = H - lines.b;
+  const lp = (L + R) > 0 ? L / (L + R) * 100 : 50;
+  const tp = (T + B) > 0 ? T / (T + B) * 100 : 50;
+  const worst = Math.max(lp, 100 - lp, tp, 100 - tp);
+  return { lr: [lp, 100 - lp], tb: [tp, 100 - tp], worst };
+}
+
+/* ---- Grader centering standards (max % on the larger side) ----
+   PSA publishes these; CGC publishes most; BGS gives centering as a sub-grade and
+   its exact tolerances are not officially published (these are the commonly
+   cited figures). Sources disagree in places, so treat all as approximate. */
+const GRADERS = {
+  psa: { name: 'PSA', unofficial: false, tiers: [
+    { g: '10', f: 55, b: 75 }, { g: '9', f: 60, b: 90 }, { g: '8', f: 65, b: 90 }, { g: '7', f: 70, b: 90 },
+    { g: '6', f: 80, b: 90 }, { g: '5', f: 85, b: 90 }, { g: '4', f: 85, b: 90 }, { g: '3', f: 90, b: 90 }, { g: '2', f: 90, b: 90 },
+  ] },
+  bgs: { name: 'BGS', unofficial: true, tiers: [
+    { g: '10', f: 55, b: 55 }, { g: '9.5', f: 55, b: 60 }, { g: '9', f: 60, b: 65 }, { g: '8.5', f: 65, b: 70 },
+    { g: '8', f: 70, b: 80 }, { g: '7.5', f: 75, b: 85 }, { g: '7', f: 80, b: 90 },
+  ] },
+  cgc: { name: 'CGC', unofficial: false, tiers: [
+    { g: '10 Pristine', f: 50, b: 55 }, { g: '10', f: 55, b: 75 }, { g: '9', f: 60, b: 90 },
+    { g: '8', f: 70, b: 90 }, { g: '7', f: 75, b: 90 }, { g: '6', f: 85, b: 90 },
+  ] },
+};
+const CENTERING_TOLERANCE = 2; // points of measurement slack a phone photo can't resolve
+
+/* Highest grade the measured centering allows. Not a predicted grade. */
+function centeringCeiling(key, frontWorst, backWorst){
+  const tiers = GRADERS[key].tiers;
+  const hasBack = backWorst !== null && backWorst !== undefined;
+  const okTier = (t, slack) => frontWorst <= t.f + slack && (!hasBack || backWorst <= t.b + slack);
+  for(let i = 0; i < tiers.length; i++){
+    if(okTier(tiers[i], 0)){
+      const up = i > 0 ? tiers[i - 1] : null;
+      let borderline = null, limitedBy = null;
+      if(up){
+        if(okTier(up, CENTERING_TOLERANCE)) borderline = up.g;
+        limitedBy = frontWorst > up.f ? 'front' : 'back';
+      }
+      return { grade: tiers[i].g, tierIndex: i, up, borderline, limitedBy, belowScale: false, hasBack };
+    }
+  }
+  return { grade: '1', tierIndex: tiers.length, up: tiers[tiers.length - 1], borderline: null, limitedBy: 'front', belowScale: true, hasBack };
+}
+
+/* Photo-quality checks. info: { natW, workW, workH, quad(work coords), detected, clipped, flatLum, flatRGBA } */
+function computeQuality(info){
+  const out = [];
+  const q = info.quad;
+  const top = distPts(q[0], q[1]), bot = distPts(q[3], q[2]);
+  const left = distPts(q[0], q[3]), right = distPts(q[1], q[2]);
+  const toNat = info.natW / info.workW;
+  const cardPx = Math.round(((top + bot) / 2) * toNat);
+
+  if(!info.detected){
+    out.push({ id: 'outline', level: 'warn', label: 'Card outline', text: 'Couldn’t auto-find the edges — drag the corners onto the card.' });
+  } else if(info.clipped){
+    out.push({ id: 'outline', level: 'bad', label: 'Card outline', text: 'The card runs off the edge of the frame — retake with all four corners visible.' });
+  } else if(info.lowConf){
+    out.push({ id: 'outline', level: 'warn', label: 'Card outline', text: 'Outline looks uncertain — check the corners.' });
+  } else {
+    out.push({ id: 'outline', level: 'ok', label: 'Card outline', text: 'Found automatically.' });
+  }
+
+  if(info.autoConf){
+    const found = ['l', 'r', 't', 'b'].filter(k => info.autoConf[k]).length;
+    if(found < 3) out.push({ id: 'borders', level: 'warn', label: 'Inner border', text: 'Couldn\u2019t find the border on ' + (4 - found) + ' side(s) \u2014 the orange lines are guesses. Drag them, or check the outline is on the card edge (not the artwork).' });
+  }
+  if(info.detected && info.marginFrac !== undefined && info.marginFrac < 0.07 && polyArea(q) / (info.workW * info.workH) > 0.55){
+    out.push({ id: 'tight', level: 'warn', label: 'Tight frame', text: 'If the card fills the whole photo, tap \u201cUse whole photo\u201d \u2014 the outline may be sitting on the artwork.' });
+  }
+
+  if(cardPx < 450) out.push({ id: 'res', level: 'bad', label: 'Resolution', text: 'Card is only ~' + cardPx + ' px wide — too small to measure borders well. Move closer or use a higher-res photo.' });
+  else if(cardPx < 700) out.push({ id: 'res', level: 'warn', label: 'Resolution', text: 'Card is ~' + cardPx + ' px wide — usable, but 800+ px gives steadier results.' });
+  else out.push({ id: 'res', level: 'ok', label: 'Resolution', text: '~' + cardPx + ' px across the card.' });
+
+  const fill = polyArea(q) / (info.workW * info.workH);
+  if(fill < 0.12) out.push({ id: 'size', level: 'bad', label: 'Card size', text: 'Card fills only ' + Math.round(fill * 100) + '% of the frame — move much closer.' });
+  else if(fill < 0.25) out.push({ id: 'size', level: 'warn', label: 'Card size', text: 'Card fills ' + Math.round(fill * 100) + '% of the frame — move closer.' });
+  else out.push({ id: 'size', level: 'ok', label: 'Card size', text: 'Fills ' + Math.round(fill * 100) + '% of the frame.' });
+
+  const tilt = Math.max(Math.abs(1 - top / bot), Math.abs(1 - left / right));
+  if(tilt > 0.12) out.push({ id: 'tilt', level: 'bad', label: 'Tilt', text: 'Strong angle (' + Math.round(tilt * 100) + '% perspective). Straightening helps but accuracy drops — shoot from directly above.' });
+  else if(tilt > 0.05) out.push({ id: 'tilt', level: 'warn', label: 'Tilt', text: 'Slight angle (' + Math.round(tilt * 100) + '% perspective) — corrected, but straight-on is better.' });
+  else out.push({ id: 'tilt', level: 'ok', label: 'Tilt', text: 'Shot is close to straight-on.' });
+
+  const aw = (top + bot) / 2, ah = (left + right) / 2;
+  const dev = Math.abs(aw / ah - CARD_RATIO) / CARD_RATIO;
+  if(dev > 0.12) out.push({ id: 'shape', level: 'warn', label: 'Outline shape', text: 'Proportions don’t match a standard card (' + (aw / ah).toFixed(2) + ' vs 0.71) — check the corners.' });
+
+  const W = CARD_W, H = CARD_H;
+  const sharp = info.autoLines ? edgeSharpness(info.flatLum, W, H, info.autoLines) : null;
+  if(sharp === null) out.push({ id: 'blur', level: 'na', label: 'Sharpness', text: 'Couldn\u2019t measure (borders too low-contrast).' });
+  else if(sharp < BLUR_BAD) out.push({ id: 'blur', level: 'bad', label: 'Sharpness', text: 'Looks blurry \u2014 tap to focus, hold steady, add light.' });
+  else if(sharp < BLUR_WARN) out.push({ id: 'blur', level: 'warn', label: 'Sharpness', text: 'A bit soft \u2014 edges may read slightly off.' });
+  else out.push({ id: 'blur', level: 'ok', label: 'Sharpness', text: 'Edges look crisp.' });
+
+  let hot = 0, tot = 0;
+  const gx0 = Math.round(W * 0.12), gx1 = Math.round(W * 0.88), gy0 = Math.round(H * 0.12), gy1 = Math.round(H * 0.88);
+  for(let y = gy0; y < gy1; y += 2){
+    for(let x = gx0; x < gx1; x += 2){
+      const j = (y * W + x) * 4;
+      if(info.flatRGBA[j] >= 246 && info.flatRGBA[j + 1] >= 246 && info.flatRGBA[j + 2] >= 246) hot++;
+      tot++;
+    }
+  }
+  const hotFrac = hot / tot;
+  if(hotFrac > 0.05) out.push({ id: 'glare', level: 'bad', label: 'Glare', text: 'Strong reflections cover ~' + Math.round(hotFrac * 100) + '% of the card — tilt the light away.' });
+  else if(hotFrac > 0.015) out.push({ id: 'glare', level: 'warn', label: 'Glare', text: 'Possible glare spots — can hide wear and confuse edge detection.' });
+  else out.push({ id: 'glare', level: 'ok', label: 'Glare', text: 'No major glare.' });
+
+  return out;
+}
+const BLUR_WARN = 0.22, BLUR_BAD = 0.12;
+/* ALGO-END */
+
+/* ================= Grade / Condition Check ================= */
+
+const gradeZone = document.getElementById('gradeZone');
+const gradeFileInput = document.getElementById('gradeFileInput');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const gradeClearBtn = document.getElementById('gradeClearBtn');
+const gradeStatusLine = document.getElementById('gradeStatusLine');
+const gradeResults = document.getElementById('gradeResults');
+
+const GRADE_IDLE_MARKUP = `
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+      <circle cx="12" cy="13" r="3.5"/>
+    </svg>
+    <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
+    <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>`;
+
+function newGradeSide(){
+  return {
+    file: null, url: null,
+    analyzed: false,
+    work: null, workData: null, natW: 0,
+    quad: null, detected: false, clipped: false, lowConf: false, marginFrac: undefined, wholePhoto: false,
+    flat: null, flatRGBA: null, flatLum: null, profile: null,
+    lines: null, lineConf: null, autoLines: null, autoConf: null, linesTouched: false,
+    quality: [],
+  };
+}
+const gradeSides = { front: newGradeSide(), back: newGradeSide() };
+let currentGradeSide = 'front';
+function curSide(){ return gradeSides[currentGradeSide]; }
+function sideWord(){ return currentGradeSide === 'front' ? 'Front' : 'Back'; }
+
+gradeZone.addEventListener('click', (e) => {
+  if(e.target.closest('#gradeRotateBtn')){ e.stopPropagation(); gradeRotateCurrentImage(); return; }
+  if(e.target.closest('#gradeCameraBtn')){ e.stopPropagation(); gradeOpenCamera(); return; }
+  if(e.target.closest('#gradeCameraCancelBtn')){ e.stopPropagation(); gradeCloseCameraToIdle(); return; }
+  if(e.target.closest('#gradeCaptureBtn')){ e.stopPropagation(); gradeCaptureFromCamera(); return; }
+  if(e.target.closest('#gradeCameraSwitchBtn')){ e.stopPropagation(); gradeSwitchCamera(); return; }
+  if(gradeZone.classList.contains('has-camera')) return;
+  gradeFileInput.click();
+});
+
+gradeFileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  gradeSetImageFile(file);
+  gradeFileInput.value = '';
+});
+
+/* Redraws the photo zone + results for whichever side is selected. */
+function gradeShowZone(){
+  const s = curSide();
+  gradeZone.classList.remove('has-camera');
+  if(s.file){
+    gradeZone.classList.add('has-image');
+    gradeZone.innerHTML = `
+      <img id="gradePreviewImg" src="${s.url}" alt="${currentGradeSide} of card">
+      <button type="button" class="rotate-btn" id="gradeRotateBtn" aria-label="Rotate photo 90 degrees">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+          <path d="M21 3v6h-6"/>
+        </svg>
+      </button>`;
+  } else {
+    gradeZone.classList.remove('has-image');
+    gradeZone.innerHTML = GRADE_IDLE_MARKUP;
+    if(currentGradeSide === 'back'){
+      const hint = gradeZone.querySelector('.scan-hint');
+      if(hint) hint.textContent = 'Now the back of the same card — same setup: flat, straight-on, all four corners in frame.';
+    }
+  }
+  analyzeBtn.disabled = !s.file;
+  analyzeBtn.textContent = (s.analyzed ? 'Re-analyze ' : 'Analyze ') + sideWord();
+  gradeResults.style.display = s.analyzed ? 'block' : 'none';
+  document.querySelectorAll('#gradeSideToggle button').forEach(b => b.classList.toggle('active', b.dataset.side === currentGradeSide));
+  document.getElementById('backDone').textContent = gradeSides.back.analyzed ? ' ✓' : '';
+  if(s.analyzed) renderGradeAll();
+}
+
+function gradeSetImageFile(file){
+  const s = curSide();
+  if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
+  const keepLinesFlag = false;
+  Object.assign(s, newGradeSide(), { file, url: URL.createObjectURL(file) });
+  gradeShowZone();
+}
+
+document.getElementById('gradeSideToggle').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-side]');
+  if(!btn || btn.dataset.side === currentGradeSide) return;
+  gradeStopCameraStream();
+  currentGradeSide = btn.dataset.side;
+  hideSaveForm();
+  gradeShowZone();
+});
+
+async function gradeOpenCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    gradeShowCameraError(new Error('this browser doesn\'t support camera access'));
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: state.gradeFacingMode }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false,
+    });
+    state.gradeCameraStream = stream;
+    gradeZone.classList.remove('has-image');
+    gradeZone.classList.add('has-camera');
+    gradeZone.innerHTML = `
+      <video id="gradeCameraVideo" autoplay playsinline muted></video>
+      <div class="camera-controls">
+        <button type="button" class="camera-icon-btn" id="gradeCameraCancelBtn" aria-label="Cancel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <button type="button" class="shutter-btn" id="gradeCaptureBtn" aria-label="Capture photo"></button>
+        <button type="button" class="camera-icon-btn" id="gradeCameraSwitchBtn" aria-label="Switch camera">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>`;
+    document.getElementById('gradeCameraVideo').srcObject = stream;
+  } catch(err){
+    gradeShowCameraError(err);
+  }
+}
+
+function gradeStopCameraStream(){
+  if(state.gradeCameraStream){
+    state.gradeCameraStream.getTracks().forEach(t => t.stop());
+    state.gradeCameraStream = null;
+  }
+}
+
+function gradeCloseCameraToIdle(){
+  gradeStopCameraStream();
+  gradeShowZone();
+}
+
+function gradeShowCameraError(err){
+  gradeStopCameraStream();
+  gradeZone.classList.remove('has-camera', 'has-image');
+  gradeZone.innerHTML = GRADE_IDLE_MARKUP;
+  const name = err && err.name;
+  const isPermission = name === 'NotAllowedError' || name === 'PermissionDeniedError' || name === 'SecurityError';
+  const isNoCamera = name === 'NotFoundError' || name === 'DevicesNotFoundError';
+  const isInUse = name === 'NotReadableError' || name === 'TrackStartError';
+  let msg;
+  if(isPermission){
+    msg = 'Camera access is turned off for this page. Allow it in your browser settings, then tap "Allow Camera" to try again.';
+  } else if(isNoCamera){
+    msg = 'No camera was found on this device. You can still upload a photo instead.';
+  } else if(isInUse){
+    msg = 'Your camera seems to be in use elsewhere. Close it and tap "Allow Camera" to try again.';
+  } else {
+    msg = 'Camera unavailable (' + (err && err.message ? err.message : 'unknown error') + '). You can upload a photo instead.';
+  }
+  const hint = gradeZone.querySelector('.scan-hint');
+  if(hint) hint.textContent = msg;
+  if(isPermission || isInUse){
+    const camBtn = document.getElementById('gradeCameraBtn');
+    if(camBtn) camBtn.textContent = 'Allow Camera';
+  }
+}
+
+function gradeCaptureFromCamera(){
+  const videoEl = document.getElementById('gradeCameraVideo');
+  if(!videoEl || !videoEl.videoWidth) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = videoEl.videoWidth;
+  canvas.height = videoEl.videoHeight;
+  canvas.getContext('2d').drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+  canvas.toBlob((blob) => {
+    if(!blob) return;
+    gradeStopCameraStream();
+    gradeSetImageFile(new File([blob], 'grade-capture.jpg', { type: 'image/jpeg' }));
+  }, 'image/jpeg', 0.95);
+}
+
+async function gradeSwitchCamera(){
+  state.gradeFacingMode = state.gradeFacingMode === 'environment' ? 'user' : 'environment';
+  gradeStopCameraStream();
+  await gradeOpenCamera();
+}
+
+async function gradeRotateCurrentImage(){
+  const s = curSide();
+  if(!s.file) return;
+  const rotateBtn = document.getElementById('gradeRotateBtn');
+  if(rotateBtn) rotateBtn.style.opacity = '0.4';
+  try{
+    const rotated = await rotateImageFile(s.file, 90);
+    gradeSetImageFile(rotated);
+  } catch(err){
+    // leave original photo as-is if rotation fails
+  } finally {
+    if(rotateBtn) rotateBtn.style.opacity = '1';
+  }
+}
+
+gradeClearBtn.addEventListener('click', () => {
+  const s = curSide();
+  if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
+  Object.assign(s, newGradeSide());
+  gradeFileInput.value = '';
+  gradeStopCameraStream();
+  hideSaveForm();
+  gradeShowZone();
+});
+
+function loadImageEl(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => { resolve(img); };
+    img.onerror = () => reject(new Error('image load failed'));
+    img.src = url;
+  });
+}
+
+/* ---------------- Detection pipeline (DOM side) ---------------- */
+
+function autoOutline(s){
+  const ww = s.work.width, wh = s.work.height;
+  const ds = Math.min(1, 800 / Math.max(ww, wh));
+  const sw = Math.max(1, Math.round(ww * ds)), sh = Math.max(1, Math.round(wh * ds));
+  const c = document.createElement('canvas');
+  c.width = sw; c.height = sh;
+  const g = c.getContext('2d');
+  g.drawImage(s.work, 0, 0, sw, sh);
+  const det = detectCardQuad(g.getImageData(0, 0, sw, sh).data, sw, sh);
+  s.wholePhoto = false;
+  if(det && det.quad){
+    let q = det.quad.map(p => ({ x: p.x / sw * ww, y: p.y / sh * wh }));
+    q = orientQuad(q);
+    q = refineQuadToCardEdge(s.workData.data, ww, wh, q);
+    s.quad = q;
+    s.detected = true;
+    s.clipped = !!det.clipped;
+    s.lowConf = det.conf === 'low';
+    const xs = q.map(p => p.x), ys = q.map(p => p.y);
+    s.marginFrac = Math.min(Math.min(...xs) / ww, Math.min(...ys) / wh, 1 - Math.max(...xs) / ww, 1 - Math.max(...ys) / wh);
+  } else {
+    setWholePhotoQuad(s);
+    s.detected = false;
+  }
+}
+
+function setWholePhotoQuad(s){
+  const ww = s.work.width, wh = s.work.height;
+  s.quad = orientQuad([{ x: 0, y: 0 }, { x: ww, y: 0 }, { x: ww, y: wh }, { x: 0, y: wh }]);
+  s.detected = true; s.clipped = false; s.lowConf = false; s.marginFrac = undefined; s.wholePhoto = true;
+}
+
+function reflatten(s){
+  const ww = s.work.width, wh = s.work.height;
+  const out = warpQuad(s.workData.data, ww, wh, s.quad, CARD_W, CARD_H);
+  s.flatRGBA = out;
+  const fc = document.createElement('canvas');
+  fc.width = CARD_W; fc.height = CARD_H;
+  fc.getContext('2d').putImageData(new ImageData(out, CARD_W, CARD_H), 0, 0);
+  s.flat = fc;
+  s.flatLum = lumOf(out, CARD_W * CARD_H);
+  const ab = autoBorders(s.flatLum, CARD_W, CARD_H);
+  s.autoLines = ab.lines; s.autoConf = ab.conf;
+  if(!s.linesTouched || !s.lines){
+    s.lines = { ...ab.lines };
+    s.lineConf = { ...ab.conf };
+  }
+  s.profile = cardProfiles(s.flatLum, CARD_W, CARD_H);
+  s.quality = computeQuality({
+    natW: s.natW, workW: ww, workH: wh, quad: s.quad,
+    detected: s.detected, clipped: s.clipped, lowConf: s.lowConf, marginFrac: s.marginFrac,
+    flatLum: s.flatLum, flatRGBA: out, autoLines: s.autoLines, autoConf: s.autoConf,
+  });
+  if(s.wholePhoto){
+    const o = s.quality.find(q => q.id === 'outline');
+    if(o) o.text = 'Using the whole photo as the card.';
+  }
+}
+
+async function analyzeSide(s){
+  const img = await loadImageEl(s.file);
+  const natW = img.naturalWidth || img.width, natH = img.naturalHeight || img.height;
+  const ws = Math.min(1, 1600 / Math.max(natW, natH));
+  const ww = Math.max(1, Math.round(natW * ws)), wh = Math.max(1, Math.round(natH * ws));
+  const work = document.createElement('canvas');
+  work.width = ww; work.height = wh;
+  const g = work.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0, ww, wh);
+  s.work = work;
+  s.workData = g.getImageData(0, 0, ww, wh);
+  s.natW = natW;
+  s.linesTouched = false;
+  autoOutline(s);
+  reflatten(s);
+  s.analyzed = true;
+}
+
+analyzeBtn.addEventListener('click', async () => {
+  const s = curSide();
+  if(!s.file) return;
+  analyzeBtn.disabled = true;
+  gradeStatusLine.style.display = 'flex';
+  gradeResults.style.display = 'none';
+  const sideAtStart = currentGradeSide;
+  try{
+    await analyzeSide(s);
+    hideSaveForm();
+    if(currentGradeSide === sideAtStart) gradeShowZone();
+  } catch(err){
+    gradeResults.style.display = 'block';
+    document.getElementById('qualityHead').textContent = 'Could not analyze this photo';
+    document.getElementById('qualityList').innerHTML = `<div class="quality-row is-bad"><span class="status-dot bad"></span><span>${escapeHtml(err.message || 'unknown error')}. Try a clearer, straight-on shot with all four corners visible.</span></div>`;
+  } finally {
+    gradeStatusLine.style.display = 'none';
+    analyzeBtn.disabled = !curSide().file;
+  }
+});
+
+/* ---------------- Rendering ---------------- */
+
+function renderGradeAll(){
+  renderQuality();
+  drawOutline();
+  drawBorder();
+  renderMeasurements();
+  renderCloseups();
+}
+function renderFlatDependents(){
+  renderQuality();
+  drawBorder();
+  renderMeasurements();
+  renderCloseups();
+}
+
+const qualityDot = { ok: 'clean', warn: 'wear', bad: 'bad', na: 'na' };
+function renderQuality(){
+  const s = curSide();
+  const list = document.getElementById('qualityList');
+  const head = document.getElementById('qualityHead');
+  const order = { bad: 0, warn: 1, ok: 2, na: 3 };
+  const rows = [...s.quality].sort((a, b) => order[a.level] - order[b.level]);
+  const issues = rows.filter(r => r.level === 'bad' || r.level === 'warn').length;
+  const anyBad = rows.some(r => r.level === 'bad');
+  head.textContent = 'Photo quality — ' + (issues === 0 ? 'looks good' : (anyBad ? 'retake recommended' : issues + ' thing' + (issues === 1 ? '' : 's') + ' to improve'));
+  list.innerHTML = rows.map(r => `
+    <div class="quality-row ${r.level === 'bad' ? 'is-bad' : (r.level === 'warn' ? 'is-warn' : '')}">
+      <span class="status-dot ${qualityDot[r.level]}"></span>
+      <div><b>${escapeHtml(r.label)}</b><span>${escapeHtml(r.text)}</span></div>
+    </div>`).join('');
+}
+
+/* ---- loupe ---- */
+function showLoupe(loupeEl, srcCanvas, wrapEl, sx, sy, span, ev){
+  const g = loupeEl.getContext('2d');
+  const L = loupeEl.width;
+  g.fillStyle = '#000'; g.fillRect(0, 0, L, L);
+  g.imageSmoothingEnabled = true;
+  g.drawImage(srcCanvas, sx - span / 2, sy - span / 2, span, span, 0, 0, L, L);
+  g.strokeStyle = 'rgba(125,224,192,0.95)'; g.lineWidth = 2;
+  g.beginPath();
+  g.moveTo(L / 2, L / 2 - 22); g.lineTo(L / 2, L / 2 + 22);
+  g.moveTo(L / 2 - 22, L / 2); g.lineTo(L / 2 + 22, L / 2);
+  g.stroke();
+  const rect = wrapEl.getBoundingClientRect();
+  const px = ev.clientX - rect.left, py = ev.clientY - rect.top;
+  const left = Math.min(Math.max(px - 48, 0), Math.max(0, rect.width - 96));
+  let top = py - 130;
+  if(top < 0) top = py + 36;
+  loupeEl.style.left = left + 'px';
+  loupeEl.style.top = top + 'px';
+  loupeEl.style.display = 'block';
+}
+
+function canvasPoint(canvas, ev){
+  const r = canvas.getBoundingClientRect();
+  const k = canvas.width / r.width;
+  return { x: (ev.clientX - r.left) * k, y: (ev.clientY - r.top) * k, k };
+}
+
+/* ---- Step 1: outline editor ---- */
+const outlineCanvas = document.getElementById('outlineCanvas');
+const outlineWrap = document.getElementById('outlineWrap');
+const outlineLoupe = document.getElementById('outlineLoupe');
+let outlineDrag = -1;
+
+function outlineScale(s){ return Math.min(1, 640 / Math.max(s.work.width, s.work.height)); }
+
+function drawOutline(){
+  const s = curSide();
+  if(!s.work || !s.quad) return;
+  const sc = outlineScale(s);
+  const cw = Math.round(s.work.width * sc), ch = Math.round(s.work.height * sc);
+  if(outlineCanvas.width !== cw || outlineCanvas.height !== ch){ outlineCanvas.width = cw; outlineCanvas.height = ch; }
+  const g = outlineCanvas.getContext('2d');
+  g.drawImage(s.work, 0, 0, cw, ch);
+  const q = s.quad.map(p => ({ x: p.x * sc, y: p.y * sc }));
+  g.lineWidth = Math.max(2, cw * 0.005);
+  g.strokeStyle = '#7de0c0';
+  g.beginPath();
+  q.forEach((p, i) => i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y));
+  g.closePath(); g.stroke();
+  const r = Math.max(8, cw * 0.017);
+  q.forEach(p => {
+    g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2);
+    g.fillStyle = 'rgba(125,224,192,0.35)'; g.fill();
+    g.lineWidth = 2; g.strokeStyle = '#7de0c0'; g.stroke();
+    g.beginPath(); g.arc(p.x, p.y, 2, 0, Math.PI * 2); g.fillStyle = '#fff'; g.fill();
+  });
+}
+
+outlineCanvas.addEventListener('pointerdown', (ev) => {
+  const s = curSide();
+  if(!s.analyzed) return;
+  const p = canvasPoint(outlineCanvas, ev), sc = outlineScale(s);
+  let bi = -1, bd = Infinity;
+  s.quad.forEach((q, i) => { const d = Math.hypot(q.x * sc - p.x, q.y * sc - p.y); if(d < bd){ bd = d; bi = i; } });
+  if(bd > 80 * p.k) return;
+  outlineDrag = bi;
+  outlineCanvas.setPointerCapture(ev.pointerId);
+  outlineCanvas.classList.add('dragging');
+  ev.preventDefault();
+  moveOutlineHandle(ev);
+});
+outlineCanvas.addEventListener('pointermove', (ev) => { if(outlineDrag >= 0) moveOutlineHandle(ev); });
+function endOutlineDrag(){
+  if(outlineDrag < 0) return;
+  outlineDrag = -1;
+  outlineCanvas.classList.remove('dragging');
+  outlineLoupe.style.display = 'none';
+  const s = curSide();
+  reflatten(s);
+  renderFlatDependents();
+}
+outlineCanvas.addEventListener('pointerup', endOutlineDrag);
+outlineCanvas.addEventListener('pointercancel', endOutlineDrag);
+
+function moveOutlineHandle(ev){
+  const s = curSide(), sc = outlineScale(s);
+  const p = canvasPoint(outlineCanvas, ev);
+  const x = Math.min(s.work.width, Math.max(0, p.x / sc)), y = Math.min(s.work.height, Math.max(0, p.y / sc));
+  s.quad[outlineDrag] = { x, y };
+  s.detected = true; s.clipped = false; s.lowConf = false; s.marginFrac = undefined; s.wholePhoto = false;
+  drawOutline();
+  showLoupe(outlineLoupe, s.work, outlineWrap, x, y, 44, ev);
+}
+
+document.getElementById('useWholePhotoBtn').addEventListener('click', () => {
+  const s = curSide(); if(!s.analyzed) return;
+  setWholePhotoQuad(s); s.linesTouched = false;
+  reflatten(s); drawOutline(); renderFlatDependents();
+});
+document.getElementById('redetectBtn').addEventListener('click', () => {
+  const s = curSide(); if(!s.analyzed) return;
+  autoOutline(s); s.linesTouched = false;
+  reflatten(s); drawOutline(); renderFlatDependents();
+});
+
+/* ---- Step 2: border-line editor ---- */
+const borderCanvas = document.getElementById('borderCanvas');
+const borderWrap = document.getElementById('borderWrap');
+const borderLoupe = document.getElementById('borderLoupe');
+let borderDrag = null;
+
+function drawBorder(){
+  const s = curSide();
+  if(!s.flat || !s.lines) return;
+  const W = CARD_W, H = CARD_H;
+  if(borderCanvas.width !== W || borderCanvas.height !== H){ borderCanvas.width = W; borderCanvas.height = H; }
+  const g = borderCanvas.getContext('2d');
+  g.drawImage(s.flat, 0, 0);
+  const col = (k) => s.lineConf && s.lineConf[k] ? '#7de0c0' : '#ffb347';
+  g.lineWidth = 2;
+  const seg = (k, x0, y0, x1, y1) => {
+    g.strokeStyle = col(k); g.setLineDash([9, 6]);
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); g.setLineDash([]);
+  };
+  seg('l', s.lines.l, 0, s.lines.l, H);
+  seg('r', s.lines.r, 0, s.lines.r, H);
+  seg('t', 0, s.lines.t, W, s.lines.t);
+  seg('b', 0, s.lines.b, W, s.lines.b);
+  const tab = (k, cx, cy, w, h) => {
+    g.fillStyle = col(k);
+    g.beginPath();
+    if(g.roundRect) g.roundRect(cx - w / 2, cy - h / 2, w, h, 5); else g.rect(cx - w / 2, cy - h / 2, w, h);
+    g.fill();
+  };
+  tab('l', s.lines.l, H / 2, 12, 46); tab('r', s.lines.r, H / 2, 12, 46);
+  tab('t', W / 2, s.lines.t, 46, 12); tab('b', W / 2, s.lines.b, 46, 12);
+}
+
+borderCanvas.addEventListener('pointerdown', (ev) => {
+  const s = curSide();
+  if(!s.analyzed) return;
+  const p = canvasPoint(borderCanvas, ev);
+  const cands = [
+    ['l', Math.abs(p.x - s.lines.l)], ['r', Math.abs(p.x - s.lines.r)],
+    ['t', Math.abs(p.y - s.lines.t)], ['b', Math.abs(p.y - s.lines.b)],
+  ].sort((a, b) => a[1] - b[1]);
+  if(cands[0][1] > 44 * p.k) return;
+  borderDrag = cands[0][0];
+  borderCanvas.setPointerCapture(ev.pointerId);
+  borderCanvas.classList.add('dragging');
+  ev.preventDefault();
+  moveBorderLine(ev);
+});
+borderCanvas.addEventListener('pointermove', (ev) => { if(borderDrag) moveBorderLine(ev); });
+function endBorderDrag(){
+  if(!borderDrag) return;
+  borderDrag = null;
+  borderCanvas.classList.remove('dragging');
+  borderLoupe.style.display = 'none';
+}
+borderCanvas.addEventListener('pointerup', endBorderDrag);
+borderCanvas.addEventListener('pointercancel', endBorderDrag);
+
+function moveBorderLine(ev){
+  const s = curSide();
+  const p = canvasPoint(borderCanvas, ev);
+  const W = CARD_W, H = CARD_H, k = borderDrag, L = s.lines;
+  if(k === 'l') L.l = Math.round(Math.min(L.r - 80, Math.max(3, p.x)));
+  if(k === 'r') L.r = Math.round(Math.max(L.l + 80, Math.min(W - 3, p.x)));
+  if(k === 't') L.t = Math.round(Math.min(L.b - 100, Math.max(3, p.y)));
+  if(k === 'b') L.b = Math.round(Math.max(L.t + 100, Math.min(H - 3, p.y)));
+  s.linesTouched = true;
+  s.lineConf[k] = true;
+  drawBorder();
+  renderMeasurements();
+  const focusX = (k === 'l' || k === 'r') ? L[k] : Math.min(W, Math.max(0, p.x));
+  const focusY = (k === 't' || k === 'b') ? L[k] : Math.min(H, Math.max(0, p.y));
+  showLoupe(borderLoupe, borderCanvas, borderWrap, focusX, focusY, 40, ev);
+}
+
+document.getElementById('resetLinesBtn').addEventListener('click', () => {
+  const s = curSide(); if(!s.analyzed) return;
+  s.linesTouched = false;
+  s.lines = { ...s.autoLines }; s.lineConf = { ...s.autoConf };
+  drawBorder(); renderMeasurements();
+});
+
+/* ---- Measurements, grader ceilings, wear ---- */
+
+function sideCentering(s){
+  return s && s.analyzed && s.lines ? centeringFromLines(s.lines, CARD_W, CARD_H) : null;
+}
+const r0 = (n) => Math.round(n);
+
+function renderMeasurements(){
+  const s = curSide();
+  const c = sideCentering(s);
+  if(!c) return;
+  document.getElementById('lrFill').style.width = c.lr[0] + '%';
+  document.getElementById('tbFill').style.width = c.tb[0] + '%';
+  document.getElementById('lrValue').textContent = r0(c.lr[0]) + ' / ' + r0(c.lr[1]);
+  document.getElementById('tbValue').textContent = r0(c.tb[0]) + ' / ' + r0(c.tb[1]);
+  const worst = c.worst;
+  let verdict;
+  if(worst <= 55) verdict = 'Excellent — close to dead-center';
+  else if(worst <= 60) verdict = 'Very good centering';
+  else if(worst <= 65) verdict = 'Good centering';
+  else if(worst <= 70) verdict = 'Fair — noticeably off-center';
+  else if(worst <= 80) verdict = 'Off-center';
+  else verdict = 'Significantly off-center';
+  document.getElementById('centeringVerdict').textContent = verdict;
+
+  const f = sideCentering(gradeSides.front), b = sideCentering(gradeSides.back);
+  const line = (label, key, cc) => cc ? `
+    <div class="center-line ${currentGradeSide === key ? 'is-current' : ''}">
+      <span class="cl-side">${label}</span>
+      <span class="cl-vals">L/R ${r0(cc.lr[0])}/${r0(cc.lr[1])} · T/B ${r0(cc.tb[0])}/${r0(cc.tb[1])}</span>
+      <span class="cl-worst">worst ${r0(cc.worst)}/${100 - r0(cc.worst)}</span>
+    </div>` : `
+    <div class="center-line"><span class="cl-side">${label}</span><span class="cl-vals" style="opacity:.5">not analyzed yet</span></div>`;
+  document.getElementById('centerSummary').innerHTML = line('Front', 'front', f) + line('Back', 'back', b);
+
+  renderGraders(f, b);
+  renderWear(s);
+}
+
+function renderGraders(f, b){
+  const grid = document.getElementById('graderGrid');
+  const sub = document.getElementById('graderSubHead');
+  const note = document.getElementById('graderNote');
+  if(!f){
+    grid.innerHTML = '';
+    sub.textContent = 'Analyze the front of the card to see what its centering allows at PSA, BGS and CGC.';
+    note.textContent = '';
+    return;
+  }
+  sub.textContent = b
+    ? 'Based on measured front and back centering. This is a ceiling from centering only.'
+    : 'Front only so far — add the back photo for the full check (PSA 10 also limits the back to 75/25). This is a ceiling from centering only.';
+  const bw = b ? b.worst : null;
+  grid.innerHTML = ['psa', 'bgs', 'cgc'].map(key => {
+    const G = GRADERS[key];
+    const res = centeringCeiling(key, f.worst, bw);
+    let line;
+    if(res.belowScale){
+      line = `Centering is worse than the lowest ${G.name} tier listed.`;
+    } else if(res.tierIndex === 0){
+      line = 'Centering doesn’t hold it back at the top tier.';
+    } else {
+      const u = res.up;
+      const need = `≤ ${u.f}/${100 - u.f} front${res.hasBack ? ', ≤ ' + u.b + '/' + (100 - u.b) + ' back' : ''}`;
+      line = res.borderline
+        ? `Borderline for ${res.borderline} (needs ${need}) — within measurement error, can\u2019t be confirmed from a photo.`
+        : `Held back by ${res.limitedBy} centering. Next grade up (${u.g}) needs ${need}.`;
+    }
+    return `
+      <div class="grader-row">
+        <div class="grader-name">${G.name}</div>
+        <div class="grader-ceiling">≤ ${escapeHtml(res.grade)}${G.unofficial ? '<small>unofficial tolerances</small>' : ''}${res.hasBack ? '' : '<small>front only</small>'}</div>
+        <div class="grader-sub">${escapeHtml(line)}</div>
+      </div>`;
+  }).join('');
+  note.textContent = 'PSA and CGC publish centering tolerances (PSA reportedly tightened its 10 to 55/45 in 2025; CGC’s lower tiers are approximate). BGS grades centering as a sub-grade and doesn’t officially publish exact numbers — these are the commonly cited figures, and a BGS Pristine 10 needs a true 50/50. Corners, edges and surface can only lower a grade from these ceilings, never raise it.';
+}
+
+const WEAR_THRESHOLD = 22, LIGHT_BORDER_CUTOFF = 195;
+const conditionStatusText = { clean: 'Looks clean', wear: 'Possible wear', inconclusive: 'Inconclusive' };
+
+function computeWear(s){
+  const W = CARD_W, H = CARD_H, lum = s.flatLum, L = s.lines;
+  const m = { t: L.t, b: H - L.b, l: L.l, r: W - L.r };
+  const avg1D = (arr, i0, i1) => {
+    i0 = Math.max(0, i0); i1 = Math.min(arr.length, Math.max(i0 + 1, i1));
+    let t = 0, n = 0; for(let i = i0; i < i1; i++){ t += arr[i]; n++; }
+    return n ? t / n : null;
+  };
+  const region = (x0, y0, x1, y1) => {
+    x0 = Math.max(0, Math.round(x0)); y0 = Math.max(0, Math.round(y0));
+    x1 = Math.min(W, Math.round(x1)); y1 = Math.min(H, Math.round(y1));
+    if(x1 <= x0 || y1 <= y0) return null;
+    let t = 0, n = 0;
+    for(let y = y0; y < y1; y++) for(let x = x0; x < x1; x++){ t += lum[y * W + x]; n++; }
+    return n ? t / n : null;
+  };
+  const { rowAvg, colAvg } = s.profile;
+  const ref = {
+    t: avg1D(rowAvg, Math.round(m.t * 0.25), Math.round(m.t * 0.75)),
+    b: avg1D(rowAvg, H - Math.round(m.b * 0.75), H - Math.round(m.b * 0.25)),
+    l: avg1D(colAvg, Math.round(m.l * 0.25), Math.round(m.l * 0.75)),
+    r: avg1D(colAvg, W - Math.round(m.r * 0.75), W - Math.round(m.r * 0.25)),
+  };
+  const mean2 = (a, b) => (a === null || b === null) ? (a === null ? b : a) : (a + b) / 2;
+  const verdict = (patch, r) => (r === null || patch === null || r >= LIGHT_BORDER_CUTOFF) ? 'inconclusive' : ((patch - r) > WEAR_THRESHOLD ? 'wear' : 'clean');
+
+  const minM = Math.min(m.t, m.b, m.l, m.r);
+  const o = 8, avail = minM - o - 1;
+  const cs = Math.min(14, avail);
+  const cornerOK = cs >= 4;
+  const corner = (label, x0, y0, refA, refB) => ({
+    label,
+    status: cornerOK ? verdict(region(x0, y0, x0 + cs, y0 + cs), mean2(refA, refB)) : 'inconclusive',
+  });
+  const corners = [
+    corner('Top-left', o, o, ref.t, ref.l),
+    corner('Top-right', W - o - cs, o, ref.t, ref.r),
+    corner('Bottom-left', o, H - o - cs, ref.b, ref.l),
+    corner('Bottom-right', W - o - cs, H - o - cs, ref.b, ref.r),
+  ];
+
+  const edge = (label, refv, sampler, length) => {
+    if(refv === null || refv >= LIGHT_BORDER_CUTOFF) return { label, status: 'inconclusive' };
+    const segs = 6, start = length * 0.12, usable = length * 0.76, segLen = usable / segs;
+    for(let i = 0; i < segs; i++){
+      const v = sampler(start + i * segLen, start + (i + 1) * segLen);
+      if(v !== null && (v - refv) > WEAR_THRESHOLD) return { label, status: 'wear' };
+    }
+    return { label, status: 'clean' };
+  };
+  const band = (mm) => Math.max(2, Math.round(mm * 0.6));
+  const edges = [
+    edge('Top edge', ref.t, (a, b) => region(a, 3, b, band(m.t)), W),
+    edge('Bottom edge', ref.b, (a, b) => region(a, H - band(m.b), b, H - 3), W),
+    edge('Left edge', ref.l, (a, b) => region(3, a, band(m.l), b), H),
+    edge('Right edge', ref.r, (a, b) => region(W - band(m.r), a, W - 3, b), H),
+  ];
+  return { corners, edges };
+}
+
+function renderWear(s){
+  const w = computeWear(s);
+  const render = (id, items) => {
+    document.getElementById(id).innerHTML = items.map(item => `
+      <div class="condition-chip">
+        <span class="status-dot ${item.status}"></span>
+        <span class="chip-label">${escapeHtml(item.label)}</span>
+        <span>${conditionStatusText[item.status]}</span>
+      </div>`).join('');
+  };
+  render('cornerGrid', w.corners);
+  render('edgeGrid', w.edges);
+}
+
+function drawCrop(canvasId, sx, sy, sw, sh){
+  const s = curSide();
+  const target = document.getElementById(canvasId);
+  if(!target || !s.flat) return;
+  const dw = 160, dh = Math.round(dw * (sh / sw));
+  target.width = dw; target.height = dh;
+  target.getContext('2d').drawImage(s.flat, sx, sy, sw, sh, 0, 0, dw, dh);
+}
+function renderCloseups(){
+  const W = CARD_W, H = CARD_H, cs = Math.round(W * 0.22);
+  drawCrop('cropTL', 0, 0, cs, cs);
+  drawCrop('cropTR', W - cs, 0, cs, cs);
+  drawCrop('cropBL', 0, H - cs, cs, cs);
+  drawCrop('cropBR', W - cs, H - cs, cs, cs);
+  const cw = Math.round(W * 0.5), ch = Math.round(H * 0.3);
+  drawCrop('cropCenter', Math.round((W - cw) / 2), Math.round((H - ch) / 2), cw, ch);
+}
+
+/* ---- Save to My Desk ---- */
+
+const saveForm = document.getElementById('gradeSaveForm');
+const saveMsg = document.getElementById('gradeSaveMsg');
+function hideSaveForm(){ saveForm.style.display = 'none'; saveMsg.textContent = ''; saveMsg.classList.remove('is-error'); }
+
+function ceilingsRecord(f, b){
+  if(!f) return null;
+  const out = {};
+  ['psa', 'bgs', 'cgc'].forEach(k => { out[k] = centeringCeiling(k, f.worst, b ? b.worst : null).grade; });
+  return out;
+}
+
+function buildGradingRecord(){
+  const f = sideCentering(gradeSides.front), b = sideCentering(gradeSides.back);
+  const side = (c) => c ? { lr: [r0(c.lr[0]), r0(c.lr[1])], tb: [r0(c.tb[0]), r0(c.tb[1])], worst: r0(c.worst) } : null;
+  const issues = ['front', 'back'].reduce((n, k) => n + gradeSides[k].quality.filter(q => q.level === 'bad' || q.level === 'warn').length, 0);
+  return { savedAt: Date.now(), front: side(f), back: side(b), ceilings: ceilingsRecord(f, b), frontOnly: !b, photoIssues: issues };
+}
+
+function gradeThumbData(){
+  const src = (gradeSides.front.flat || gradeSides.back.flat);
+  if(!src) return null;
+  const c = document.createElement('canvas');
+  c.width = 120; c.height = 168;
+  c.getContext('2d').drawImage(src, 0, 0, 120, 168);
+  try{ return c.toDataURL('image/jpeg', 0.7); } catch(e){ return null; }
+}
+
+document.getElementById('gradeSaveOpen').addEventListener('click', () => {
+  saveMsg.textContent = ''; saveMsg.classList.remove('is-error');
+  if(!gradeSides.front.analyzed && !gradeSides.back.analyzed) return;
+  const sel = document.getElementById('gradeSaveTarget');
+  const sorted = [...state.collection].sort((a, b) => b.addedAt - a.addedAt);
+  sel.innerHTML = '<option value="new">+ New entry</option>' + sorted.map(c =>
+    `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} · ${escapeHtml(gameNames[c.game] || c.game)}</option>`).join('');
+  document.getElementById('gradeNewFields').style.display = 'flex';
+  saveForm.style.display = 'flex';
+});
+document.getElementById('gradeSaveTarget').addEventListener('change', (e) => {
+  document.getElementById('gradeNewFields').style.display = e.target.value === 'new' ? 'flex' : 'none';
+});
+document.getElementById('gradeSaveCancel').addEventListener('click', hideSaveForm);
+document.getElementById('gradeSaveConfirm').addEventListener('click', () => {
+  const target = document.getElementById('gradeSaveTarget').value;
+  const record = buildGradingRecord();
+  const thumb = gradeThumbData();
+  if(target === 'new'){
+    const name = document.getElementById('gradeSaveName').value.trim();
+    if(!name){
+      saveMsg.textContent = 'Give the card a name first.';
+      saveMsg.classList.add('is-error');
+      return;
+    }
+    state.collection.push({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      game: document.getElementById('gradeSaveGame').value,
+      name, meta: 'Condition check', img: null, gradeThumb: thumb,
+      price: null, source: null, demo: false, addedAt: Date.now(), grading: record,
+    });
+  } else {
+    const item = state.collection.find(c => c.id === target);
+    if(!item) return;
+    item.grading = record;
+    item.gradeThumb = thumb;
+  }
+  saveCollection();
+  updateCollectionBadge();
+  saveForm.style.display = 'none';
+  document.getElementById('gradeSaveName').value = '';
+  saveMsg.classList.remove('is-error');
+  saveMsg.textContent = 'Saved — find it on the Desk tab.';
+});
+
+function gradingChipsMarkup(c){
+  const g = c.grading;
+  if(!g) return '';
+  const chips = [];
+  if(g.front) chips.push(`<span class="grade-chip muted">Front ${g.front.lr[0]}/${g.front.lr[1]} · ${g.front.tb[0]}/${g.front.tb[1]}</span>`);
+  if(g.back) chips.push(`<span class="grade-chip muted">Back ${g.back.lr[0]}/${g.back.lr[1]} · ${g.back.tb[0]}/${g.back.tb[1]}</span>`);
+  if(g.ceilings){
+    chips.push(`<span class="grade-chip">PSA ≤ ${escapeHtml(g.ceilings.psa)}</span>`);
+    chips.push(`<span class="grade-chip">BGS ≤ ${escapeHtml(g.ceilings.bgs)}</span>`);
+    chips.push(`<span class="grade-chip">CGC ≤ ${escapeHtml(g.ceilings.cgc)}</span>`);
+  }
+  if(g.frontOnly && g.front) chips.push('<span class="grade-chip muted">front only</span>');
+  return `<div class="grade-chips" title="Centering-based ceilings, not predicted grades">${chips.join('')}</div>`;
+}
+
+function setView(view){
+  const scannerView = document.getElementById('scannerView');
+  const gradeView = document.getElementById('gradeView');
+  const collectionView = document.getElementById('collectionView');
+  const navScanBtn = document.getElementById('navScanBtn');
+  const navGradeBtn = document.getElementById('navGradeBtn');
+  const navCollectionBtn = document.getElementById('navCollectionBtn');
+
+  state.view = view;
+
+  scannerView.style.display = view === 'scanner' ? 'block' : 'none';
+  gradeView.style.display = view === 'grade' ? 'block' : 'none';
+  collectionView.style.display = view === 'collection' ? 'block' : 'none';
+
+  navScanBtn.classList.toggle('active', view === 'scanner');
+  navGradeBtn.classList.toggle('active', view === 'grade');
+  navCollectionBtn.classList.toggle('active', view === 'collection');
+
+  if(view !== 'scanner') stopCameraStream();
+  if(view !== 'grade') gradeStopCameraStream();
+  if(view === 'collection'){
+    renderCollectionView();
+  } else {
+    confirmDeleteId = null;
+  }
+}
+
+document.getElementById('navScanBtn').addEventListener('click', () => setView('scanner'));
+document.getElementById('navGradeBtn').addEventListener('click', () => setView('grade'));
+document.getElementById('navCollectionBtn').addEventListener('click', () => setView('collection'));
+
+updateCollectionBadge();
+
+window.addEventListener('pagehide', () => { stopCameraStream(); gradeStopCameraStream(); });
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){ stopCameraStream(); gradeStopCameraStream(); }
+});
+
+function escapeHtml(s){
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>

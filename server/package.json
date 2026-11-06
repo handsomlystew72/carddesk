@@ -1,0 +1,19 @@
+{
+  "name": "carddesk-pricing-server",
+  "version": "1.0.0",
+  "description": "Backend pricing service for CardDesk. Proxies TCGplayer and eBay APIs so API keys never touch the browser.",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

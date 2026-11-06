@@ -1,0 +1,127 @@
+  <div id="gradeView" style="display:none;">
+    <div class="desk">
+      <div class="collection-head">
+        <div>
+          <h3>Condition Check</h3>
+          <span>Centering, grader ceilings &amp; wear from your photos</span>
+        </div>
+      </div>
+
+      <div class="side-toggle" id="gradeSideToggle">
+        <button type="button" class="active" data-side="front">Front</button>
+        <button type="button" data-side="back">Back<span class="side-done" id="backDone"></span></button>
+      </div>
+
+      <div class="scan-zone" id="gradeZone">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+          <circle cx="12" cy="13" r="3.5"/>
+        </svg>
+        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
+        <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>
+      </div>
+      <input type="file" id="gradeFileInput" accept="image/*" capture="environment">
+
+      <div class="row">
+        <button class="btn-primary" id="analyzeBtn" disabled>Analyze Front</button>
+        <button class="btn-secondary" id="gradeClearBtn">Clear</button>
+      </div>
+
+      <div class="status" id="gradeStatusLine" style="display:none;">
+        <div class="spinner"></div>
+        <span>Finding the card and measuring borders…</span>
+      </div>
+
+      <div id="gradeResults" style="display:none;">
+        <p class="quality-head" id="qualityHead">Photo quality</p>
+        <div class="quality-list" id="qualityList"></div>
+
+        <p class="step-label">1 · Card outline</p>
+        <p class="step-help">Drag each green corner onto the card's real corner. The magnifier shows exactly where you are.</p>
+        <div class="editor-wrap" id="outlineWrap">
+          <canvas class="editor" id="outlineCanvas"></canvas>
+          <canvas class="loupe" id="outlineLoupe" width="192" height="192"></canvas>
+        </div>
+        <div class="editor-actions">
+          <button type="button" id="useWholePhotoBtn">Use whole photo</button>
+          <button type="button" id="redetectBtn">Re-detect outline</button>
+        </div>
+
+        <p class="step-label">2 · Border lines</p>
+        <p class="step-help">Straightened card. Drag each line onto the inner edge of the border — where the border meets the artwork. Orange lines are ones it wasn't sure about.</p>
+        <div class="editor-wrap" id="borderWrap">
+          <canvas class="editor" id="borderCanvas"></canvas>
+          <canvas class="loupe" id="borderLoupe" width="192" height="192"></canvas>
+        </div>
+        <div class="editor-actions" style="max-width:340px; margin-left:auto; margin-right:auto;">
+          <button type="button" id="resetLinesBtn">Reset lines to auto</button>
+        </div>
+
+        <div class="centering-readout">
+          <div class="centering-axis">
+            <span class="axis-label">Left / Right</span>
+            <div class="axis-bar"><div class="axis-fill" id="lrFill"></div></div>
+            <span class="axis-value" id="lrValue">— / —</span>
+          </div>
+          <div class="centering-axis">
+            <span class="axis-label">Top / Bottom</span>
+            <div class="axis-bar"><div class="axis-fill" id="tbFill"></div></div>
+            <span class="axis-value" id="tbValue">— / —</span>
+          </div>
+        </div>
+        <div class="centering-verdict" id="centeringVerdict"></div>
+        <div class="center-summary" id="centerSummary"></div>
+
+        <p class="grader-head">What centering alone allows</p>
+        <p class="grader-sub-head" id="graderSubHead"></p>
+        <div class="grader-grid" id="graderGrid"></div>
+        <p class="grader-note" id="graderNote"></p>
+
+        <p class="condition-label">Corners &amp; edges — heuristic wear check (this side)</p>
+        <div class="condition-grid" id="cornerGrid"></div>
+        <div class="condition-grid condition-grid-edges" id="edgeGrid"></div>
+
+        <div class="corner-inspector">
+          <p class="corner-inspector-label">Close-ups for your own eyes — corners and center surface</p>
+          <div class="corner-grid">
+            <div class="corner-crop"><canvas id="cropTL"></canvas><span>Top-left</span></div>
+            <div class="corner-crop"><canvas id="cropTR"></canvas><span>Top-right</span></div>
+            <div class="corner-crop"><canvas id="cropBL"></canvas><span>Bottom-left</span></div>
+            <div class="corner-crop"><canvas id="cropBR"></canvas><span>Bottom-right</span></div>
+            <div class="corner-crop corner-crop-wide"><canvas id="cropCenter"></canvas><span>Center surface</span></div>
+          </div>
+        </div>
+
+        <div class="save-bar" id="gradeSaveBar">
+          <button type="button" class="btn-primary" id="gradeSaveOpen" style="width:100%;">Save result to My Desk</button>
+          <div class="save-form" id="gradeSaveForm" style="display:none;">
+            <label for="gradeSaveTarget">Save to</label>
+            <select id="gradeSaveTarget"></select>
+            <div id="gradeNewFields" style="display:flex; flex-direction:column; gap:8px;">
+              <label for="gradeSaveName">Card name</label>
+              <input id="gradeSaveName" type="text" maxlength="80" placeholder="e.g. Charizard 4/102">
+              <label for="gradeSaveGame">Category</label>
+              <select id="gradeSaveGame">
+                <option value="pokemon">Pokémon</option>
+                <option value="yugioh">Yu-Gi-Oh</option>
+                <option value="baseball">Baseball</option>
+                <option value="basketball">Basketball</option>
+                <option value="football">Football</option>
+              </select>
+            </div>
+            <div class="row">
+              <button type="button" class="btn-primary" id="gradeSaveConfirm">Save</button>
+              <button type="button" class="btn-secondary" id="gradeSaveCancel">Cancel</button>
+            </div>
+          </div>
+          <p class="save-msg" id="gradeSaveMsg"></p>
+        </div>
+      </div>
+
+      <div class="source-note">
+        <b>What this can and can't tell you:</b> the straightened-card centering is a real measurement, good to roughly ±2 points on a clean, sharp photo. The PSA / BGS / CGC rows show the best grade your <i>centering</i> would allow under each company's published (or, for BGS, commonly cited) tolerances — a ceiling, not a predicted grade. Corners, edges and surface decide the rest, and a phone photo can't judge those reliably, so there is deliberately no single "you'll get a 9" number. The corner/edge check is a rough heuristic and is inconclusive on light or white-bordered cards. The grading companies don't all publish exact numbers and sources disagree in places — treat these as guidance and confirm against each company's current standards.
+      </div>
+    </div>
+  </div>
