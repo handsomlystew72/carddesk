@@ -451,4 +451,42 @@ function computeQuality(info){
   return out;
 }
 const BLUR_WARN = 0.22, BLUR_BAD = 0.12;
+
+/* ---- Calibration helpers: compare a real graded result to the centering ceiling ---- */
+const GRADE_OPTIONS = {
+  psa: ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'],
+  bgs: ['10', '9.5', '9', '8.5', '8', '7.5', '7', '6.5', '6', '5.5', '5', '4.5', '4', '3.5', '3', '2.5', '2', '1.5', '1'],
+  cgc: ['10 Pristine', '10', '9.5', '9', '8.5', '8', '7.5', '7', '6.5', '6', '5.5', '5', '4.5', '4', '3.5', '3', '2.5', '2', '1.5', '1'],
+};
+
+function gradeNum(g){
+  const s = String(g);
+  if(/pristine/i.test(s)) return 10.5; // CGC Pristine 10 sits above Gem Mint 10
+  return parseFloat(s);
+}
+
+/* 'below' / 'at' = consistent with the ceiling; 'between' = the grade falls in a gap where
+   the company has no tier in our table (still consistent); 'above' = beat the ceiling. */
+function calibrationStatus(key, ceilingGrade, actualGrade){
+  const tiers = GRADERS[key].tiers;
+  const c = gradeNum(ceilingGrade), a = gradeNum(actualGrade);
+  if(a < c) return 'below';
+  if(a === c) return 'at';
+  const idx = tiers.findIndex(t => t.g === String(ceilingGrade));
+  if(idx > 0 && a < gradeNum(tiers[idx - 1].g)) return 'between';
+  return 'above';
+}
+
+/* How many centering points past the limit for the grade actually received (0 if within). */
+function overshootPoints(key, actualGrade, frontWorst, backWorst){
+  const tiers = GRADERS[key].tiers;
+  const a = gradeNum(actualGrade);
+  const cands = tiers.filter(t => gradeNum(t.g) <= a);
+  if(!cands.length) return 0;
+  const t = cands.reduce((best, x) => gradeNum(x.g) > gradeNum(best.g) ? x : best);
+  let over = 0;
+  if(frontWorst !== null && frontWorst !== undefined) over = Math.max(over, frontWorst - t.f);
+  if(backWorst !== null && backWorst !== undefined) over = Math.max(over, backWorst - t.b);
+  return Math.max(0, over);
+}
 /* ALGO-END */

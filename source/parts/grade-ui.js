@@ -738,9 +738,9 @@ function gradeThumbData(){
   const src = (gradeSides.front.flat || gradeSides.back.flat);
   if(!src) return null;
   const c = document.createElement('canvas');
-  c.width = 120; c.height = 168;
-  c.getContext('2d').drawImage(src, 0, 0, 120, 168);
-  try{ return c.toDataURL('image/jpeg', 0.7); } catch(e){ return null; }
+  c.width = 240; c.height = 336;
+  c.getContext('2d').drawImage(src, 0, 0, 240, 336);
+  try{ return c.toDataURL('image/jpeg', 0.78); } catch(e){ return null; }
 }
 
 document.getElementById('gradeSaveOpen').addEventListener('click', () => {
@@ -788,18 +788,208 @@ document.getElementById('gradeSaveConfirm').addEventListener('click', () => {
   saveMsg.textContent = 'Saved — find it on the Desk tab.';
 });
 
-function gradingChipsMarkup(c){
+function gradeBoxMarkup(c){
   const g = c.grading;
-  if(!g) return '';
-  const chips = [];
-  if(g.front) chips.push(`<span class="grade-chip muted">Front ${g.front.lr[0]}/${g.front.lr[1]} · ${g.front.tb[0]}/${g.front.tb[1]}</span>`);
-  if(g.back) chips.push(`<span class="grade-chip muted">Back ${g.back.lr[0]}/${g.back.lr[1]} · ${g.back.tb[0]}/${g.back.tb[1]}</span>`);
-  if(g.ceilings){
-    chips.push(`<span class="grade-chip">PSA ≤ ${escapeHtml(g.ceilings.psa)}</span>`);
-    chips.push(`<span class="grade-chip">BGS ≤ ${escapeHtml(g.ceilings.bgs)}</span>`);
-    chips.push(`<span class="grade-chip">CGC ≤ ${escapeHtml(g.ceilings.cgc)}</span>`);
+  if(!g){
+    return '<button type="button" class="desk-grade-cta" data-action="grade">Check condition &rarr;</button>';
   }
-  if(g.frontOnly && g.front) chips.push('<span class="grade-chip muted">front only</span>');
-  return `<div class="grade-chips" title="Centering-based ceilings, not predicted grades">${chips.join('')}</div>`;
+  if(!g.ceilings){
+    return '<button type="button" class="desk-grade-cta" data-action="grade">Only the back was checked &mdash; add the front &rarr;</button>';
+  }
+  const slab = (name, val) => `<div class="grade-slab"><span class="gs-name">${name}</span><span class="gs-val${String(val).length > 4 ? ' long' : ''}">&le;${escapeHtml(String(val))}</span></div>`;
+  const side = (label, s) => s ? `${label} ${s.lr[0]}/${s.lr[1]} &middot; ${s.tb[0]}/${s.tb[1]}` : '';
+  const detail = [side('Front', g.front), side('Back', g.back)].filter(Boolean).join(' &nbsp;|&nbsp; ') + (g.frontOnly ? ' &middot; front only' : '');
+  return `<div class="desk-grade" title="Best grade the centering allows &mdash; not a predicted grade">
+    <p class="dg-label">Possible grade <span>centering ceiling</span></p>
+    <div class="grade-slabs">${slab('PSA', g.ceilings.psa)}${slab('BGS', g.ceilings.bgs)}${slab('CGC', g.ceilings.cgc)}</div>
+    <p class="dg-detail">${detail}</p>
+  </div>`;
+}
+
+function openLightbox(id){
+  const c = state.collection.find(x => x.id === id);
+  if(!c) return;
+  const src = c.img || c.gradeThumb;
+  if(!src) return;
+  const price = c.price ? '$' + c.price : '';
+  let box = document.getElementById('lightbox');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'lightbox';
+    box.className = 'lightbox';
+    box.addEventListener('click', () => { box.style.display = 'none'; box.innerHTML = ''; });
+    document.body.appendChild(box);
+  }
+  box.innerHTML = `<div class="lightbox-inner">
+    <img src="${src}" alt="${escapeHtml(c.name)}">
+    <p class="lb-name">${escapeHtml(c.name)}</p>
+    ${c.meta ? `<p class="lb-meta">${escapeHtml(c.meta)}</p>` : ''}
+    ${price ? `<p class="lb-price">${escapeHtml(price)}${c.demo ? ' <small style="font-weight:400;opacity:.6">est. range</small>' : ''}</p>` : ''}
+    ${c.grading && c.grading.ceilings ? gradeBoxMarkup(c) : ''}
+    <p class="lightbox-hint">Tap anywhere to close</p>
+  </div>`;
+  box.style.display = 'flex';
+}
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){ const b = document.getElementById('lightbox'); if(b){ b.style.display = 'none'; b.innerHTML = ''; } }
+});
+
+/* ================= Desk: sorting + calibration ================= */
+
+const SORT_KEY = 'carddesk_sort_v1';
+const SORT_OPTIONS = [
+  ['newest', 'Newest added'], ['oldest', 'Oldest added'],
+  ['value-high', 'Value: high to low'], ['value-low', 'Value: low to high'],
+  ['name', 'Name A–Z'], ['centering', 'Best centering first'],
+];
+function loadSort(){
+  try{ const v = localStorage.getItem(SORT_KEY); return SORT_OPTIONS.some(o => o[0] === v) ? v : 'newest'; } catch(e){ return 'newest'; }
+}
+state.collectionSort = loadSort();
+let gradeLogId = null, gradeLogDraft = null, calibrationOpen = false;
+
+/* First number in a price string ("1,234.50", "38,000 – 5.2M" -> 38000). Null if none. */
+function priceValue(c){
+  if(!c.price) return null;
+  const m = String(c.price).match(/[\d,]+(?:\.\d+)?/);
+  if(!m) return null;
+  const v = parseFloat(m[0].replace(/,/g, ''));
+  return isNaN(v) ? null : v;
+}
+
+function sortDeskItems(items){
+  const arr = [...items];
+  const byNewest = (a, b) => b.addedAt - a.addedAt;
+  const nullsLast = (va, vb, dir) => {
+    if(va === null && vb === null) return 0;
+    if(va === null) return 1;
+    if(vb === null) return -1;
+    return dir * (va - vb);
+  };
+  const worst = (c) => (c.grading && c.grading.front) ? c.grading.front.worst : null;
+  switch(state.collectionSort){
+    case 'oldest': arr.sort((a, b) => a.addedAt - b.addedAt); break;
+    case 'value-high': arr.sort((a, b) => nullsLast(priceValue(a), priceValue(b), -1) || byNewest(a, b)); break;
+    case 'value-low': arr.sort((a, b) => nullsLast(priceValue(a), priceValue(b), 1) || byNewest(a, b)); break;
+    case 'name': arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }) || byNewest(a, b)); break;
+    case 'centering': arr.sort((a, b) => nullsLast(worst(a), worst(b), 1) || byNewest(a, b)); break;
+    default: arr.sort(byNewest);
+  }
+  return arr;
+}
+
+const graderLabel = { psa: 'PSA', bgs: 'BGS', cgc: 'CGC' };
+const calStatusText = { at: 'at ceiling', below: 'below ceiling', between: 'between tiers', above: 'above ceiling' };
+
+function gradeLogMarkup(c){
+  if(!c.grading || !c.grading.ceilings) return '';
+  const results = c.gradeResults || [];
+  const pills = results.map(r => {
+    const st = calibrationStatus(r.grader, r.ceiling, r.grade);
+    return `<span class="log-pill ${st === 'above' ? 'is-above' : 'is-ok'}">${graderLabel[r.grader]} ${escapeHtml(r.grade)} &middot; ${calStatusText[st]}<button type="button" data-action="log-remove" data-id="${c.id}" data-grader="${r.grader}" aria-label="Remove logged ${graderLabel[r.grader]} grade">&times;</button></span>`;
+  }).join('');
+  let tail;
+  if(gradeLogId === c.id && gradeLogDraft){
+    const opts = GRADE_OPTIONS[gradeLogDraft.grader].map(g => `<option value="${escapeHtml(g)}"${g === gradeLogDraft.grade ? ' selected' : ''}>${escapeHtml(g)}</option>`).join('');
+    tail = `<div class="log-form">
+      <select data-role="lg-grader" aria-label="Grading company">${['psa', 'bgs', 'cgc'].map(k => `<option value="${k}"${k === gradeLogDraft.grader ? ' selected' : ''}>${graderLabel[k]}</option>`).join('')}</select>
+      <select data-role="lg-grade" aria-label="Grade received">${opts}</select>
+      <button type="button" class="log-save" data-action="log-save" data-id="${c.id}">Save</button>
+      <button type="button" class="log-cancel" data-action="log-cancel" data-id="${c.id}">Cancel</button>
+      ${gradeLogDraft.grader === 'bgs' ? '<p class="log-help">For BGS, enter the <b>centering sub-grade</b> from the label — the overall grade also depends on corners, edges and surface.</p>' : ''}
+    </div>`;
+  } else {
+    tail = `<button type="button" class="log-open" data-action="log-open" data-id="${c.id}">+ Log real grade</button>`;
+  }
+  return `<div class="log-wrap">${pills ? `<div class="log-pills">${pills}</div>` : ''}${tail}</div>`;
+}
+
+function calibrationRows(){
+  const rows = [];
+  state.collection.forEach(c => (c.gradeResults || []).forEach(r => {
+    const status = calibrationStatus(r.grader, r.ceiling, r.grade);
+    rows.push({ c, r, status, over: status === 'above' ? overshootPoints(r.grader, r.grade, r.frontWorst, r.backWorst) : 0 });
+  }));
+  return rows;
+}
+
+function renderCalibrationPanel(){
+  const panel = document.getElementById('calibrationPanel');
+  const btn = document.getElementById('calibrateBtn');
+  if(!panel) return;
+  btn.classList.toggle('is-open', calibrationOpen);
+  panel.style.display = calibrationOpen ? 'block' : 'none';
+  if(!calibrationOpen) return;
+  const rows = calibrationRows();
+  if(!rows.length){
+    panel.innerHTML = `<h4>Calibration</h4>
+      <p>Once a card comes back from grading, open it on the Desk and tap <b>+ Log real grade</b>. This panel then checks whether your photos' centering ceilings held up against what the grader actually gave.</p>
+      <p>It never changes any numbers on its own &mdash; it just shows whether they hold up. Log about 10 or more before trusting a pattern.</p>`;
+    return;
+  }
+  const n = rows.length;
+  const above = rows.filter(x => x.status === 'above');
+  const at = rows.filter(x => x.status === 'at').length;
+  const within = n - above.length;
+  const avgOver = above.length ? above.reduce((t, x) => t + x.over, 0) / above.length : 0;
+  let verdict;
+  if(!above.length){
+    verdict = 'Every logged result landed at or under its ceiling — the readings and thresholds look consistent so far.';
+  } else {
+    verdict = `${above.length} of ${n} landed above their ceiling, by ${avgOver.toFixed(1)} centering points on average. ` +
+      (avgOver <= 2 ? 'That is within normal photo measurement error (about ±2 points).' : 'That is more than measurement error — the company may be more lenient than the table assumes, or photos may be reading cards as more off-center than they are.');
+  }
+  const caution = n < 10 ? `<p class="cal-caution">Only ${n} result${n === 1 ? '' : 's'} so far — too few to draw conclusions.</p>` : '';
+  panel.innerHTML = `<h4>Calibration</h4>
+    <div class="cal-stats">
+      <div><b>${n}</b><span>logged</span></div>
+      <div><b>${Math.round(within / n * 100)}%</b><span>within ceiling</span></div>
+      <div><b>${at}</b><span>exactly at ceiling</span></div>
+      <div><b>${above.length}</b><span>above ceiling</span></div>
+    </div>
+    <p>${escapeHtml(verdict)}</p>${caution}
+    <ul class="cal-list">${rows.map(x => `<li class="${x.status === 'above' ? 'is-above' : ''}"><span>${escapeHtml(x.c.name)}</span><span>${graderLabel[x.r.grader]} ${escapeHtml(x.r.grade)} <i>(ceiling ${escapeHtml(x.r.ceiling)}${x.status === 'above' && x.over > 0 ? ', ' + x.over.toFixed(1) + ' pts over' : ''})</i></span></li>`).join('')}</ul>
+    <p class="cal-note">Exactly-at-ceiling results suggest centering is what held the card back; below-ceiling results mean corners, edges or surface cost it more.</p>`;
+}
+
+document.getElementById('deskSort').innerHTML = SORT_OPTIONS.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('');
+document.getElementById('deskSort').value = state.collectionSort;
+document.getElementById('deskSort').addEventListener('change', (e) => {
+  state.collectionSort = e.target.value;
+  try{ localStorage.setItem(SORT_KEY, state.collectionSort); } catch(err){}
+  renderCollectionView();
+});
+document.getElementById('calibrateBtn').addEventListener('click', () => {
+  calibrationOpen = !calibrationOpen;
+  renderCalibrationPanel();
+});
+
+/* ================= eBay sold-listing links (no API needed) ================= */
+/* Builds an eBay search for SOLD + completed listings, newest first. Opens in a new tab,
+   so the user sees real sold prices on eBay itself. extra = e.g. "PSA 9". */
+function ebaySoldUrl(item, extra, game){
+  const g = game || item.game;
+  const name = String(item.name || '').replace(/\(test\)/ig, '').trim();
+  let parts = String(item.meta || '').split('·').map(p => p.trim())
+    .filter(p => p && !/sample entry|rookie-era icon|demo|active ebay listing/i.test(p));
+  let tag = '';
+  if(g === 'yugioh'){ parts = []; tag = 'Yu-Gi-Oh'; }   // meta is card-type text (monster/race/attribute): too noisy to search on
+  else if(g === 'pokemon'){ tag = 'Pokemon'; }
+  const q = [name, tag, ...parts, extra || ''].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(q) + '&LH_Sold=1&LH_Complete=1&_sop=13';
+}
+
+function soldLinkMarkup(item, game){
+  return `<a class="sold-link" href="${ebaySoldUrl(item, '', game)}" target="_blank" rel="noopener noreferrer">Sold on eBay &#8599;</a>`;
+}
+
+/* Desk cards: plain sold link plus one at the best grade the card could reach. */
+function deskSoldLinks(c){
+  let links = `<a class="sold-link" href="${ebaySoldUrl(c)}" target="_blank" rel="noopener noreferrer">Sold on eBay &#8599;</a>`;
+  const ce = c.grading && c.grading.ceilings;
+  if(ce && ce.psa){
+    links += `<a class="sold-link" href="${ebaySoldUrl(c, 'PSA ' + ce.psa)}" target="_blank" rel="noopener noreferrer" title="Sold listings graded at the best PSA grade your centering allows">PSA ${escapeHtml(String(ce.psa))} sold &#8599;</a>`;
+  }
+  return `<div class="sold-links">${links}</div>`;
 }
 

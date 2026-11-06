@@ -155,10 +155,142 @@
   .save-msg{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--foil-1); margin: 8px 0 0; min-height:14px; }
   .save-msg.is-error{ color:#e0714f; }
 
-  .grade-chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
-  .grade-chip{
-    font-family:'IBM Plex Mono', monospace; font-size:9.5px;
-    padding:3px 7px; border-radius:6px;
-    background: rgba(125,224,192,0.14); color: var(--foil-1);
+  /* ---------- Desk card: picture, price, possible grade ---------- */
+  .collection-item .card-thumb{ width:84px; height:118px; border-radius:8px; }
+  .collection-item .card-thumb[data-action="zoom"]{ cursor:zoom-in; }
+  .collection-item .card-info{ padding-top:14px; }
+  .collection-item .card-name{ color: var(--ink-900); padding-right:78px; }
+  .collection-item .card-price{ flex-wrap:wrap; row-gap:3px; }
+  .collection-item .card-price .amt{ font-size:15px; }
+  .collection-item .badge-demo, .collection-item .badge-live{ margin-left:2px; }
+  .collection-item .card-price{ margin-bottom:2px; }
+
+  .desk-grade{ margin-top:9px; }
+  .dg-label{
+    margin:0 0 5px;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:0.5px; text-transform:uppercase;
+    color: var(--ink-600);
   }
-  .grade-chip.muted{ background: rgba(255,255,255,0.08); color: rgba(247,243,232,0.7); }
+  .dg-label span{ opacity:0.7; text-transform:none; letter-spacing:0; margin-left:4px; }
+  .grade-slabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .grade-slab{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:6px 4px 5px;
+    border-radius:8px;
+    background: var(--ink-900);
+    line-height:1.1;
+  }
+  .gs-name{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.8px; color: rgba(247,243,232,0.6); }
+  .gs-val{ font-family:'Oswald', sans-serif; font-size:17px; color: var(--foil-1); margin-top:2px; white-space:nowrap; }
+  .gs-val.long{ font-size:12px; margin-top:5px; }
+  .dg-detail{
+    margin:5px 0 0;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; line-height:1.45;
+    color: var(--ink-600);
+  }
+  .desk-grade-cta{
+    margin-top:9px;
+    padding:7px 12px; border-radius:8px;
+    border:1px dashed rgba(18,20,15,0.3);
+    background: transparent; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color: var(--ink-900);
+  }
+  .desk-grade-cta:hover{ background: rgba(18,20,15,0.05); }
+
+  .lightbox{
+    position:fixed; inset:0; z-index:50;
+    background: rgba(8,10,8,0.96);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    padding:18px;
+  }
+  .lightbox-inner{
+    width:100%; max-width:380px; max-height:100%; overflow:auto;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    color: var(--stock-100); text-align:center;
+  }
+  .lightbox-inner img{ max-width:100%; max-height:58vh; border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.6); }
+  .lightbox-inner .lb-name{ font-family:'Inter', sans-serif; font-weight:600; font-size:16px; margin:0; }
+  .lightbox-inner .lb-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:0.65; margin:0; }
+  .lightbox-inner .lb-price{ font-family:'IBM Plex Mono', monospace; font-size:18px; font-weight:600; margin:0; }
+  .lightbox-inner .desk-grade{ width:100%; }
+  .lightbox-inner .dg-label, .lightbox-inner .dg-detail{ color: rgba(247,243,232,0.6); }
+  .lightbox-inner .grade-slab{ background: rgba(255,255,255,0.1); }
+  .lightbox-hint{ font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.5; margin:4px 0 0; }
+
+  /* ---------- Desk: sort bar, real-grade logging, calibration ---------- */
+  .desk-toolbar{ display:flex; align-items:center; gap:8px; margin: 0 0 14px; }
+  .desk-toolbar label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase; color: rgba(247,243,232,0.55); }
+  .desk-toolbar select{
+    flex:1; min-width:0;
+    padding:8px 10px; border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.3); color: var(--stock-100);
+    font-family:'Inter', sans-serif; font-size:12.5px;
+  }
+  .calibrate-btn{
+    padding:8px 12px; border-radius:8px; cursor:pointer;
+    border:1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(247,243,232,0.8);
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+  }
+  .calibrate-btn:hover{ background: rgba(255,255,255,0.07); }
+  .calibrate-btn.is-open{ background: var(--stock-100); color: var(--ink-900); }
+
+  .calibration-panel{
+    margin: 0 0 14px; padding:14px; border-radius:10px;
+    background: rgba(255,255,255,0.06); color: var(--stock-100);
+  }
+  .calibration-panel h4{ margin:0 0 8px; font-family:'Oswald', sans-serif; font-size:16px; letter-spacing:0.5px; font-weight:500; }
+  .calibration-panel p{ margin:0 0 8px; font-size:12px; line-height:1.5; color: rgba(247,243,232,0.8); }
+  .cal-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
+  .cal-stats div{ background: rgba(0,0,0,0.25); border-radius:8px; padding:8px 4px; text-align:center; }
+  .cal-stats b{ display:block; font-family:'Oswald', sans-serif; font-size:18px; font-weight:500; color: var(--foil-1); }
+  .cal-stats span{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; line-height:1.3; color: rgba(247,243,232,0.6); }
+  .calibration-panel .cal-caution{ color:#ffb347; font-family:'IBM Plex Mono', monospace; font-size:10.5px; }
+  .calibration-panel .cal-note{ font-family:'IBM Plex Mono', monospace; font-size:10px; color: rgba(247,243,232,0.5); margin:8px 0 0; }
+  .cal-list{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:4px; }
+  .cal-list li{
+    display:flex; justify-content:space-between; gap:10px;
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    padding:6px 8px; border-radius:6px; background: rgba(255,255,255,0.05);
+  }
+  .cal-list li.is-above{ background: rgba(224,113,79,0.16); }
+  .cal-list i{ opacity:0.6; font-style:normal; }
+
+  .log-wrap{ margin-top:8px; }
+  .log-pills{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
+  .log-pill{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px;
+    padding:3px 4px 3px 8px; border-radius:999px;
+  }
+  .log-pill.is-ok{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
+  .log-pill.is-above{ background: rgba(224,113,79,0.2); color:#8a3a1a; }
+  .log-pill button{ border:none; background: rgba(18,20,15,0.12); color: inherit; width:16px; height:16px; border-radius:50%; cursor:pointer; line-height:1; font-size:11px; padding:0; }
+  .log-open{
+    border:none; background:none; cursor:pointer; padding:2px 0;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color: var(--ink-600); text-decoration:underline;
+  }
+  .log-form{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .log-form select{
+    padding:6px 8px; border-radius:7px; border:1px solid rgba(18,20,15,0.25);
+    background:#fff; color: var(--ink-900); font-family:'Inter', sans-serif; font-size:12px;
+  }
+  .log-form button{
+    padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:12px;
+  }
+  .log-save{ background: var(--ink-900); color: var(--stock-100); }
+  .log-cancel{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
+  .log-help{ flex-basis:100%; margin:2px 0 0; font-family:'IBM Plex Mono', monospace; font-size:9.5px; line-height:1.45; color: var(--ink-600); }
+
+  /* ---------- eBay sold links ---------- */
+  .sold-links{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .sold-link{
+    display:inline-block; margin-top:7px;
+    padding:5px 10px; border-radius:999px;
+    background: rgba(18,20,15,0.07); color: var(--ink-900);
+    font-family:'IBM Plex Mono', monospace; font-size:10px; text-decoration:none;
+    border:1px solid rgba(18,20,15,0.12);
+  }
+  .sold-links .sold-link{ margin-top:0; }
+  .sold-link:hover{ background: rgba(18,20,15,0.13); }

@@ -126,7 +126,7 @@ const path = require('path');
   await page.click('#gradeSaveConfirm');
 
   await page.click('#navCollectionBtn'); await page.waitForTimeout(200);
-  const chips = await page.$$eval('.grade-chips', els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
+  const chips = await page.$$eval('.desk-grade', els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
   console.log('Desk chips:', chips);
   await page.screenshot({ path: 'shot-desk.png', fullPage: true });
 

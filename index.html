@@ -494,6 +494,7 @@
     font-size:14px;
     line-height:1.25;
     margin:0 0 3px;
+    color: var(--ink-900);
   }
   .card-meta{
     font-family:'IBM Plex Mono', monospace;
@@ -1196,13 +1197,145 @@
   .save-msg{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--foil-1); margin: 8px 0 0; min-height:14px; }
   .save-msg.is-error{ color:#e0714f; }
 
-  .grade-chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
-  .grade-chip{
-    font-family:'IBM Plex Mono', monospace; font-size:9.5px;
-    padding:3px 7px; border-radius:6px;
-    background: rgba(125,224,192,0.14); color: var(--foil-1);
+  /* ---------- Desk card: picture, price, possible grade ---------- */
+  .collection-item .card-thumb{ width:84px; height:118px; border-radius:8px; }
+  .collection-item .card-thumb[data-action="zoom"]{ cursor:zoom-in; }
+  .collection-item .card-info{ padding-top:14px; }
+  .collection-item .card-name{ color: var(--ink-900); padding-right:78px; }
+  .collection-item .card-price{ flex-wrap:wrap; row-gap:3px; }
+  .collection-item .card-price .amt{ font-size:15px; }
+  .collection-item .badge-demo, .collection-item .badge-live{ margin-left:2px; }
+  .collection-item .card-price{ margin-bottom:2px; }
+
+  .desk-grade{ margin-top:9px; }
+  .dg-label{
+    margin:0 0 5px;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:0.5px; text-transform:uppercase;
+    color: var(--ink-600);
   }
-  .grade-chip.muted{ background: rgba(255,255,255,0.08); color: rgba(247,243,232,0.7); }
+  .dg-label span{ opacity:0.7; text-transform:none; letter-spacing:0; margin-left:4px; }
+  .grade-slabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .grade-slab{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:6px 4px 5px;
+    border-radius:8px;
+    background: var(--ink-900);
+    line-height:1.1;
+  }
+  .gs-name{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.8px; color: rgba(247,243,232,0.6); }
+  .gs-val{ font-family:'Oswald', sans-serif; font-size:17px; color: var(--foil-1); margin-top:2px; white-space:nowrap; }
+  .gs-val.long{ font-size:12px; margin-top:5px; }
+  .dg-detail{
+    margin:5px 0 0;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; line-height:1.45;
+    color: var(--ink-600);
+  }
+  .desk-grade-cta{
+    margin-top:9px;
+    padding:7px 12px; border-radius:8px;
+    border:1px dashed rgba(18,20,15,0.3);
+    background: transparent; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color: var(--ink-900);
+  }
+  .desk-grade-cta:hover{ background: rgba(18,20,15,0.05); }
+
+  .lightbox{
+    position:fixed; inset:0; z-index:50;
+    background: rgba(8,10,8,0.96);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    padding:18px;
+  }
+  .lightbox-inner{
+    width:100%; max-width:380px; max-height:100%; overflow:auto;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    color: var(--stock-100); text-align:center;
+  }
+  .lightbox-inner img{ max-width:100%; max-height:58vh; border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.6); }
+  .lightbox-inner .lb-name{ font-family:'Inter', sans-serif; font-weight:600; font-size:16px; margin:0; }
+  .lightbox-inner .lb-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:0.65; margin:0; }
+  .lightbox-inner .lb-price{ font-family:'IBM Plex Mono', monospace; font-size:18px; font-weight:600; margin:0; }
+  .lightbox-inner .desk-grade{ width:100%; }
+  .lightbox-inner .dg-label, .lightbox-inner .dg-detail{ color: rgba(247,243,232,0.6); }
+  .lightbox-inner .grade-slab{ background: rgba(255,255,255,0.1); }
+  .lightbox-hint{ font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.5; margin:4px 0 0; }
+
+  /* ---------- Desk: sort bar, real-grade logging, calibration ---------- */
+  .desk-toolbar{ display:flex; align-items:center; gap:8px; margin: 0 0 14px; }
+  .desk-toolbar label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase; color: rgba(247,243,232,0.55); }
+  .desk-toolbar select{
+    flex:1; min-width:0;
+    padding:8px 10px; border-radius:8px;
+    border:1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.3); color: var(--stock-100);
+    font-family:'Inter', sans-serif; font-size:12.5px;
+  }
+  .calibrate-btn{
+    padding:8px 12px; border-radius:8px; cursor:pointer;
+    border:1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(247,243,232,0.8);
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+  }
+  .calibrate-btn:hover{ background: rgba(255,255,255,0.07); }
+  .calibrate-btn.is-open{ background: var(--stock-100); color: var(--ink-900); }
+
+  .calibration-panel{
+    margin: 0 0 14px; padding:14px; border-radius:10px;
+    background: rgba(255,255,255,0.06); color: var(--stock-100);
+  }
+  .calibration-panel h4{ margin:0 0 8px; font-family:'Oswald', sans-serif; font-size:16px; letter-spacing:0.5px; font-weight:500; }
+  .calibration-panel p{ margin:0 0 8px; font-size:12px; line-height:1.5; color: rgba(247,243,232,0.8); }
+  .cal-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
+  .cal-stats div{ background: rgba(0,0,0,0.25); border-radius:8px; padding:8px 4px; text-align:center; }
+  .cal-stats b{ display:block; font-family:'Oswald', sans-serif; font-size:18px; font-weight:500; color: var(--foil-1); }
+  .cal-stats span{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; line-height:1.3; color: rgba(247,243,232,0.6); }
+  .calibration-panel .cal-caution{ color:#ffb347; font-family:'IBM Plex Mono', monospace; font-size:10.5px; }
+  .calibration-panel .cal-note{ font-family:'IBM Plex Mono', monospace; font-size:10px; color: rgba(247,243,232,0.5); margin:8px 0 0; }
+  .cal-list{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:4px; }
+  .cal-list li{
+    display:flex; justify-content:space-between; gap:10px;
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    padding:6px 8px; border-radius:6px; background: rgba(255,255,255,0.05);
+  }
+  .cal-list li.is-above{ background: rgba(224,113,79,0.16); }
+  .cal-list i{ opacity:0.6; font-style:normal; }
+
+  .log-wrap{ margin-top:8px; }
+  .log-pills{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
+  .log-pill{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px;
+    padding:3px 4px 3px 8px; border-radius:999px;
+  }
+  .log-pill.is-ok{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
+  .log-pill.is-above{ background: rgba(224,113,79,0.2); color:#8a3a1a; }
+  .log-pill button{ border:none; background: rgba(18,20,15,0.12); color: inherit; width:16px; height:16px; border-radius:50%; cursor:pointer; line-height:1; font-size:11px; padding:0; }
+  .log-open{
+    border:none; background:none; cursor:pointer; padding:2px 0;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color: var(--ink-600); text-decoration:underline;
+  }
+  .log-form{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .log-form select{
+    padding:6px 8px; border-radius:7px; border:1px solid rgba(18,20,15,0.25);
+    background:#fff; color: var(--ink-900); font-family:'Inter', sans-serif; font-size:12px;
+  }
+  .log-form button{
+    padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:12px;
+  }
+  .log-save{ background: var(--ink-900); color: var(--stock-100); }
+  .log-cancel{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
+  .log-help{ flex-basis:100%; margin:2px 0 0; font-family:'IBM Plex Mono', monospace; font-size:9.5px; line-height:1.45; color: var(--ink-600); }
+
+  /* ---------- eBay sold links ---------- */
+  .sold-links{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .sold-link{
+    display:inline-block; margin-top:7px;
+    padding:5px 10px; border-radius:999px;
+    background: rgba(18,20,15,0.07); color: var(--ink-900);
+    font-family:'IBM Plex Mono', monospace; font-size:10px; text-decoration:none;
+    border:1px solid rgba(18,20,15,0.12);
+  }
+  .sold-links .sold-link{ margin-top:0; }
+  .sold-link:hover{ background: rgba(18,20,15,0.13); }
 </style>
 </head>
 <body>
@@ -1446,6 +1579,12 @@
         <div class="tab" data-filter="basketball" data-game="basketball"><span class="dot"></span>Basketball</div>
         <div class="tab" data-filter="football" data-game="football"><span class="dot"></span>Football</div>
       </div>
+      <div class="desk-toolbar">
+        <label for="deskSort">Sort</label>
+        <select id="deskSort"></select>
+        <button type="button" class="calibrate-btn" id="calibrateBtn">Calibration</button>
+      </div>
+      <div class="calibration-panel" id="calibrationPanel" style="display:none;"></div>
       <div id="collectionList"></div>
     </div>
   </div>
@@ -1565,8 +1704,8 @@ const EBAY_CATEGORY_IDS = {
 };
 
 const sourceNotes = {
-  pokemon: 'Live TCGplayer market pricing, via the Pokémon TCG API. <b>On the roadmap:</b> eBay sold-comps and TAG pop/price data, once a backend can hold those API keys safely.',
-  yugioh: 'Live lookup via YGOPRODeck\'s public database, with real TCGplayer market pricing attached. <b>On the roadmap:</b> eBay sold-comps and TAG pop/price data, once a backend can hold those API keys safely.',
+  pokemon: 'Live TCGplayer market pricing, via the Pokémon TCG API. Tap <b>Sold on eBay</b> on any card to see what it has actually sold for.',
+  yugioh: 'Live lookup via YGOPRODeck\'s public database, with real TCGplayer market pricing attached. Tap <b>Sold on eBay</b> on any card to see what it has actually sold for.',
   baseball: 'SPORTS_DYNAMIC',
   basketball: 'SPORTS_DYNAMIC',
   football: 'SPORTS_DYNAMIC',
@@ -1634,7 +1773,7 @@ function renderSourceNote(){
   if(raw === 'SPORTS_DYNAMIC'){
     sourceNote.innerHTML = PRICING_BACKEND_URL
       ? '<b>Live eBay asking prices</b> — current listings, not confirmed sold prices. TCGplayer\'s API isn\'t available for this (they\'ve paused new partner approvals).'
-      : '<b>Demo data.</b> A backend is built and ready for eBay pricing here — set <code>PRICING_BACKEND_URL</code> in the code once it\'s deployed to go live automatically.';
+      : '<b>Demo estimates.</b> The prices shown are rough illustrative ranges, not live data. Tap <b>Sold on eBay</b> on any card to see what that card has actually sold for on eBay.';
   } else {
     sourceNote.innerHTML = raw;
   }
@@ -2212,6 +2351,7 @@ function renderResults(items, count, isDemo, note){
           <span class="amt">${item.price ? (item.demo ? '$' + item.price : '$' + item.price) : 'n/a'}</span>
           ${item.demo ? '<span class="badge-demo">Demo data</span>' : '<span class="badge-live">Live</span>'}
         </div>
+        ${soldLinkMarkup(item, state.game)}
       </div>
     </div>
   `;
@@ -2257,8 +2397,12 @@ function updateCollectionSummary(items){
   const summaryEl = document.getElementById('collectionSummary');
   if(!summaryEl) return;
   const n = items.length;
-  const total = items.reduce((sum, c) => sum + (c.price ? parseFloat(c.price) : 0), 0);
-  summaryEl.textContent = n + ' card' + (n === 1 ? '' : 's') + (total > 0 ? ' · $' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' combined (est.)' : '');
+  const live = items.filter(c => !c.demo);
+  const total = live.reduce((sum, c) => sum + (priceValue(c) || 0), 0);
+  const hasDemo = items.some(c => c.demo);
+  summaryEl.textContent = n + ' card' + (n === 1 ? '' : 's') +
+    (total > 0 ? ' \u00b7 $' + total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' combined (est.)' : '') +
+    (hasDemo ? ' \u00b7 demo ranges not counted' : '');
 }
 
 const gameNames = {
@@ -2268,6 +2412,7 @@ const gameNames = {
 function renderCollectionView(){
   const list = document.getElementById('collectionList');
   if(!list) return;
+  renderCalibrationPanel();
 
   if(state.collection.length === 0){
     list.innerHTML = `
@@ -2294,7 +2439,7 @@ function renderCollectionView(){
     return;
   }
 
-  const sorted = [...filtered].sort((a, b) => b.addedAt - a.addedAt);
+  const sorted = sortDeskItems(filtered);
   list.innerHTML = sorted.map(c => `
     <div class="collection-item">
       <span class="game-dot" style="background:${gameDotColors[c.game] || 'var(--amber-500)'}"></span>
@@ -2311,7 +2456,7 @@ function renderCollectionView(){
         Delete
       </button>`}
       ${(c.img || c.gradeThumb)
-        ? `<img class="card-thumb" src="${c.img || c.gradeThumb}" alt="${escapeHtml(c.name)}">`
+        ? `<img class="card-thumb" src="${c.img || c.gradeThumb}" alt="${escapeHtml(c.name)}" data-action="zoom" data-id="${c.id}">`
         : `<div class="card-thumb placeholder">${escapeHtml(c.name.charAt(0))}</div>`}
       <div class="card-info">
         <p class="card-name">${escapeHtml(c.name)}</p>
@@ -2321,7 +2466,9 @@ function renderCollectionView(){
           <span class="amt">${c.price ? '$' + c.price : 'n/a'}</span>
           ${c.demo ? '<span class="badge-demo">Demo data</span>' : '<span class="badge-live">Live</span>'}
         </div>
-        ${gradingChipsMarkup(c)}
+        ${gradeBoxMarkup(c)}
+        ${gradeLogMarkup(c)}
+        ${deskSoldLinks(c)}
       </div>
     </div>
   `).join('');
@@ -2332,6 +2479,28 @@ document.getElementById('collectionList') && document.getElementById('collection
   if(!btn) return;
   const id = btn.dataset.id;
   const action = btn.dataset.action;
+  if(action === 'zoom'){ openLightbox(id); return; }
+  if(action === 'grade'){ setView('grade'); return; }
+  if(action === 'log-open'){ gradeLogId = id; gradeLogDraft = { grader: 'psa', grade: GRADE_OPTIONS.psa[0] }; renderCollectionView(); return; }
+  if(action === 'log-cancel'){ gradeLogId = null; gradeLogDraft = null; renderCollectionView(); return; }
+  if(action === 'log-remove'){
+    const item = state.collection.find(x => x.id === id);
+    if(item){ item.gradeResults = (item.gradeResults || []).filter(r => r.grader !== btn.dataset.grader); saveCollection(); }
+    renderCollectionView(); return;
+  }
+  if(action === 'log-save'){
+    const item = state.collection.find(x => x.id === id);
+    if(item && gradeLogDraft && item.grading && item.grading.ceilings){
+      const g = item.grading;
+      const rec = {
+        grader: gradeLogDraft.grader, grade: gradeLogDraft.grade, ceiling: g.ceilings[gradeLogDraft.grader],
+        frontWorst: g.front ? g.front.worst : null, backWorst: g.back ? g.back.worst : null, loggedAt: Date.now(),
+      };
+      item.gradeResults = (item.gradeResults || []).filter(r => r.grader !== rec.grader).concat(rec);
+      saveCollection();
+    }
+    gradeLogId = null; gradeLogDraft = null; renderCollectionView(); return;
+  }
   if(action === 'ask'){
     confirmDeleteId = id;
   } else if(action === 'cancel'){
@@ -2342,6 +2511,14 @@ document.getElementById('collectionList') && document.getElementById('collection
     saveCollection();
     updateCollectionBadge();
   }
+  renderCollectionView();
+});
+
+document.getElementById('collectionList').addEventListener('change', (e) => {
+  const sel = e.target.closest('select[data-role]');
+  if(!sel || !gradeLogDraft) return;
+  if(sel.dataset.role === 'lg-grader'){ gradeLogDraft = { grader: sel.value, grade: GRADE_OPTIONS[sel.value][0] }; }
+  else { gradeLogDraft.grade = sel.value; }
   renderCollectionView();
 });
 
@@ -2836,6 +3013,44 @@ function computeQuality(info){
   return out;
 }
 const BLUR_WARN = 0.22, BLUR_BAD = 0.12;
+
+/* ---- Calibration helpers: compare a real graded result to the centering ceiling ---- */
+const GRADE_OPTIONS = {
+  psa: ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'],
+  bgs: ['10', '9.5', '9', '8.5', '8', '7.5', '7', '6.5', '6', '5.5', '5', '4.5', '4', '3.5', '3', '2.5', '2', '1.5', '1'],
+  cgc: ['10 Pristine', '10', '9.5', '9', '8.5', '8', '7.5', '7', '6.5', '6', '5.5', '5', '4.5', '4', '3.5', '3', '2.5', '2', '1.5', '1'],
+};
+
+function gradeNum(g){
+  const s = String(g);
+  if(/pristine/i.test(s)) return 10.5; // CGC Pristine 10 sits above Gem Mint 10
+  return parseFloat(s);
+}
+
+/* 'below' / 'at' = consistent with the ceiling; 'between' = the grade falls in a gap where
+   the company has no tier in our table (still consistent); 'above' = beat the ceiling. */
+function calibrationStatus(key, ceilingGrade, actualGrade){
+  const tiers = GRADERS[key].tiers;
+  const c = gradeNum(ceilingGrade), a = gradeNum(actualGrade);
+  if(a < c) return 'below';
+  if(a === c) return 'at';
+  const idx = tiers.findIndex(t => t.g === String(ceilingGrade));
+  if(idx > 0 && a < gradeNum(tiers[idx - 1].g)) return 'between';
+  return 'above';
+}
+
+/* How many centering points past the limit for the grade actually received (0 if within). */
+function overshootPoints(key, actualGrade, frontWorst, backWorst){
+  const tiers = GRADERS[key].tiers;
+  const a = gradeNum(actualGrade);
+  const cands = tiers.filter(t => gradeNum(t.g) <= a);
+  if(!cands.length) return 0;
+  const t = cands.reduce((best, x) => gradeNum(x.g) > gradeNum(best.g) ? x : best);
+  let over = 0;
+  if(frontWorst !== null && frontWorst !== undefined) over = Math.max(over, frontWorst - t.f);
+  if(backWorst !== null && backWorst !== undefined) over = Math.max(over, backWorst - t.b);
+  return Math.max(0, over);
+}
 /* ALGO-END */
 
 /* ================= Grade / Condition Check ================= */
@@ -3578,9 +3793,9 @@ function gradeThumbData(){
   const src = (gradeSides.front.flat || gradeSides.back.flat);
   if(!src) return null;
   const c = document.createElement('canvas');
-  c.width = 120; c.height = 168;
-  c.getContext('2d').drawImage(src, 0, 0, 120, 168);
-  try{ return c.toDataURL('image/jpeg', 0.7); } catch(e){ return null; }
+  c.width = 240; c.height = 336;
+  c.getContext('2d').drawImage(src, 0, 0, 240, 336);
+  try{ return c.toDataURL('image/jpeg', 0.78); } catch(e){ return null; }
 }
 
 document.getElementById('gradeSaveOpen').addEventListener('click', () => {
@@ -3628,19 +3843,209 @@ document.getElementById('gradeSaveConfirm').addEventListener('click', () => {
   saveMsg.textContent = 'Saved — find it on the Desk tab.';
 });
 
-function gradingChipsMarkup(c){
+function gradeBoxMarkup(c){
   const g = c.grading;
-  if(!g) return '';
-  const chips = [];
-  if(g.front) chips.push(`<span class="grade-chip muted">Front ${g.front.lr[0]}/${g.front.lr[1]} · ${g.front.tb[0]}/${g.front.tb[1]}</span>`);
-  if(g.back) chips.push(`<span class="grade-chip muted">Back ${g.back.lr[0]}/${g.back.lr[1]} · ${g.back.tb[0]}/${g.back.tb[1]}</span>`);
-  if(g.ceilings){
-    chips.push(`<span class="grade-chip">PSA ≤ ${escapeHtml(g.ceilings.psa)}</span>`);
-    chips.push(`<span class="grade-chip">BGS ≤ ${escapeHtml(g.ceilings.bgs)}</span>`);
-    chips.push(`<span class="grade-chip">CGC ≤ ${escapeHtml(g.ceilings.cgc)}</span>`);
+  if(!g){
+    return '<button type="button" class="desk-grade-cta" data-action="grade">Check condition &rarr;</button>';
   }
-  if(g.frontOnly && g.front) chips.push('<span class="grade-chip muted">front only</span>');
-  return `<div class="grade-chips" title="Centering-based ceilings, not predicted grades">${chips.join('')}</div>`;
+  if(!g.ceilings){
+    return '<button type="button" class="desk-grade-cta" data-action="grade">Only the back was checked &mdash; add the front &rarr;</button>';
+  }
+  const slab = (name, val) => `<div class="grade-slab"><span class="gs-name">${name}</span><span class="gs-val${String(val).length > 4 ? ' long' : ''}">&le;${escapeHtml(String(val))}</span></div>`;
+  const side = (label, s) => s ? `${label} ${s.lr[0]}/${s.lr[1]} &middot; ${s.tb[0]}/${s.tb[1]}` : '';
+  const detail = [side('Front', g.front), side('Back', g.back)].filter(Boolean).join(' &nbsp;|&nbsp; ') + (g.frontOnly ? ' &middot; front only' : '');
+  return `<div class="desk-grade" title="Best grade the centering allows &mdash; not a predicted grade">
+    <p class="dg-label">Possible grade <span>centering ceiling</span></p>
+    <div class="grade-slabs">${slab('PSA', g.ceilings.psa)}${slab('BGS', g.ceilings.bgs)}${slab('CGC', g.ceilings.cgc)}</div>
+    <p class="dg-detail">${detail}</p>
+  </div>`;
+}
+
+function openLightbox(id){
+  const c = state.collection.find(x => x.id === id);
+  if(!c) return;
+  const src = c.img || c.gradeThumb;
+  if(!src) return;
+  const price = c.price ? '$' + c.price : '';
+  let box = document.getElementById('lightbox');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'lightbox';
+    box.className = 'lightbox';
+    box.addEventListener('click', () => { box.style.display = 'none'; box.innerHTML = ''; });
+    document.body.appendChild(box);
+  }
+  box.innerHTML = `<div class="lightbox-inner">
+    <img src="${src}" alt="${escapeHtml(c.name)}">
+    <p class="lb-name">${escapeHtml(c.name)}</p>
+    ${c.meta ? `<p class="lb-meta">${escapeHtml(c.meta)}</p>` : ''}
+    ${price ? `<p class="lb-price">${escapeHtml(price)}${c.demo ? ' <small style="font-weight:400;opacity:.6">est. range</small>' : ''}</p>` : ''}
+    ${c.grading && c.grading.ceilings ? gradeBoxMarkup(c) : ''}
+    <p class="lightbox-hint">Tap anywhere to close</p>
+  </div>`;
+  box.style.display = 'flex';
+}
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){ const b = document.getElementById('lightbox'); if(b){ b.style.display = 'none'; b.innerHTML = ''; } }
+});
+
+/* ================= Desk: sorting + calibration ================= */
+
+const SORT_KEY = 'carddesk_sort_v1';
+const SORT_OPTIONS = [
+  ['newest', 'Newest added'], ['oldest', 'Oldest added'],
+  ['value-high', 'Value: high to low'], ['value-low', 'Value: low to high'],
+  ['name', 'Name A–Z'], ['centering', 'Best centering first'],
+];
+function loadSort(){
+  try{ const v = localStorage.getItem(SORT_KEY); return SORT_OPTIONS.some(o => o[0] === v) ? v : 'newest'; } catch(e){ return 'newest'; }
+}
+state.collectionSort = loadSort();
+let gradeLogId = null, gradeLogDraft = null, calibrationOpen = false;
+
+/* First number in a price string ("1,234.50", "38,000 – 5.2M" -> 38000). Null if none. */
+function priceValue(c){
+  if(!c.price) return null;
+  const m = String(c.price).match(/[\d,]+(?:\.\d+)?/);
+  if(!m) return null;
+  const v = parseFloat(m[0].replace(/,/g, ''));
+  return isNaN(v) ? null : v;
+}
+
+function sortDeskItems(items){
+  const arr = [...items];
+  const byNewest = (a, b) => b.addedAt - a.addedAt;
+  const nullsLast = (va, vb, dir) => {
+    if(va === null && vb === null) return 0;
+    if(va === null) return 1;
+    if(vb === null) return -1;
+    return dir * (va - vb);
+  };
+  const worst = (c) => (c.grading && c.grading.front) ? c.grading.front.worst : null;
+  switch(state.collectionSort){
+    case 'oldest': arr.sort((a, b) => a.addedAt - b.addedAt); break;
+    case 'value-high': arr.sort((a, b) => nullsLast(priceValue(a), priceValue(b), -1) || byNewest(a, b)); break;
+    case 'value-low': arr.sort((a, b) => nullsLast(priceValue(a), priceValue(b), 1) || byNewest(a, b)); break;
+    case 'name': arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }) || byNewest(a, b)); break;
+    case 'centering': arr.sort((a, b) => nullsLast(worst(a), worst(b), 1) || byNewest(a, b)); break;
+    default: arr.sort(byNewest);
+  }
+  return arr;
+}
+
+const graderLabel = { psa: 'PSA', bgs: 'BGS', cgc: 'CGC' };
+const calStatusText = { at: 'at ceiling', below: 'below ceiling', between: 'between tiers', above: 'above ceiling' };
+
+function gradeLogMarkup(c){
+  if(!c.grading || !c.grading.ceilings) return '';
+  const results = c.gradeResults || [];
+  const pills = results.map(r => {
+    const st = calibrationStatus(r.grader, r.ceiling, r.grade);
+    return `<span class="log-pill ${st === 'above' ? 'is-above' : 'is-ok'}">${graderLabel[r.grader]} ${escapeHtml(r.grade)} &middot; ${calStatusText[st]}<button type="button" data-action="log-remove" data-id="${c.id}" data-grader="${r.grader}" aria-label="Remove logged ${graderLabel[r.grader]} grade">&times;</button></span>`;
+  }).join('');
+  let tail;
+  if(gradeLogId === c.id && gradeLogDraft){
+    const opts = GRADE_OPTIONS[gradeLogDraft.grader].map(g => `<option value="${escapeHtml(g)}"${g === gradeLogDraft.grade ? ' selected' : ''}>${escapeHtml(g)}</option>`).join('');
+    tail = `<div class="log-form">
+      <select data-role="lg-grader" aria-label="Grading company">${['psa', 'bgs', 'cgc'].map(k => `<option value="${k}"${k === gradeLogDraft.grader ? ' selected' : ''}>${graderLabel[k]}</option>`).join('')}</select>
+      <select data-role="lg-grade" aria-label="Grade received">${opts}</select>
+      <button type="button" class="log-save" data-action="log-save" data-id="${c.id}">Save</button>
+      <button type="button" class="log-cancel" data-action="log-cancel" data-id="${c.id}">Cancel</button>
+      ${gradeLogDraft.grader === 'bgs' ? '<p class="log-help">For BGS, enter the <b>centering sub-grade</b> from the label — the overall grade also depends on corners, edges and surface.</p>' : ''}
+    </div>`;
+  } else {
+    tail = `<button type="button" class="log-open" data-action="log-open" data-id="${c.id}">+ Log real grade</button>`;
+  }
+  return `<div class="log-wrap">${pills ? `<div class="log-pills">${pills}</div>` : ''}${tail}</div>`;
+}
+
+function calibrationRows(){
+  const rows = [];
+  state.collection.forEach(c => (c.gradeResults || []).forEach(r => {
+    const status = calibrationStatus(r.grader, r.ceiling, r.grade);
+    rows.push({ c, r, status, over: status === 'above' ? overshootPoints(r.grader, r.grade, r.frontWorst, r.backWorst) : 0 });
+  }));
+  return rows;
+}
+
+function renderCalibrationPanel(){
+  const panel = document.getElementById('calibrationPanel');
+  const btn = document.getElementById('calibrateBtn');
+  if(!panel) return;
+  btn.classList.toggle('is-open', calibrationOpen);
+  panel.style.display = calibrationOpen ? 'block' : 'none';
+  if(!calibrationOpen) return;
+  const rows = calibrationRows();
+  if(!rows.length){
+    panel.innerHTML = `<h4>Calibration</h4>
+      <p>Once a card comes back from grading, open it on the Desk and tap <b>+ Log real grade</b>. This panel then checks whether your photos' centering ceilings held up against what the grader actually gave.</p>
+      <p>It never changes any numbers on its own &mdash; it just shows whether they hold up. Log about 10 or more before trusting a pattern.</p>`;
+    return;
+  }
+  const n = rows.length;
+  const above = rows.filter(x => x.status === 'above');
+  const at = rows.filter(x => x.status === 'at').length;
+  const within = n - above.length;
+  const avgOver = above.length ? above.reduce((t, x) => t + x.over, 0) / above.length : 0;
+  let verdict;
+  if(!above.length){
+    verdict = 'Every logged result landed at or under its ceiling — the readings and thresholds look consistent so far.';
+  } else {
+    verdict = `${above.length} of ${n} landed above their ceiling, by ${avgOver.toFixed(1)} centering points on average. ` +
+      (avgOver <= 2 ? 'That is within normal photo measurement error (about ±2 points).' : 'That is more than measurement error — the company may be more lenient than the table assumes, or photos may be reading cards as more off-center than they are.');
+  }
+  const caution = n < 10 ? `<p class="cal-caution">Only ${n} result${n === 1 ? '' : 's'} so far — too few to draw conclusions.</p>` : '';
+  panel.innerHTML = `<h4>Calibration</h4>
+    <div class="cal-stats">
+      <div><b>${n}</b><span>logged</span></div>
+      <div><b>${Math.round(within / n * 100)}%</b><span>within ceiling</span></div>
+      <div><b>${at}</b><span>exactly at ceiling</span></div>
+      <div><b>${above.length}</b><span>above ceiling</span></div>
+    </div>
+    <p>${escapeHtml(verdict)}</p>${caution}
+    <ul class="cal-list">${rows.map(x => `<li class="${x.status === 'above' ? 'is-above' : ''}"><span>${escapeHtml(x.c.name)}</span><span>${graderLabel[x.r.grader]} ${escapeHtml(x.r.grade)} <i>(ceiling ${escapeHtml(x.r.ceiling)}${x.status === 'above' && x.over > 0 ? ', ' + x.over.toFixed(1) + ' pts over' : ''})</i></span></li>`).join('')}</ul>
+    <p class="cal-note">Exactly-at-ceiling results suggest centering is what held the card back; below-ceiling results mean corners, edges or surface cost it more.</p>`;
+}
+
+document.getElementById('deskSort').innerHTML = SORT_OPTIONS.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('');
+document.getElementById('deskSort').value = state.collectionSort;
+document.getElementById('deskSort').addEventListener('change', (e) => {
+  state.collectionSort = e.target.value;
+  try{ localStorage.setItem(SORT_KEY, state.collectionSort); } catch(err){}
+  renderCollectionView();
+});
+document.getElementById('calibrateBtn').addEventListener('click', () => {
+  calibrationOpen = !calibrationOpen;
+  renderCalibrationPanel();
+});
+
+/* ================= eBay sold-listing links (no API needed) ================= */
+/* Builds an eBay search for SOLD + completed listings, newest first. Opens in a new tab,
+   so the user sees real sold prices on eBay itself. extra = e.g. "PSA 9". */
+function ebaySoldUrl(item, extra, game){
+  const g = game || item.game;
+  const name = String(item.name || '').replace(/\(test\)/ig, '').trim();
+  let parts = String(item.meta || '').split('·').map(p => p.trim())
+    .filter(p => p && !/sample entry|rookie-era icon|demo|active ebay listing/i.test(p));
+  let tag = '';
+  if(g === 'yugioh'){ parts = []; tag = 'Yu-Gi-Oh'; }   // meta is card-type text (monster/race/attribute): too noisy to search on
+  else if(g === 'pokemon'){ tag = 'Pokemon'; }
+  const q = [name, tag, ...parts, extra || ''].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(q) + '&LH_Sold=1&LH_Complete=1&_sop=13';
+}
+
+function soldLinkMarkup(item, game){
+  return `<a class="sold-link" href="${ebaySoldUrl(item, '', game)}" target="_blank" rel="noopener noreferrer">Sold on eBay &#8599;</a>`;
+}
+
+/* Desk cards: plain sold link plus one at the best grade the card could reach. */
+function deskSoldLinks(c){
+  let links = `<a class="sold-link" href="${ebaySoldUrl(c)}" target="_blank" rel="noopener noreferrer">Sold on eBay &#8599;</a>`;
+  const ce = c.grading && c.grading.ceilings;
+  if(ce && ce.psa){
+    links += `<a class="sold-link" href="${ebaySoldUrl(c, 'PSA ' + ce.psa)}" target="_blank" rel="noopener noreferrer" title="Sold listings graded at the best PSA grade your centering allows">PSA ${escapeHtml(String(ce.psa))} sold &#8599;</a>`;
+  }
+  return `<div class="sold-links">${links}</div>`;
 }
 
 function setView(view){
