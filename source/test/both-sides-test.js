@@ -40,8 +40,15 @@ const waitAnalyzed = (page) => page.waitForFunction(
     await page.waitForSelector('#gradeCameraVideo');
     await page.waitForFunction(() => document.getElementById('gradeCameraVideo').videoWidth > 0, null, { timeout: 10000 });
     check('camera: step 1 shows front', /Step 1 of 2/.test(await stepText(page)));
+    check('camera: Analyze / Clear hidden while the camera is open', !(await page.isVisible('#gradeActionRow')));
+    const expectCrop = await page.evaluate(() => { const v = document.getElementById('gradeCameraVideo'); return { vw: v.videoWidth, vh: v.videoHeight, r: guideCropRect(v, gradeZone) }; });
     await page.click('#gradeCaptureBtn');
     await page.waitForFunction(() => currentGradeSide === 'back' && document.getElementById('gradeCameraVideo'), null, { timeout: 10000 });
+    const saved = await page.evaluate(async () => { const i = await loadImageEl(gradeSides.front.file); return { w: i.naturalWidth, h: i.naturalHeight }; });
+    check('camera: photo cropped to the card frame (smaller than the full picture)',
+      saved.w === expectCrop.r.sw && saved.h === expectCrop.r.sh && saved.w * saved.h < expectCrop.vw * expectCrop.vh * 0.8,
+      JSON.stringify({ saved, full: [expectCrop.vw, expectCrop.vh] }));
+    check('camera: crop keeps the frame portrait-shaped like a card', saved.h > saved.w);
     await page.waitForFunction(() => document.getElementById('gradeCameraVideo').videoWidth > 0, null, { timeout: 10000 });
     check('camera: front saved, camera reopened for back', await page.evaluate(() => !!gradeSides.front.file && !gradeSides.back.file));
     check('camera: step 2 shows back', /Step 2 of 2/.test(await stepText(page)));
@@ -51,6 +58,9 @@ const waitAnalyzed = (page) => page.waitForFunction(
     check('camera: shows front with back marked done', await page.evaluate(() => currentGradeSide === 'front' && document.getElementById('backDone').textContent.includes('✓')));
     check('camera: grader rows use both sides', /front and back/.test(await page.textContent('#graderSubHead')));
     check('camera: done message', /Front and back checked/.test(await stepText(page)));
+    check('camera: no Re-analyze / Clear above the results', !(await page.isVisible('#analyzeBtn')) && !(await page.isVisible('#gradeClearBtn')));
+    await page.click('#gradeSideToggle button[data-side="back"]');
+    check('camera: still hidden on the Back side', !(await page.isVisible('#gradeActionRow')));
     check('camera: no page errors', errors.length === 0, errors.join(' | '));
     await page.context().close();
   }

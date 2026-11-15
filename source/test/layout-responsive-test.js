@@ -66,6 +66,11 @@ const box = (page, sel) => page.$eval(sel, e => { const r = e.getBoundingClientR
     check('computer: Collection grid has 4+ columns', cols >= 4, String(cols));
     const s = await box(page, '#collectionSearch'), f = await box(page, '#statusFilter');
     check('computer: search and filters on one row', f.x > s.right && Math.abs(f.y - s.y) < 30);
+    for(let i = 0; i < 10; i++){ await page.click('#addTestCardBtn'); }
+    const tops = [];
+    for(const y of [0, 150, 600, 99999]){ await page.evaluate(y => window.scrollTo(0, y), y); tops.push(Math.round((await box(page, '.bottom-nav')).y)); }
+    for(const v of ['navScanBtn', 'navGradeBtn', 'navCollectionBtn']){ await page.click('#' + v); await page.waitForTimeout(80); tops.push(Math.round((await box(page, '.bottom-nav')).y)); }
+    check('computer: sidebar stays in one spot while scrolling and switching tabs', tops.every(t => t === tops[0]), tops.join(', '));
     check('computer: no page errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
