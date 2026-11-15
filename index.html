@@ -1759,6 +1759,7 @@
       grid-template-columns: 220px minmax(0, 1fr);
       grid-template-areas: "nav head" "nav main";   /* sidebar starts at the top, so it never slides */
       column-gap: 24px; align-items:start;
+      align-content:start; align-self:start;   /* don't stretch the rows on tall screens (that pushed everything down by a different amount per tab) */
     }
     #mainApp > header.app-head{ grid-area: head; margin-bottom:20px; padding:16px 24px 19px; }
     #mainApp > #scannerView, #mainApp > #gradeView, #mainApp > #collectionView{ grid-area: main; min-width:0; }

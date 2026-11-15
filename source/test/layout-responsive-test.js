@@ -75,6 +75,23 @@ const box = (page, sel) => page.$eval(sel, e => { const r = e.getBoundingClientR
     await ctx.close();
   }
 
+  // ---- tall computer screen: nothing moves between tabs ----
+  {
+    const { page, errors, ctx } = await open(browser, 1918, 1213);
+    const views = { navScanBtn: '#scannerView', navGradeBtn: '#gradeView', navCollectionBtn: '#collectionView' };
+    const spots = [];
+    for(const [btn, view] of Object.entries(views)){
+      await page.click('#' + btn); await page.waitForTimeout(100);
+      spots.push([(await box(page, '#mainApp > header')).y, (await box(page, '.bottom-nav')).y, (await box(page, view)).y].map(Math.round).join('/'));
+    }
+    check('tall screen: header, sidebar and content start at the same spot on every tab', spots.every(s => s === spots[0]), spots.join('  '));
+    await page.click('#navScanBtn'); await page.waitForTimeout(100);
+    const gap = (await box(page, '#scannerView')).y - (await box(page, '#mainApp > header')).bottom;
+    check('tall screen: no big empty gap under the header', gap < 40, String(Math.round(gap)));
+    check('tall screen: no page errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+  }
+
   // ---- no sideways scrolling ----
   for(const w of [320, 360, 375, 400, 430, 768, 960, 1024, 1280, 1440, 1920]){
     const { page, ctx } = await open(browser, w, 800);
