@@ -1448,6 +1448,8 @@
   .brand span{ color:#fff; }
   .brand-sub{ color: rgba(255,255,255,0.62); margin-top:3px; }
   .head-stripes{ display:flex; gap:4px; transform: skewX(-20deg); }
+  .head-right{ display:flex; align-items:center; gap:18px; }
+  .menu-btn{ display:none; }
   .head-stripes i{ display:block; width:5px; height:18px; background: rgba(255,255,255,0.75); }
   .head-stripes i:nth-child(2){ background: var(--red); }
 
@@ -1749,28 +1751,43 @@
 
   /* ================= Computer layout (screens 960px and wider) =================
      Phones keep the single column with the bottom tab bar. On a computer the tabs move into a
-     left sidebar and each screen splits into two columns. Switches automatically by window width. */
+     dropdown menu in the header and each screen splits into two columns. Switches automatically by window width. */
   .grade-empty{ display:none; }
   @media (min-width: 960px){
     body{ padding: 24px 24px 40px; }
     .phone{ max-width: 1240px; }
     #mainApp:not([style*="display: none"]):not([style*="display:none"]){
       display:grid !important;
-      grid-template-columns: 220px minmax(0, 1fr);
-      grid-template-areas: "nav head" "nav main";   /* sidebar starts at the top, so it never slides */
-      column-gap: 24px; align-items:start;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "head" "main";
+      align-items:start;
       align-content:start; align-self:start;   /* don't stretch the rows on tall screens (that pushed everything down by a different amount per tab) */
+      position:relative;
     }
-    #mainApp > header.app-head{ grid-area: head; margin-bottom:20px; padding:16px 24px 19px; }
+    #mainApp > header.app-head{ grid-area: head; margin-bottom:20px; padding:16px 24px 19px; position:sticky; top:0; z-index:55; }   /* stays at the top so the menu is always in reach */
     #mainApp > #scannerView, #mainApp > #gradeView, #mainApp > #collectionView{ grid-area: main; min-width:0; }
     .brand{ font-size:36px; }
     .brand-logo{ width:46px; height:46px; flex-basis:46px; }
 
-    /* Tabs become a sidebar */
-    .bottom-nav{
-      grid-area: nav; position: sticky; top: 24px; bottom:auto; left:auto; transform:none;
-      width:auto; max-width:none; flex-direction:column; gap:4px; padding:10px; border-radius:16px;
+    /* Tabs become a dropdown menu under the header's menu button */
+    .menu-btn{
+      display:inline-flex; align-items:center; gap:9px; height:44px; padding:0 14px 0 14px;
+      border-radius:10px; border:1.5px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.08); color:#fff;
+      font-family: var(--display); font-weight:700; font-size:18px; letter-spacing:0.4px; text-transform:uppercase; cursor:pointer;
+      transition: background .15s ease, border-color .15s ease;
     }
+    .menu-btn:hover, .menu-btn[aria-expanded="true"]{ background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.7); }
+    .menu-btn:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+    .menu-ico{ width:20px; height:20px; }
+    .menu-chev{ width:18px; height:18px; transition: transform .15s ease; }
+    .menu-btn[aria-expanded="true"] .menu-chev{ transform: rotate(180deg); }
+    .bottom-nav{
+      display:none; position:fixed; top: var(--menu-top, 96px);   /* fixed: opens under the pinned header wherever the page is scrolled */
+      right: var(--menu-right, 24px); bottom:auto; left:auto; transform:none;
+      width:240px; max-width:none; flex-direction:column; gap:4px; padding:8px; border-radius:14px; z-index:60;
+    }
+    #mainApp.menu-open .bottom-nav{ display:flex; animation: menuDrop .14s ease-out; }
+    @keyframes menuDrop{ from{ opacity:0; transform: translateY(-6px); } to{ opacity:1; transform:none; } }
     .bottom-nav-btn{ flex: 0 0 auto; flex-direction:row; justify-content:flex-start; gap:12px; padding:13px 16px; border-radius:10px; font-size:17px; position:relative; }
     .bottom-nav-btn svg{ width:22px; height:22px; }
     .bottom-nav-btn.active{ background: rgba(227,38,47,0.08); }
@@ -1784,13 +1801,13 @@
     .scan-cols{ display:grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 28px; align-items:start; }
     .scan-col-find, .scan-col-find .field{ min-width:0; }
     .scan-col-find .field input{ min-width:0; flex:1 1 auto; }
-    .scan-col-photo{ position: sticky; top: 24px; }
+    .scan-col-photo{ position: sticky; top: 110px; }   /* below the pinned header */
     .scan-col-find > .search-row:first-child{ margin-top:0; }
     .hero-title{ font-size:36px; }
 
     /* Check: photos and controls on the left, results on the right */
     .grade-cols{ display:grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 28px; align-items:start; }
-    .grade-col-photo{ position: sticky; top: 24px; }
+    .grade-col-photo{ position: sticky; top: 110px; }
     .grade-col-results:has(#gradeResults[style*="none"]) .grade-empty{
       display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;
       min-height: 420px; border:2px dashed var(--line); border-radius:16px; background: var(--panel); color: var(--muted);
@@ -1897,7 +1914,15 @@
         <div class="brand-sub">Scan · Identify · Price</div>
       </div>
     </div>
-    <div class="head-stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="head-right">
+      <div class="head-stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+      <!-- Computer only: opens the Scan / Check / Collection menu (phones use the bottom tab bar) -->
+      <button type="button" class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="mainNav">
+        <svg class="menu-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span id="menuCurrent">Scan</span>
+        <svg class="menu-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
   </header>
 
   <div id="scannerView">
@@ -2187,7 +2212,7 @@
     </div>
   </div>
 
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" id="mainNav" aria-label="Main">
     <button type="button" class="bottom-nav-btn active" id="navScanBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
@@ -5187,6 +5212,8 @@ function setView(view){
   navScanBtn.classList.toggle('active', view === 'scanner');
   navGradeBtn.classList.toggle('active', view === 'grade');
   navCollectionBtn.classList.toggle('active', view === 'collection');
+  document.getElementById('menuCurrent').textContent = { scanner: 'Scan', grade: 'Check', collection: 'Collection' }[view] || 'Menu';
+  closeMainMenu();
 
   if(view !== 'scanner') stopCameraStream();
   if(view !== 'grade'){ gradeStopCameraStream(); endBothFlow(); }
@@ -5196,6 +5223,38 @@ function setView(view){
     confirmDeleteId = null;
   }
 }
+
+/* Computer layout: the header's menu button drops down Scan / Check / Collection.
+   (On phones the button is hidden and the same buttons sit in the bottom tab bar.) */
+const menuBtn = document.getElementById('menuBtn');
+function closeMainMenu(){
+  const app = document.getElementById('mainApp');
+  if(!app.classList.contains('menu-open')) return;
+  app.classList.remove('menu-open');
+  menuBtn.setAttribute('aria-expanded', 'false');
+}
+function openMainMenu(){
+  const app = document.getElementById('mainApp'), nav = document.getElementById('mainNav');
+  const b = menuBtn.getBoundingClientRect();
+  nav.style.setProperty('--menu-top', Math.round(b.bottom + 8) + 'px');                    // just under the button
+  nav.style.setProperty('--menu-right', Math.round(window.innerWidth - b.right) + 'px');   // lined up with its right edge
+  app.classList.add('menu-open');
+  menuBtn.setAttribute('aria-expanded', 'true');
+  const active = nav.querySelector('.bottom-nav-btn.active') || nav.querySelector('.bottom-nav-btn');
+  if(active) active.focus({ preventScroll: true });
+}
+menuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(document.getElementById('mainApp').classList.contains('menu-open')) closeMainMenu(); else openMainMenu();
+});
+document.addEventListener('click', (e) => { if(!e.target.closest('#mainNav, #menuBtn')) closeMainMenu(); });
+document.addEventListener('keydown', (e) => {
+  if(e.key !== 'Escape' || !document.getElementById('mainApp').classList.contains('menu-open')) return;
+  closeMainMenu();
+  menuBtn.focus();
+});
+window.addEventListener('resize', closeMainMenu);
+window.addEventListener('scroll', closeMainMenu, { passive: true });
 
 document.getElementById('navScanBtn').addEventListener('click', () => setView('scanner'));
 document.getElementById('navGradeBtn').addEventListener('click', () => setView('grade'));
