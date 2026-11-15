@@ -1822,6 +1822,40 @@
   @media (min-width: 1280px){
     .scan-cols, .grade-cols{ grid-template-columns: 400px minmax(0, 1fr); gap: 40px; }
   }
+
+  /* ---------- Camera view with a card guide (2026-11-14) ----------
+     The box takes the camera's real shape (set from the video in fitCameraView) and grows to use the
+     screen, capped so the shutter stays visible. A 5:7 card frame sits in the middle; outside it is dimmed. */
+  .scan-zone.has-camera{
+    width: min(100%, calc(68svh * var(--cam-ratio, 0.75)));
+    max-width: 480px;
+    aspect-ratio: var(--cam-ratio, 0.75);
+    height:auto; border-radius:14px;
+  }
+  .scan-zone.has-camera video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cam-guide{
+    position:absolute; left:50%; top:47%; transform: translate(-50%, -50%);
+    height:68%; max-width:80%; aspect-ratio: 5 / 7;
+    border-radius:12px; pointer-events:none; z-index:1;
+    box-shadow: 0 0 0 9999px rgba(6,12,30,0.42);
+    outline: 1.5px dashed rgba(255,255,255,0.55); outline-offset:-1px;
+  }
+  .cam-guide i{ position:absolute; width:26px; height:26px; border:0 solid #fff; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); }
+  .cam-guide .g-tl{ top:-3px; left:-3px; border-top-width:4px; border-left-width:4px; border-top-left-radius:12px; }
+  .cam-guide .g-tr{ top:-3px; right:-3px; border-top-width:4px; border-right-width:4px; border-top-right-radius:12px; }
+  .cam-guide .g-bl{ bottom:-3px; left:-3px; border-bottom-width:4px; border-left-width:4px; border-bottom-left-radius:12px; }
+  .cam-guide .g-br{ bottom:-3px; right:-3px; border-bottom-width:4px; border-right-width:4px; border-bottom-right-radius:12px; }
+  .cam-tip{
+    position:absolute; top:10px; left:10px; right:10px; margin:0; z-index:2; text-align:center; pointer-events:none;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:12.5px; line-height:1.3; color:#fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  }
+  .scan-zone.has-camera .camera-controls{ z-index:3; bottom:12px; }
+  .scan-zone.cam-wide .cam-guide{ height:84%; top:50%; }
+  .scan-zone.cam-wide .cam-tip{ font-size:11px; top:6px; }
+  .scan-zone.cam-wide .camera-controls{ bottom:auto; top:50%; left:auto; right:10px; transform: translateY(-50%); flex-direction:column; gap:10px; }
+  .scan-zone.cam-wide .shutter-btn{ width:48px; height:48px; }
+  @media (min-width: 960px){ .scan-zone.has-camera{ width: min(100%, calc(62vh * var(--cam-ratio, 0.75))); } }
 </style>
 </head>
 <body>
@@ -2417,6 +2451,20 @@ function setImageFile(file){
   scanBtn.disabled = false;
 }
 
+/* Camera view: shape the box like the real camera picture, so what you see is exactly what
+   the photo captures (no hidden crop), then bring it into view. The card guide sits on top. */
+function fitCameraView(zone, video){
+  const apply = () => {
+    if(!video.videoWidth || !video.videoHeight) return;
+    zone.style.setProperty('--cam-ratio', (video.videoWidth / video.videoHeight).toFixed(4));
+    zone.classList.toggle('cam-wide', video.videoWidth > video.videoHeight);
+  };
+  video.addEventListener('loadedmetadata', apply);
+  video.addEventListener('resize', apply);   // some phones report the real size a moment later
+  apply();
+  setTimeout(() => zone.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80);
+}
+
 async function openCamera(){
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
     showCameraError(new Error('this browser doesn\'t support camera access'));
@@ -2424,7 +2472,7 @@ async function openCamera(){
   }
   try{
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: state.facingMode } },
+      video: { facingMode: { ideal: state.facingMode }, width: { ideal: 1920 }, height: { ideal: 1080 } },
       audio: false,
     });
     state.cameraStream = stream;
@@ -2433,6 +2481,8 @@ async function openCamera(){
     scanZone.classList.add('has-camera');
     scanZone.innerHTML = `
       <video id="cameraVideo" autoplay playsinline muted></video>
+      <div class="cam-guide" aria-hidden="true"><i class="g-tl"></i><i class="g-tr"></i><i class="g-bl"></i><i class="g-br"></i></div>
+      <p class="cam-tip">Fit the card inside the frame, with a little space around it</p>
       <div class="camera-controls">
         <button type="button" class="camera-icon-btn" id="cameraCancelBtn" aria-label="Cancel">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -2444,6 +2494,7 @@ async function openCamera(){
       </div>`;
     const videoEl = document.getElementById('cameraVideo');
     videoEl.srcObject = stream;
+    fitCameraView(scanZone, videoEl);
   } catch(err){
     showCameraError(err);
   }
@@ -3948,6 +3999,8 @@ async function gradeOpenCamera(){
     gradeZone.classList.add('has-camera');
     gradeZone.innerHTML = `
       <video id="gradeCameraVideo" autoplay playsinline muted></video>
+      <div class="cam-guide" aria-hidden="true"><i class="g-tl"></i><i class="g-tr"></i><i class="g-bl"></i><i class="g-br"></i></div>
+      <p class="cam-tip">Fit the card inside the frame, with a little space around it</p>
       <div class="camera-controls">
         <button type="button" class="camera-icon-btn" id="gradeCameraCancelBtn" aria-label="Cancel">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -3957,7 +4010,9 @@ async function gradeOpenCamera(){
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         </button>
       </div>`;
-    document.getElementById('gradeCameraVideo').srcObject = stream;
+    const gv = document.getElementById('gradeCameraVideo');
+    gv.srcObject = stream;
+    fitCameraView(gradeZone, gv);
   } catch(err){
     gradeShowCameraError(err);
   }
