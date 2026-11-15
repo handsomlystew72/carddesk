@@ -4,12 +4,13 @@ const path = require('path');
   const browser = await chromium.launch();
   const page = await (await browser.newContext({ viewport: { width: 430, height: 900 }, deviceScaleFactor: 2 })).newPage();
   const errors = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto('file://' + path.resolve(__dirname, '../index.html')); await page.click('#enterBtn');
+  await page.addInitScript(() => { try{ localStorage.setItem('carddesk_view_v1', 'list'); }catch(e){} }); // these checks read the full list entries
+  await page.goto('file://' + path.resolve(__dirname, '../../index.html')); await page.click('#enterBtn');
   let fail = 0; const check = (label, ok, extra) => { if(!ok) fail++; console.log(ok ? 'PASS' : 'FAIL', label, extra || ''); };
 
   // sports search
   await page.click('.tab[data-game="baseball"]');
-  await page.fill('#queryInput', 'Mantle'); await page.click('#searchBtn');
+  await page.fill('#queryInput', 'Mantle'); await page.click('#searchBtn'); await page.click('#findAddBtn');
   await page.waitForSelector('.card-result', { timeout: 15000 });
   const href = await page.getAttribute('.card-result .sold-link', 'href');
   const u = new URL(href);

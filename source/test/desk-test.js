@@ -5,7 +5,8 @@ const path = require('path');
   const page = await (await browser.newContext({ viewport: { width: 430, height: 900 }, deviceScaleFactor: 2 })).newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
-  await page.goto('file://' + path.resolve(__dirname, '../index.html'));
+  await page.addInitScript(() => { try{ localStorage.setItem('carddesk_view_v1', 'list'); }catch(e){} }); // these checks read the full list entries
+  await page.goto('file://' + path.resolve(__dirname, '../../index.html'));
   await page.click('#enterBtn');
   await page.evaluate(() => {
     const mk = (hue) => { const c = document.createElement('canvas'); c.width = 240; c.height = 336; const g = c.getContext('2d');

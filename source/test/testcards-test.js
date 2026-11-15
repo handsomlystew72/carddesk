@@ -4,7 +4,8 @@ const path = require('path');
   const browser = await chromium.launch();
   const page = await (await browser.newContext({ viewport: { width: 430, height: 900 }, deviceScaleFactor: 2 })).newPage();
   const errors = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto('file://' + path.resolve(__dirname, '../index.html'));
+  await page.addInitScript(() => { try{ localStorage.setItem('carddesk_view_v1', 'list'); }catch(e){} }); // these checks read the full list entries
+  await page.goto('file://' + path.resolve(__dirname, '../../index.html') + '?test');
   await page.click('#enterBtn'); await page.click('#navCollectionBtn');
   for(let i = 0; i < 5; i++) await page.click('#addTestCardBtn');
   await page.waitForTimeout(300);

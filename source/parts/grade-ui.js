@@ -14,8 +14,7 @@ const GRADE_IDLE_MARKUP = `
       <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
       <circle cx="12" cy="13" r="3.5"/>
     </svg>
-    <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
-    <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>`;
+    <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface. Tap here to upload a photo instead.</div>`;
 
 function newGradeSide(){
   return {
@@ -35,7 +34,6 @@ function sideWord(){ return currentGradeSide === 'front' ? 'Front' : 'Back'; }
 
 gradeZone.addEventListener('click', (e) => {
   if(e.target.closest('#gradeRotateBtn')){ e.stopPropagation(); gradeRotateCurrentImage(); return; }
-  if(e.target.closest('#gradeCameraBtn')){ e.stopPropagation(); gradeOpenCamera(); return; }
   if(e.target.closest('#gradeCameraCancelBtn')){ e.stopPropagation(); gradeCloseCameraToIdle(); return; }
   if(e.target.closest('#gradeCaptureBtn')){ e.stopPropagation(); gradeCaptureFromCamera(); return; }
   if(e.target.closest('#gradeCameraSwitchBtn')){ e.stopPropagation(); gradeSwitchCamera(); return; }
@@ -48,6 +46,7 @@ gradeFileInput.addEventListener('change', (e) => {
   if(!file) return;
   gradeSetImageFile(file);
   gradeFileInput.value = '';
+  bothFlowAfterPhoto();
 });
 
 /* Redraws the photo zone + results for whichever side is selected. */
@@ -91,6 +90,7 @@ function gradeSetImageFile(file){
 document.getElementById('gradeSideToggle').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-side]');
   if(!btn || btn.dataset.side === currentGradeSide) return;
+  endBothFlow();
   gradeStopCameraStream();
   currentGradeSide = btn.dataset.side;
   hideSaveForm();
@@ -135,11 +135,13 @@ function gradeStopCameraStream(){
 }
 
 function gradeCloseCameraToIdle(){
+  endBothFlow();
   gradeStopCameraStream();
   gradeShowZone();
 }
 
 function gradeShowCameraError(err){
+  bothFlowCamera = false;
   gradeStopCameraStream();
   gradeZone.classList.remove('has-camera', 'has-image');
   gradeZone.innerHTML = GRADE_IDLE_MARKUP;
@@ -149,20 +151,17 @@ function gradeShowCameraError(err){
   const isInUse = name === 'NotReadableError' || name === 'TrackStartError';
   let msg;
   if(isPermission){
-    msg = 'Camera access is turned off for this page. Allow it in your browser settings, then tap "Allow Camera" to try again.';
+    msg = 'Camera access is turned off for this page. Allow it in your browser settings, then tap "Scan front & back" to try again.';
   } else if(isNoCamera){
     msg = 'No camera was found on this device. You can still upload a photo instead.';
   } else if(isInUse){
-    msg = 'Your camera seems to be in use elsewhere. Close it and tap "Allow Camera" to try again.';
+    msg = 'Your camera seems to be in use elsewhere. Close it and tap "Scan front & back" to try again.';
   } else {
     msg = 'Camera unavailable (' + (err && err.message ? err.message : 'unknown error') + '). You can upload a photo instead.';
   }
+  if(bothFlow) msg += ' Tap here to upload the ' + bothFlow + ' photo instead.';
   const hint = gradeZone.querySelector('.scan-hint');
   if(hint) hint.textContent = msg;
-  if(isPermission || isInUse){
-    const camBtn = document.getElementById('gradeCameraBtn');
-    if(camBtn) camBtn.textContent = 'Allow Camera';
-  }
 }
 
 function gradeCaptureFromCamera(){
@@ -176,6 +175,7 @@ function gradeCaptureFromCamera(){
     if(!blob) return;
     gradeStopCameraStream();
     gradeSetImageFile(new File([blob], 'grade-capture.jpg', { type: 'image/jpeg' }));
+    bothFlowAfterPhoto();
   }, 'image/jpeg', 0.95);
 }
 
@@ -201,6 +201,7 @@ async function gradeRotateCurrentImage(){
 }
 
 gradeClearBtn.addEventListener('click', () => {
+  endBothFlow();
   const s = curSide();
   if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
   Object.assign(s, newGradeSide());
@@ -319,6 +320,81 @@ analyzeBtn.addEventListener('click', async () => {
     analyzeBtn.disabled = !curSide().file;
   }
 });
+
+/* ---------------- One button: front, then back, then analyze both ---------------- */
+
+let bothFlow = null;        // null, 'front' or 'back': which photo the flow is waiting for
+let bothFlowCamera = false; // true while the live camera works; false means uploads
+const gradeBothStep = document.getElementById('gradeBothStep');
+
+function setBothStep(text){
+  gradeBothStep.textContent = text || '';
+  gradeBothStep.style.display = text ? 'block' : 'none';
+}
+
+function endBothFlow(){
+  if(!bothFlow) return;
+  bothFlow = null;
+  setBothStep('');
+}
+
+document.getElementById('gradeBothBtn').addEventListener('click', () => {
+  gradeStopCameraStream();
+  hideSaveForm();
+  ['front', 'back'].forEach(k => {
+    const s = gradeSides[k];
+    if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
+    Object.assign(s, newGradeSide());
+  });
+  bothFlow = 'front';
+  bothFlowCamera = true;
+  currentGradeSide = 'front';
+  gradeShowZone();
+  setBothStep('Step 1 of 2 \u00b7 Front of the card');
+  gradeOpenCamera();
+});
+
+/* Called after each photo (camera or upload) while the flow is running. */
+function bothFlowAfterPhoto(){
+  if(!bothFlow) return;
+  if(bothFlow === 'front'){
+    bothFlow = 'back';
+    currentGradeSide = 'back';
+    gradeShowZone();
+    if(bothFlowCamera){
+      setBothStep('Step 2 of 2 \u00b7 Flip the card over and take the back');
+      gradeOpenCamera();
+    } else {
+      setBothStep('Step 2 of 2 \u00b7 Tap the box to add the back photo');
+    }
+    return;
+  }
+  bothFlow = null;
+  runBothAnalysis();
+}
+
+async function runBothAnalysis(){
+  analyzeBtn.disabled = true;
+  gradeResults.style.display = 'none';
+  gradeStatusLine.style.display = 'flex';
+  setBothStep('Measuring front and back\u2026');
+  try{
+    await analyzeSide(gradeSides.front);
+    await analyzeSide(gradeSides.back);
+    currentGradeSide = 'front';
+    hideSaveForm();
+    gradeShowZone();
+    setBothStep('Front and back checked. Use the Front / Back switch to adjust either side.');
+  } catch(err){
+    setBothStep('');
+    gradeResults.style.display = 'block';
+    document.getElementById('qualityHead').textContent = 'Could not analyze these photos';
+    document.getElementById('qualityList').innerHTML = `<div class="quality-row is-bad"><span class="status-dot bad"></span><span>${escapeHtml(err.message || 'unknown error')}. Try clearer, straight-on shots with all four corners visible.</span></div>`;
+  } finally {
+    gradeStatusLine.style.display = 'none';
+    analyzeBtn.disabled = !curSide().file;
+  }
+}
 
 /* ---------------- Rendering ---------------- */
 
@@ -800,7 +876,7 @@ function gradeBoxMarkup(c){
   const side = (label, s) => s ? `${label} ${s.lr[0]}/${s.lr[1]} &middot; ${s.tb[0]}/${s.tb[1]}` : '';
   const detail = [side('Front', g.front), side('Back', g.back)].filter(Boolean).join(' &nbsp;|&nbsp; ') + (g.frontOnly ? ' &middot; front only' : '');
   return `<div class="desk-grade" title="Best grade the centering allows &mdash; not a predicted grade">
-    <p class="dg-label">Possible grade <span>centering ceiling</span></p>
+    <p class="dg-label">Centering check <span>doesn't assess surface, corners, or edges</span></p>
     <div class="grade-slabs">${slab('PSA', g.ceilings.psa)}${slab('BGS', g.ceilings.bgs)}${slab('CGC', g.ceilings.cgc)}</div>
     <p class="dg-detail">${detail}</p>
   </div>`;

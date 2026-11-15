@@ -5,7 +5,8 @@ const path = require('path');
   const ctx = await browser.newContext({ viewport: { width: 430, height: 900 }, deviceScaleFactor: 2 });
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', e => errors.push(e.message));
-  const url = 'file://' + path.resolve(__dirname, '../index.html');
+  const url = 'file://' + path.resolve(__dirname, '../../index.html');
+  await page.addInitScript(() => { try{ localStorage.setItem('carddesk_view_v1', 'list'); }catch(e){} }); // these checks read the full list entries
   await page.goto(url); await page.click('#enterBtn');
   const G = (lr, tb, blr, btb, ce) => { const w = (a, b) => Math.max(a, 100 - a, b, 100 - b); return { savedAt: 1, front: { lr: [lr, 100 - lr], tb: [tb, 100 - tb], worst: w(lr, tb) }, back: blr == null ? null : { lr: [blr, 100 - blr], tb: [btb, 100 - btb], worst: w(blr, btb) }, ceilings: ce, frontOnly: blr == null }; };
   await page.evaluate((gs) => {

@@ -6,7 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1c1a'/%3E%3Crect x='7' y='9' width='18' height='14' rx='2' fill='none' stroke='%23e0a64b' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.2' fill='none' stroke='%237de0c0' stroke-width='2'/%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <style>
   :root{
@@ -38,7 +38,7 @@
       radial-gradient(ellipse 800px 600px at 50% 120%, rgba(224,166,75,0.08), transparent 60%),
       linear-gradient(180deg, #0a1420 0%, #0d1c1a 55%, #0a1614 100%);
     background-attachment: fixed;
-    color: var(--stock-100);
+    color: var(--text);
     font-family:'Inter', sans-serif;
     min-height:100vh;
     display:flex;
@@ -62,7 +62,7 @@
     font-size:26px;
     letter-spacing:0.5px;
     text-transform:uppercase;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .brand span{ color: var(--amber-500); }
   .brand-sub{
@@ -70,7 +70,7 @@
     font-size:10px;
     letter-spacing:1.5px;
     text-transform:uppercase;
-    color: rgba(247,243,232,0.45);
+    color: rgba(15,29,69,0.62);
   }
 
   .bottom-nav{
@@ -84,7 +84,7 @@
     gap:4px;
     padding:6px;
     background: rgba(20,26,22,0.7);
-    border:1px solid rgba(255,255,255,0.12);
+    border:1px solid rgba(15,29,69,0.108);
     border-radius:16px;
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -102,7 +102,7 @@
     border-radius:12px;
     background:transparent;
     border:none;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     cursor:pointer;
     font-family:'IBM Plex Mono', monospace;
     font-size:9.5px;
@@ -113,7 +113,7 @@
   }
   .bottom-nav-btn svg{ width:20px; height:20px; }
   .bottom-nav-btn.active{ background: var(--stock-100); color: var(--ink-900); }
-  .bottom-nav-btn:hover:not(.active){ color: rgba(247,243,232,0.85); }
+  .bottom-nav-btn:hover:not(.active){ color: rgba(15,29,69,0.86); }
   .nav-badge{
     position:absolute;
     top:4px; right:22%;
@@ -135,12 +135,12 @@
     gap:2px;
     margin-bottom:16px;
     padding:4px;
-    background: rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.10);
+    background: rgba(15,29,69,0.054);
+    border:1px solid rgba(15,29,69,0.09);
     border-radius:14px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(15,29,69,0.054);
   }
   .tab{
     flex:1;
@@ -156,9 +156,9 @@
     font-size:9px;
     letter-spacing:0.2px;
     text-transform:uppercase;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
   }
-  .tab:hover{ background: rgba(255,255,255,0.06); color: rgba(247,243,232,0.8); }
+  .tab:hover{ background: rgba(15,29,69,0.054); color: rgba(15,29,69,0.83); }
   .tab .dot{
     display:block;
     width:8px;height:8px;
@@ -185,18 +185,18 @@
   .tab.active .dot{ opacity:1; background: currentColor; }
 
   .desk{
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(15,29,69,0.045);
+    border: 1px solid rgba(15,29,69,0.09);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: var(--radius-card);
-    color: var(--stock-100);
+    color: var(--text);
     padding: 18px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(15,29,69,0.054);
   }
 
   .scan-zone{
-    border: 2px dashed rgba(255,255,255,0.2);
+    border: 2px dashed rgba(15,29,69,0.18);
     border-radius: 10px;
     aspect-ratio: 5 / 7;
     width: 100%;
@@ -210,12 +210,12 @@
     padding: 20px;
     position:relative;
     overflow:hidden;
-    background: rgba(255,255,255,0.04);
+    background: rgba(15,29,69,0.036);
     cursor:pointer;
   }
   .scan-zone.has-image{
     border-style:solid;
-    border-color: rgba(255,255,255,0.15);
+    border-color: rgba(15,29,69,0.135);
     padding:0;
     aspect-ratio: 5 / 7;
     min-height:0;
@@ -240,10 +240,10 @@
     background: rgba(10,14,10,0.55);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border:1px solid rgba(255,255,255,0.3);
+    border:1px solid rgba(15,29,69,0.27);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    color: var(--stock-100);
+    color: var(--text);
     z-index:2;
     transition: background .15s ease, transform .15s ease;
   }
@@ -269,7 +269,7 @@
 
   .scan-zone.has-camera{
     border-style:solid;
-    border-color: rgba(255,255,255,0.15);
+    border-color: rgba(15,29,69,0.135);
     padding:0;
     aspect-ratio: 5 / 7;
     min-height:0;
@@ -296,10 +296,10 @@
     background: rgba(10,14,10,0.55);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border:1px solid rgba(255,255,255,0.3);
+    border:1px solid rgba(15,29,69,0.27);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    color: var(--stock-100);
+    color: var(--text);
     transition: background .15s ease, transform .15s ease;
   }
   .camera-icon-btn svg{ width:17px; height:17px; }
@@ -309,7 +309,7 @@
     width:60px; height:60px;
     border-radius:50%;
     background: var(--stock-100);
-    border:4px solid rgba(255,255,255,0.45);
+    border:4px solid rgba(15,29,69,0.405);
     cursor:pointer;
     transition: transform .12s ease;
   }
@@ -323,14 +323,14 @@
   .scan-hint{
     font-family:'IBM Plex Mono', monospace;
     font-size:11px;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
     letter-spacing:0.3px;
     max-width:230px;
     line-height:1.5;
   }
   .corner{
     position:absolute; width:18px; height:18px;
-    border-color: rgba(247,243,232,0.35);
+    border-color: rgba(15,29,69,0.56);
     pointer-events:none;
   }
   .corner.tl{ top:8px; left:8px; border-top:2px solid; border-left:2px solid; }
@@ -360,10 +360,64 @@
   }
   .btn-secondary{
     background: transparent;
-    color: var(--stock-100);
-    border:1px solid rgba(255,255,255,0.2) !important;
+    color: var(--text);
+    border:1px solid rgba(15,29,69,0.18) !important;
   }
   .btn-primary:hover{ opacity:0.9; }
+
+  .browse-row{ margin-top:10px; }
+  .browse-btn{
+    background:none; padding:4px 0; color: var(--foil-1);
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+  }
+  .browse-btn:hover{ text-decoration: underline; }
+  .browse-back{
+    background:none; padding:2px 0 10px; color: var(--foil-1);
+    font-family:'Inter', sans-serif; font-weight:600; font-size:12px;
+  }
+  .set-filter{
+    width:100%; box-sizing:border-box; margin:0 0 10px; padding:10px 12px; border-radius:8px;
+    background: rgba(15,29,69,0.054); border:1px solid rgba(15,29,69,0.126); color: var(--text);
+    font-family:'Inter', sans-serif; font-size:14px;
+  }
+  .set-list{ display:flex; flex-direction:column; gap:6px; }
+  .set-row{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    padding:10px 12px; border-radius:10px; background: rgba(15,29,69,0.045);
+    color: var(--text);
+  }
+  .set-row:hover{ background: rgba(15,29,69,0.09); }
+  .set-icon{
+    width:36px; height:36px; flex:0 0 36px; border-radius:8px; object-fit:contain;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(15,29,69,0.054); font-family:'Oswald', sans-serif; font-size:16px;
+  }
+  .set-text{ min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .set-name{ font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .set-meta{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: rgba(15,29,69,0.68); }
+  .set-more{ margin:8px 0 0; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: rgba(15,29,69,0.68); text-align:center; }
+
+  .find-choice{
+    margin-top:14px; padding:14px; border-radius:14px;
+    background: rgba(15,29,69,0.054); border:1px solid rgba(15,29,69,0.108);
+  }
+  .find-choice-q{
+    margin:0 0 10px; font-family:'Inter', sans-serif; font-size:14px; color: var(--text);
+  }
+  .find-choice-q b{ font-weight:600; }
+  .find-choice-btns{ display:flex; gap:8px; flex-wrap:wrap; }
+  .find-choice-btns > *{ flex:1 1 140px; }
+  .find-choice-ebay{
+    display:flex; align-items:center; justify-content:center;
+    padding:11px 14px; border-radius:8px; text-decoration:none;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
+    color: var(--text); border:1px solid rgba(15,29,69,0.18);
+  }
+  .find-choice-ebay:hover{ background: rgba(15,29,69,0.054); }
+  .find-choice-cancel{
+    display:block; margin:8px auto 0; padding:6px 10px; background:none;
+    color: rgba(15,29,69,0.71); font-family:'IBM Plex Mono', monospace; font-size:11px;
+  }
 
   .search-row{
     margin-top:14px;
@@ -374,7 +428,7 @@
     font-size:10px;
     text-transform:uppercase;
     letter-spacing:1px;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
     margin-bottom:6px;
   }
   .search-row .field{
@@ -387,17 +441,17 @@
     font-size:14px;
     padding:10px 12px;
     border-radius:8px;
-    border:1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.06);
-    color: var(--stock-100);
+    border:1px solid rgba(15,29,69,0.135);
+    background: rgba(15,29,69,0.054);
+    color: var(--text);
   }
-  .search-row input[type=text]::placeholder{ color: rgba(247,243,232,0.35); }
+  .search-row input[type=text]::placeholder{ color: rgba(15,29,69,0.56); }
 
   .status{
     margin-top:14px;
     font-family:'IBM Plex Mono', monospace;
     font-size:11.5px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     display:flex;
     align-items:center;
     gap:8px;
@@ -405,15 +459,15 @@
   .spinner{
     width:12px;height:12px;
     border-radius:50%;
-    border:2px solid rgba(255,255,255,0.15);
-    border-top-color: var(--stock-100);
+    border:2px solid rgba(15,29,69,0.135);
+    border-top-color: var(--text);
     animation: spin 0.8s linear infinite;
   }
   @keyframes spin{ to{ transform: rotate(360deg); } }
 
   .progress-track{
     height:4px;
-    background: rgba(255,255,255,0.12);
+    background: rgba(15,29,69,0.108);
     border-radius:2px;
     overflow:hidden;
     margin-top:8px;
@@ -442,7 +496,7 @@
   .results-head span{
     font-family:'IBM Plex Mono', monospace;
     font-size:10px;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
   }
 
   .card-result{
@@ -548,7 +602,7 @@
   .empty-note{
     font-family:'IBM Plex Mono', monospace;
     font-size:11px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     text-align:center;
     padding: 14px 8px;
     line-height:1.6;
@@ -557,19 +611,19 @@
   .source-note{
     margin-top:16px;
     padding-top:12px;
-    border-top:1px dashed rgba(255,255,255,0.15);
+    border-top:1px dashed rgba(15,29,69,0.135);
     font-family:'IBM Plex Mono', monospace;
     font-size:9.5px;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
     line-height:1.6;
   }
-  .source-note b{ color: var(--stock-100); }
+  .source-note b{ color: var(--text); }
   .source-note code{
     font-family:'IBM Plex Mono', monospace;
-    background: rgba(255,255,255,0.1);
+    background: rgba(15,29,69,0.09);
     padding:1px 4px;
     border-radius:3px;
-    color: var(--stock-100);
+    color: var(--text);
   }
 
   /* ---------- Cover / splash page ---------- */
@@ -589,12 +643,12 @@
     position:relative;
     width:100%;
     max-width: 320px;
-    border: 1.5px solid rgba(255,255,255,0.16);
+    border: 1.5px solid rgba(15,29,69,0.144);
     border-radius: 20px;
-    background: rgba(255,255,255,0.045);
+    background: rgba(15,29,69,0.041);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(15,29,69,0.054);
     padding: 40px 26px 32px;
     display:flex;
     flex-direction:column;
@@ -603,10 +657,10 @@
   .cover-mark{
     width:76px; height:76px;
     border-radius:18px;
-    border:1.5px solid rgba(247,243,232,0.25);
+    border:1.5px solid rgba(15,29,69,0.5);
     display:flex; align-items:center; justify-content:center;
     margin-bottom:22px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(15,29,69,0.045);
     backdrop-filter: blur(10px);
     animation: floatY 4s ease-in-out infinite;
   }
@@ -641,7 +695,7 @@
     font-size:11px;
     letter-spacing:2.5px;
     text-transform:uppercase;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
     margin-bottom:34px;
   }
   .cover-chips{
@@ -657,13 +711,13 @@
     gap:6px;
     padding:6px 12px;
     border-radius:999px;
-    background: rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
+    background: rgba(15,29,69,0.045);
+    border:1px solid rgba(15,29,69,0.09);
     font-family:'IBM Plex Mono', monospace;
     font-size:10px;
     letter-spacing:0.3px;
     text-transform:uppercase;
-    color: rgba(247,243,232,0.7);
+    color: rgba(15,29,69,0.77);
   }
   .cover-chip .dot{ width:7px; height:7px; border-radius:50%; }
   .cover-cta{
@@ -686,7 +740,7 @@
     font-family:'IBM Plex Mono', monospace;
     font-size:9.5px;
     letter-spacing:0.5px;
-    color: rgba(247,243,232,0.3);
+    color: rgba(15,29,69,0.53);
   }
 
   /* ---------- Accessibility & motion ---------- */
@@ -799,12 +853,12 @@
     text-transform:uppercase;
     letter-spacing:0.5px;
     margin:0 0 3px;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .collection-head span{
     font-family:'IBM Plex Mono', monospace;
     font-size:11px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
   }
   .collection-item{
     display:flex;
@@ -889,12 +943,12 @@
     width:38px; height:38px;
     margin-bottom:12px;
     opacity:0.35;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .collection-empty p{
     font-family:'IBM Plex Mono', monospace;
     font-size:11.5px;
-    color: rgba(247,243,232,0.5);
+    color: rgba(15,29,69,0.65);
     line-height:1.6;
     max-width:230px;
     margin: 0 auto;
@@ -905,11 +959,12 @@
     position:absolute;
     top:8px; right:8px;
     width:28px; height:28px;
+    padding:0;
     border-radius:50%;
     background: var(--ink-900);
     border:none;
     display:flex; align-items:center; justify-content:center;
-    color: var(--stock-100);
+    color: var(--text);
     cursor:pointer;
     z-index:1;
     transition: background .15s ease, transform .12s ease;
@@ -926,7 +981,7 @@
     margin: 0 auto 18px;
     border-radius:10px;
     overflow:hidden;
-    border:1px solid rgba(255,255,255,0.15);
+    border:1px solid rgba(15,29,69,0.135);
   }
   .grade-preview-wrap img{ width:100%; display:block; }
 
@@ -937,12 +992,12 @@
     font-size:10px;
     text-transform:uppercase;
     letter-spacing:0.8px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
   }
   .axis-bar{
     height:10px;
     border-radius:6px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(15,29,69,0.09);
     overflow:hidden;
     position:relative;
   }
@@ -956,7 +1011,7 @@
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
     font-weight:600;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .centering-verdict{
     text-align:center;
@@ -965,15 +1020,15 @@
     font-size:13.5px;
     padding:10px;
     border-radius:8px;
-    background: rgba(255,255,255,0.06);
-    color: var(--stock-100);
+    background: rgba(15,29,69,0.054);
+    color: var(--text);
     margin-bottom:20px;
   }
 
   .corner-inspector-label{
     font-family:'IBM Plex Mono', monospace;
     font-size:10.5px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     text-align:center;
     margin: 0 0 10px;
   }
@@ -992,15 +1047,15 @@
     width:100%;
     aspect-ratio:1/1;
     border-radius:8px;
-    border:1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04);
+    border:1px solid rgba(15,29,69,0.135);
+    background: rgba(15,29,69,0.036);
   }
   .corner-crop span{
     font-family:'IBM Plex Mono', monospace;
     font-size:9px;
     text-transform:uppercase;
     letter-spacing:0.4px;
-    color: rgba(247,243,232,0.45);
+    color: rgba(15,29,69,0.62);
   }
   .corner-crop-wide{ grid-column: span 2; }
   .corner-crop-wide canvas{ aspect-ratio: auto; }
@@ -1008,7 +1063,7 @@
   .condition-label{
     font-family:'IBM Plex Mono', monospace;
     font-size:10.5px;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     text-align:center;
     margin: 0 0 8px;
   }
@@ -1025,10 +1080,10 @@
     gap:7px;
     padding:7px 10px;
     border-radius:8px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(15,29,69,0.054);
     font-family:'IBM Plex Mono', monospace;
     font-size:10px;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .condition-chip .status-dot{
     width:8px; height:8px;
@@ -1038,20 +1093,20 @@
   .condition-chip .chip-label{ opacity:0.65; margin-right:auto; }
   .status-dot.clean{ background: var(--foil-1); }
   .status-dot.wear{ background: #e0714f; }
-  .status-dot.inconclusive{ background: rgba(255,255,255,0.3); }
+  .status-dot.inconclusive{ background: rgba(15,29,69,0.27); }
 
   /* ---------- Grade / condition check view ---------- */
   .side-toggle{
     display:flex; gap:6px;
     padding:4px;
     border-radius:12px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(15,29,69,0.054);
     margin: 0 0 14px;
   }
   .side-toggle button{
     flex:1;
     border:none; background:transparent; cursor:pointer;
-    color: rgba(247,243,232,0.6);
+    color: rgba(15,29,69,0.71);
     font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
     padding:9px 10px;
     border-radius:9px;
@@ -1059,12 +1114,25 @@
   }
   .side-toggle button.active{ background: var(--stock-100); color: var(--ink-900); }
   .side-toggle .side-done{ color: var(--foil-1); margin-left:4px; }
+
+  .both-btn{
+    width:100%; margin: 0 0 10px;
+    background: var(--amber-500); color:#2c1d00;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:14px;
+    padding:12px 14px; border-radius:10px;
+  }
+  .both-btn:hover{ opacity:0.92; }
+  .both-step{
+    margin: 0 0 10px; padding:8px 10px; border-radius:8px;
+    background: rgba(224,166,75,0.14); color: var(--amber-500);
+    font-family:'IBM Plex Mono', monospace; font-size:11px; line-height:1.45; text-align:center;
+  }
   .side-toggle button.active .side-done{ color:#0d3327; }
 
   .quality-head{
     font-family:'IBM Plex Mono', monospace;
     font-size:10.5px; letter-spacing:0.6px; text-transform:uppercase;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     margin: 4px 0 8px;
   }
   .quality-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
@@ -1072,25 +1140,25 @@
     display:flex; align-items:flex-start; gap:9px;
     padding:8px 10px;
     border-radius:8px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(15,29,69,0.045);
     font-size:12px; line-height:1.4;
-    color: var(--stock-100);
+    color: var(--text);
   }
   .quality-row .status-dot{ margin-top:4px; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
   .quality-row b{ font-weight:600; margin-right:6px; }
-  .quality-row span{ color: rgba(247,243,232,0.7); }
+  .quality-row span{ color: rgba(15,29,69,0.77); }
   .quality-row.is-bad{ background: rgba(200,66,58,0.16); }
   .quality-row.is-warn{ background: rgba(224,113,79,0.12); }
 
   .step-label{
     font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
-    color: var(--stock-100);
+    color: var(--text);
     margin: 0 0 3px;
   }
   .step-help{
     font-family:'IBM Plex Mono', monospace;
     font-size:10.5px; line-height:1.5;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
     margin: 0 0 8px;
   }
   .editor-wrap{
@@ -1104,7 +1172,7 @@
   .editor-wrap canvas.editor{
     display:block; width:100%; height:auto;
     border-radius:10px;
-    border:1px solid rgba(255,255,255,0.15);
+    border:1px solid rgba(15,29,69,0.135);
     background:#000;
     cursor:grab;
     touch-action:none;
@@ -1128,11 +1196,11 @@
     font-family:'IBM Plex Mono', monospace; font-size:10.5px;
     padding:8px 10px;
     border-radius:8px;
-    border:1px solid rgba(255,255,255,0.18);
-    background: transparent; color: rgba(247,243,232,0.8);
+    border:1px solid rgba(15,29,69,0.162);
+    background: transparent; color: rgba(15,29,69,0.83);
     cursor:pointer;
   }
-  .editor-actions button:hover{ background: rgba(255,255,255,0.07); }
+  .editor-actions button:hover{ background: rgba(15,29,69,0.063); }
 
   .center-summary{
     display:flex; flex-direction:column; gap:6px;
@@ -1141,8 +1209,8 @@
   .center-line{
     display:flex; align-items:baseline; gap:10px;
     font-family:'IBM Plex Mono', monospace; font-size:11.5px;
-    color: var(--stock-100);
-    padding:8px 10px; border-radius:8px; background: rgba(255,255,255,0.05);
+    color: var(--text);
+    padding:8px 10px; border-radius:8px; background: rgba(15,29,69,0.045);
   }
   .center-line .cl-side{ width:44px; opacity:0.6; font-size:10px; text-transform:uppercase; letter-spacing:0.6px; }
   .center-line .cl-vals{ margin-right:auto; }
@@ -1151,47 +1219,52 @@
 
   .grader-head{
     font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
-    color: var(--stock-100); margin: 4px 0 2px;
+    color: var(--text); margin: 4px 0 2px;
+  }
+  .grader-limit{
+    display:inline-block; margin-left:6px; padding:2px 7px; border-radius:6px;
+    background: rgba(224,166,75,0.16); color: var(--amber-500);
+    font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:10px; vertical-align:1px;
   }
   .grader-sub-head{
     font-family:'IBM Plex Mono', monospace; font-size:10.5px; line-height:1.5;
-    color: rgba(247,243,232,0.55); margin: 0 0 10px;
+    color: rgba(15,29,69,0.68); margin: 0 0 10px;
   }
   .grader-grid{ display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
   .grader-row{
     display:grid; grid-template-columns: 52px 1fr; gap:2px 12px; align-items:center;
-    padding:10px 12px; border-radius:10px; background: rgba(255,255,255,0.06);
+    padding:10px 12px; border-radius:10px; background: rgba(15,29,69,0.054);
   }
   .grader-name{
     grid-row: span 2;
-    font-family:'Oswald', sans-serif; font-size:18px; letter-spacing:0.5px; color: var(--stock-100);
+    font-family:'Oswald', sans-serif; font-size:18px; letter-spacing:0.5px; color: var(--text);
   }
   .grader-ceiling{ font-family:'Inter', sans-serif; font-weight:700; font-size:15px; color: var(--foil-1); }
-  .grader-ceiling small{ font-weight:500; font-size:11px; color: rgba(247,243,232,0.6); margin-left:6px; }
-  .grader-sub{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; line-height:1.45; color: rgba(247,243,232,0.6); grid-column:2; }
+  .grader-ceiling small{ font-weight:500; font-size:11px; color: rgba(15,29,69,0.71); margin-left:6px; }
+  .grader-sub{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; line-height:1.45; color: rgba(15,29,69,0.71); grid-column:2; }
   .grader-note{
     font-family:'IBM Plex Mono', monospace; font-size:10px; line-height:1.55;
-    color: rgba(247,243,232,0.5); margin: 0 0 20px;
+    color: rgba(15,29,69,0.65); margin: 0 0 20px;
   }
 
   .status-dot.bad{ background:#d6453b; }
-  .status-dot.na{ background: rgba(255,255,255,0.3); }
+  .status-dot.na{ background: rgba(15,29,69,0.27); }
 
   .save-bar{ margin: 8px 0 18px; }
   .save-form{
     margin-top:10px; padding:12px;
-    border-radius:10px; background: rgba(255,255,255,0.06);
+    border-radius:10px; background: rgba(15,29,69,0.054);
     display:flex; flex-direction:column; gap:8px;
   }
   .save-form label{
     font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase;
-    color: rgba(247,243,232,0.55);
+    color: rgba(15,29,69,0.68);
   }
   .save-form select, .save-form input{
     width:100%;
     padding:10px 12px; border-radius:8px;
-    border:1px solid rgba(255,255,255,0.18);
-    background: rgba(0,0,0,0.3); color: var(--stock-100);
+    border:1px solid rgba(15,29,69,0.162);
+    background: #fff; color: var(--text);
     font-family:'Inter', sans-serif; font-size:13px;
   }
   .save-msg{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--foil-1); margin: 8px 0 0; min-height:14px; }
@@ -1222,7 +1295,7 @@
     background: var(--ink-900);
     line-height:1.1;
   }
-  .gs-name{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.8px; color: rgba(247,243,232,0.6); }
+  .gs-name{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.8px; color: rgba(15,29,69,0.71); }
   .gs-val{ font-family:'Oswald', sans-serif; font-size:17px; color: var(--foil-1); margin-top:2px; white-space:nowrap; }
   .gs-val.long{ font-size:12px; margin-top:5px; }
   .dg-detail{
@@ -1249,51 +1322,51 @@
   .lightbox-inner{
     width:100%; max-width:380px; max-height:100%; overflow:auto;
     display:flex; flex-direction:column; align-items:center; gap:10px;
-    color: var(--stock-100); text-align:center;
+    color: var(--text); text-align:center;
   }
   .lightbox-inner img{ max-width:100%; max-height:58vh; border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.6); }
   .lightbox-inner .lb-name{ font-family:'Inter', sans-serif; font-weight:600; font-size:16px; margin:0; }
   .lightbox-inner .lb-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:0.65; margin:0; }
   .lightbox-inner .lb-price{ font-family:'IBM Plex Mono', monospace; font-size:18px; font-weight:600; margin:0; }
   .lightbox-inner .desk-grade{ width:100%; }
-  .lightbox-inner .dg-label, .lightbox-inner .dg-detail{ color: rgba(247,243,232,0.6); }
-  .lightbox-inner .grade-slab{ background: rgba(255,255,255,0.1); }
+  .lightbox-inner .dg-label, .lightbox-inner .dg-detail{ color: rgba(15,29,69,0.71); }
+  .lightbox-inner .grade-slab{ background: rgba(15,29,69,0.09); }
   .lightbox-hint{ font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.5; margin:4px 0 0; }
 
   /* ---------- Desk: sort bar, real-grade logging, calibration ---------- */
   .desk-toolbar{ display:flex; align-items:center; gap:8px; margin: 0 0 14px; }
-  .desk-toolbar label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase; color: rgba(247,243,232,0.55); }
+  .desk-toolbar label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.6px; text-transform:uppercase; color: rgba(15,29,69,0.68); }
   .desk-toolbar select{
     flex:1; min-width:0;
     padding:8px 10px; border-radius:8px;
-    border:1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.3); color: var(--stock-100);
+    border:1px solid rgba(15,29,69,0.162); background: #fff; color: var(--text);
     font-family:'Inter', sans-serif; font-size:12.5px;
   }
   .calibrate-btn{
     padding:8px 12px; border-radius:8px; cursor:pointer;
-    border:1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(247,243,232,0.8);
+    border:1px solid rgba(15,29,69,0.162); background: transparent; color: rgba(15,29,69,0.83);
     font-family:'IBM Plex Mono', monospace; font-size:10.5px;
   }
-  .calibrate-btn:hover{ background: rgba(255,255,255,0.07); }
+  .calibrate-btn:hover{ background: rgba(15,29,69,0.063); }
   .calibrate-btn.is-open{ background: var(--stock-100); color: var(--ink-900); }
 
   .calibration-panel{
     margin: 0 0 14px; padding:14px; border-radius:10px;
-    background: rgba(255,255,255,0.06); color: var(--stock-100);
+    background: rgba(15,29,69,0.054); color: var(--text);
   }
   .calibration-panel h4{ margin:0 0 8px; font-family:'Oswald', sans-serif; font-size:16px; letter-spacing:0.5px; font-weight:500; }
-  .calibration-panel p{ margin:0 0 8px; font-size:12px; line-height:1.5; color: rgba(247,243,232,0.8); }
+  .calibration-panel p{ margin:0 0 8px; font-size:12px; line-height:1.5; color: rgba(15,29,69,0.83); }
   .cal-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
-  .cal-stats div{ background: rgba(0,0,0,0.25); border-radius:8px; padding:8px 4px; text-align:center; }
+  .cal-stats div{ background: #fff; border-radius:8px; padding:8px 4px; text-align:center; }
   .cal-stats b{ display:block; font-family:'Oswald', sans-serif; font-size:18px; font-weight:500; color: var(--foil-1); }
-  .cal-stats span{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; line-height:1.3; color: rgba(247,243,232,0.6); }
+  .cal-stats span{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; line-height:1.3; color: rgba(15,29,69,0.71); }
   .calibration-panel .cal-caution{ color:#ffb347; font-family:'IBM Plex Mono', monospace; font-size:10.5px; }
-  .calibration-panel .cal-note{ font-family:'IBM Plex Mono', monospace; font-size:10px; color: rgba(247,243,232,0.5); margin:8px 0 0; }
+  .calibration-panel .cal-note{ font-family:'IBM Plex Mono', monospace; font-size:10px; color: rgba(15,29,69,0.65); margin:8px 0 0; }
   .cal-list{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:4px; }
   .cal-list li{
     display:flex; justify-content:space-between; gap:10px;
     font-family:'IBM Plex Mono', monospace; font-size:10.5px;
-    padding:6px 8px; border-radius:6px; background: rgba(255,255,255,0.05);
+    padding:6px 8px; border-radius:6px; background: rgba(15,29,69,0.045);
   }
   .cal-list li.is-above{ background: rgba(224,113,79,0.16); }
   .cal-list i{ opacity:0.6; font-style:normal; }
@@ -1321,7 +1394,7 @@
     padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
     font-family:'Inter', sans-serif; font-weight:600; font-size:12px;
   }
-  .log-save{ background: var(--ink-900); color: var(--stock-100); }
+  .log-save{ background: var(--ink-900); color: var(--text); }
   .log-cancel{ background: rgba(18,20,15,0.08); color: var(--ink-900); }
   .log-help{ flex-basis:100%; margin:2px 0 0; font-family:'IBM Plex Mono', monospace; font-size:9.5px; line-height:1.45; color: var(--ink-600); }
 
@@ -1336,6 +1409,419 @@
   }
   .sold-links .sold-link{ margin-top:0; }
   .sold-link:hover{ background: rgba(18,20,15,0.13); }
+
+  /* ================= Hobby look: red, white & blue with foil accents (2026-11-12) =================
+     Layout: light pages, navy header bar with a foil stripe, white panels, slanted blue action buttons. */
+  :root{
+    --navy:#0f1d45; --navy-2:#1b2c63;
+    --blue:#1d4ed8; --blue-d:#1638a3;
+    --red:#e3262f; --red-d:#b81c24;
+    --page:#eef2f9; --paper:#ffffff; --panel:#f5f7fc;
+    --text:#0f172a; --muted:#56607a; --line:#d7deeb;
+    --good:#15803d; --warn:#b45309;
+    --foil: linear-gradient(100deg,#ff5f6d 0%,#ffc371 18%,#f9f871 32%,#5ee7b0 48%,#4facfe 64%,#a66cff 80%,#ff5f6d 100%);
+    --display: 'Barlow Condensed', 'Oswald', 'Arial Narrow', sans-serif;
+    --shadow-1: 0 10px 30px rgba(15,29,69,0.12);
+    color-scheme: light;
+  }
+  body{
+    background:
+      linear-gradient(118deg, transparent 0 80%, rgba(29,78,216,0.10) 80% 81.5%, transparent 81.5% 83%, rgba(227,38,47,0.10) 83% 84.5%, transparent 84.5%) fixed,
+      linear-gradient(298deg, transparent 0 86%, rgba(227,38,47,0.08) 86% 87.2%, transparent 87.2% 88.4%, rgba(29,78,216,0.08) 88.4% 89.6%, transparent 89.6%) fixed,
+      radial-gradient(circle at 1px 1px, rgba(15,29,69,0.07) 1px, transparent 0) 0 0 / 14px 14px,
+      var(--page);
+    color: var(--text);
+  }
+  button:focus-visible, input:focus-visible, select:focus-visible, .tab:focus-visible, .scan-zone:focus-visible, a:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  /* Header bar */
+  header.app-head{
+    position:relative; overflow:hidden;
+    background: var(--navy); border-radius:16px;
+    padding:12px 16px 15px; margin-bottom:14px;
+    box-shadow: var(--shadow-1);
+  }
+  header.app-head::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background: var(--foil); }
+  .brand-wrap{ display:flex; align-items:center; gap:10px; }
+  .brand-logo{ width:38px; height:38px; flex:0 0 38px; }
+  .brand{ font-family: var(--display); font-style:italic; font-weight:800; font-size:30px; line-height:1; letter-spacing:0.3px; color:#fff; }
+  .brand span{ color:#fff; }
+  .brand-sub{ color: rgba(255,255,255,0.62); margin-top:3px; }
+  .head-stripes{ display:flex; gap:4px; transform: skewX(-20deg); }
+  .head-stripes i{ display:block; width:5px; height:18px; background: rgba(255,255,255,0.75); }
+  .head-stripes i:nth-child(2){ background: var(--red); }
+
+  /* Game tabs */
+  .tabs{ background: var(--paper); border:1px solid var(--line); box-shadow: 0 6px 18px rgba(15,29,69,0.08); backdrop-filter:none; -webkit-backdrop-filter:none; }
+  .tab{ font-family: var(--display); font-weight:700; font-size:12.5px; letter-spacing:0.3px; color: var(--muted) !important; }
+  .tab:hover{ background: var(--panel); }
+  .tab .dot{ opacity:1; }
+  .tab[data-game="pokemon"] .dot{ background: var(--pika-500); }
+  .tab[data-game="yugioh"] .dot{ background: var(--ygo-500); }
+  .tab[data-game="baseball"] .dot{ background: var(--bb-500); }
+  .tab[data-game="basketball"] .dot{ background: var(--ball-500); }
+  .tab[data-game="football"] .dot{ background: var(--fb-500); }
+  .tab.active{ box-shadow: 0 4px 12px rgba(15,29,69,0.18); }
+  .tab.active[data-game="pokemon"]{ color:#3a2b00 !important; }
+  .tab.active[data-game="yugioh"], .tab.active[data-game="baseball"], .tab.active[data-game="football"]{ color:#fff !important; }
+  .tab.active[data-game="basketball"]{ color:#2c1600 !important; }
+  .tab.active .dot{ background: currentColor; }
+
+  /* Main panel */
+  .desk{ background: var(--paper); border:1px solid var(--line); color: var(--text); box-shadow: var(--shadow-1); backdrop-filter:none; -webkit-backdrop-filter:none; border-radius:18px; }
+
+  /* Photo box */
+  .scan-zone{ background: var(--panel); border-color: rgba(15,29,69,0.22); }
+  .scan-icon{ color: var(--navy); opacity:0.45; }
+  .scan-hint{ color: var(--muted); }
+  .corner{ width:22px; height:22px; border-color: var(--blue); }
+  .corner.tl, .corner.tr, .corner.bl, .corner.br{ border-width:3px; border-color: var(--blue); }
+  .rotate-btn, .camera-icon-btn{ color:#fff; border-color: rgba(255,255,255,0.4); background: rgba(15,29,69,0.6); }
+  .rotate-btn:hover, .camera-icon-btn:hover{ background: rgba(15,29,69,0.85); }
+  .shutter-btn{ background:#fff; border-color: rgba(255,255,255,0.5); }
+
+  /* Buttons: slanted blue for the main action, outlined navy for the rest */
+  .btn-primary, .camera-btn, .both-btn, .cover-cta{
+    background: linear-gradient(180deg, var(--blue) 0%, var(--blue-d) 100%); color:#fff;
+    font-family: var(--display); font-style:italic; font-weight:800; text-transform:uppercase; letter-spacing:0.6px;
+    border-radius:6px; clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+    box-shadow:none;
+  }
+  .btn-primary{ font-size:16px; padding:11px 18px; }
+  .camera-btn{ font-size:15px; padding:10px 24px; }
+  .both-btn{ font-size:18px; padding:13px 18px; }
+  .btn-primary:hover, .camera-btn:hover, .both-btn:hover, .cover-cta:hover{ opacity:1; filter: brightness(1.08); }
+  .btn-primary:disabled{ background: #b9c3d8; color:#fff; opacity:1; }
+  .btn-secondary{ background: var(--paper); color: var(--navy); border:1.5px solid var(--navy) !important; font-family: var(--display); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.4px; }
+  .btn-secondary:hover{ background: var(--panel); }
+  .both-step{ background: rgba(29,78,216,0.09); color: var(--blue-d); }
+
+  /* Search */
+  .search-row label{ color: var(--muted); }
+  .search-row input[type=text], .set-filter{ background:#fff; border:1px solid var(--line); color: var(--text); }
+  .search-row input[type=text]::placeholder, .set-filter::placeholder{ color: #8a93a8; }
+  .search-row input[type=text]:focus, .set-filter:focus{ border-color: var(--blue); outline:none; box-shadow: 0 0 0 3px rgba(29,78,216,0.15); }
+  .browse-btn, .browse-back{ color: var(--blue); }
+  .find-choice{ background: var(--panel); border:1px solid var(--line); }
+  .find-choice-ebay{ color: var(--navy); border:1.5px solid var(--navy); background:#fff; font-family: var(--display); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.4px; }
+  .find-choice-ebay:hover{ background: var(--panel); }
+  .find-choice-cancel{ color: var(--muted); }
+  .set-row{ background: var(--panel); border:1px solid transparent; }
+  .set-row:hover{ background:#fff; border-color: var(--line); }
+  .set-icon{ background:#fff; color: var(--navy); }
+  .set-meta, .set-more{ color: var(--muted); }
+
+  /* Status */
+  .status{ color: var(--muted); }
+  .spinner{ border-color: var(--line); border-top-color: var(--blue); }
+  .progress-track{ background: var(--line); }
+  .progress-fill{ background: var(--foil); }
+
+  /* Section headings with a red underline swoosh */
+  .results-head h3, .collection-head h3, .grader-head{
+    font-family: var(--display); font-style:italic; font-weight:800; text-transform:uppercase; letter-spacing:0.3px; color: var(--navy);
+  }
+  .results-head h3{ font-size:21px; }
+  .collection-head h3{ font-size:25px; white-space:nowrap; }
+  .grader-head{ font-size:22px; line-height:1.1; }
+  .results-head h3::after, .collection-head h3::after{
+    content:""; display:block; width:56px; height:4px; margin-top:4px; border-radius:2px;
+    background: var(--red); transform: skewX(-20deg);
+  }
+  .results-head span, .collection-head span{ color: var(--muted); }
+
+  /* Card tiles: foil edge */
+  .card-result, .collection-item{
+    border:2px solid transparent;
+    background: linear-gradient(#fff,#fff) padding-box, var(--foil) border-box;
+    box-shadow: 0 6px 16px rgba(15,29,69,0.08);
+  }
+  .card-name{ font-family: var(--display); font-style:italic; font-weight:800; font-size:18px; text-transform:uppercase; letter-spacing:0.2px; color: var(--navy); }
+  .collection-item .card-name{ color: var(--navy); }
+  .card-meta{ color: var(--muted); }
+  .card-price .amt{ color: var(--navy); }
+  .add-btn{ background: var(--blue); color:#fff; box-shadow: 0 3px 8px rgba(29,78,216,0.35); }
+  .add-btn.is-added{ background: var(--good); color:#fff; }
+  .remove-btn:hover{ background: rgba(227,38,47,0.12); color: var(--red-d); }
+  .delete-confirm{ background: rgba(255,255,255,0.98); }
+
+  .empty-note, .source-note{ color: var(--muted); }
+  .source-note{ border-top-color: var(--line); }
+  .source-note b{ color: var(--text); }
+  .source-note code{ background: var(--panel); color: var(--text); }
+  .empty-state p{ color: inherit; }
+
+  /* Bottom nav */
+  .bottom-nav{ background: rgba(255,255,255,0.96); border:1px solid var(--line); box-shadow: 0 10px 28px rgba(15,29,69,0.16); }
+  .bottom-nav-btn{ color: var(--muted); font-family: var(--display); font-weight:700; font-size:13.5px; text-transform:none; letter-spacing:0.2px; }
+  .bottom-nav-btn.active{ background: transparent; color: var(--red); font-style:italic; font-weight:800; }
+  .bottom-nav-btn.active::after{ content:""; position:absolute; left:20%; right:20%; bottom:1px; height:3px; border-radius:2px; background: var(--red); }
+  .bottom-nav-btn:hover:not(.active){ color: var(--navy); }
+  .nav-badge{ background: var(--red); color:#fff; }
+
+  /* Cover page */
+  .cover-card{
+    border:3px solid transparent; border-radius:22px;
+    background: linear-gradient(#fff,#fff) padding-box, var(--foil) border-box;
+    box-shadow: 0 24px 60px rgba(15,29,69,0.18); backdrop-filter:none; -webkit-backdrop-filter:none;
+  }
+  .cover-mark{ border:none; background:none; backdrop-filter:none; width:88px; height:88px; }
+  .cover-mark svg{ width:76px; height:76px; }
+  .cover-brand{ font-family: var(--display); font-style:italic; font-weight:800; font-size:54px; color: var(--navy); letter-spacing:0; }
+  .cover-brand .shine{ background:none; color: var(--red); -webkit-background-clip: initial; background-clip: initial; animation:none; }
+  .cover-brand::after{ content:""; display:block; height:5px; width:70%; margin:6px auto 0; border-radius:3px; background: var(--red); transform: skewX(-24deg); }
+  .cover-tagline{ font-family: var(--display); font-style:italic; font-weight:700; font-size:17px; letter-spacing:0.2px; text-transform:none; color: var(--navy); }
+  .cover-chip{ background:#fff; border:1px solid var(--line); color: var(--navy); }
+  .cover-cta{ font-size:20px; padding:14px 40px; }
+  .cover-foot{ color: var(--muted); }
+
+  /* Check (grade) screen */
+  .side-toggle{ background: var(--panel); border:1px solid var(--line); }
+  .side-toggle button{ color: var(--muted); }
+  .side-toggle button.active{ background: var(--navy); color:#fff; }
+  .side-toggle .side-done, .side-toggle button.active .side-done{ color:#4ade80; }
+  .quality-row{ background: var(--panel); color: var(--text); }
+  .quality-row span{ color: var(--muted); }
+  .quality-row.is-bad{ background: rgba(227,38,47,0.10); }
+  .quality-row.is-warn{ background: rgba(245,158,11,0.14); }
+  .status-dot.clean{ background: var(--good); }
+  .status-dot.inconclusive, .status-dot.na{ background: rgba(15,29,69,0.25); }
+  .step-label{ color: var(--text); }
+  .step-help, .grader-sub-head, .grader-note, .corner-inspector-label, .condition-label, .axis-label, .quality-head, .corner-crop span{ color: var(--muted); }
+  .editor-wrap canvas.editor{ border-color: var(--line); }
+  .editor-actions button{ background:#fff; color: var(--navy); border:1px solid var(--line); }
+  .editor-actions button:hover{ background: var(--panel); }
+  .center-line{ background: var(--panel); color: var(--text); }
+  .center-line.is-current{ outline:2px solid var(--blue); }
+  .grader-limit{ background: rgba(227,38,47,0.10); color: var(--red-d); font-style:normal; text-transform:none; letter-spacing:0; }
+  .grader-row{ background: var(--panel); border:1px solid var(--line); }
+  .grader-name{ font-family: var(--display); font-style:italic; font-weight:800; font-size:20px; color: var(--navy); }
+  .grader-ceiling{ color: var(--blue-d); }
+  .grader-ceiling small, .grader-sub{ color: var(--muted); }
+  .axis-bar{ background: var(--line); }
+  .axis-fill{ background: var(--foil); }
+  .axis-value{ color: var(--text); }
+  .centering-verdict, .condition-chip{ background: var(--panel); color: var(--text); }
+  .corner-crop canvas{ border-color: var(--line); background: var(--panel); }
+  .grade-preview-wrap{ border-color: var(--line); }
+  .save-form{ background: var(--panel); border:1px solid var(--line); }
+  .save-form label{ color: var(--muted); }
+  .save-form select, .save-form input, .desk-toolbar select{ background:#fff; border:1px solid var(--line); color: var(--text); }
+  .save-msg{ color: var(--good); }
+  .save-msg.is-error{ color: var(--red-d); }
+
+  /* Collection screen */
+  .collection-empty svg{ color: var(--navy); }
+  .collection-empty p{ color: var(--muted); }
+  .grade-slab{ background: var(--navy); }
+  .gs-name{ color: rgba(255,255,255,0.65); }
+  .gs-val{ color:#7dd3fc; }
+  .desk-grade-cta{ border-color: rgba(15,29,69,0.35); color: var(--navy); }
+  .desk-toolbar label{ color: var(--muted); }
+  .calibrate-btn{ background:#fff; color: var(--navy); border:1px solid var(--line); }
+  .calibrate-btn:hover{ background: var(--panel); }
+  .calibrate-btn.is-open{ background: var(--navy); color:#fff; border-color: var(--navy); }
+  .calibration-panel{ background: var(--panel); border:1px solid var(--line); color: var(--text); }
+  .calibration-panel h4{ font-family: var(--display); font-style:italic; font-weight:800; font-size:19px; color: var(--navy); }
+  .calibration-panel p{ color: var(--text); }
+  .cal-stats div{ background:#fff; border:1px solid var(--line); }
+  .cal-stats b{ color: var(--blue-d); }
+  .cal-stats span, .calibration-panel .cal-note{ color: var(--muted); }
+  .calibration-panel .cal-caution{ color: var(--warn); }
+  .cal-list li{ background:#fff; }
+  .cal-list li.is-above{ background: rgba(227,38,47,0.10); }
+  .log-save{ background: var(--navy); color:#fff; }
+
+  /* Enlarged card view stays dark so the picture stands out */
+  .lightbox{ background: rgba(9,16,38,0.96); }
+  .lightbox-inner{ color:#fff; }
+  .lightbox-inner .dg-label, .lightbox-inner .dg-detail{ color: rgba(255,255,255,0.65); }
+  .lightbox-inner .grade-slab{ background: rgba(255,255,255,0.12); }
+
+  /* ---------- Step 2 layouts (2026-11-12) ---------- */
+  .hero-head{ margin: 0 0 14px; }
+  .hero-title{ margin:0; font-family: var(--display); font-style:italic; font-weight:800; font-size:30px; line-height:1; text-transform:uppercase; color: var(--navy); letter-spacing:0.2px; }
+  .hero-title::after{ content:""; display:block; width:70px; height:4px; margin-top:6px; border-radius:2px; background: var(--red); transform: skewX(-20deg); }
+  .hero-sub{ margin:6px 0 0; font-family: var(--display); font-style:italic; font-weight:700; font-size:16px; color: var(--muted); }
+  .photo-tips{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; margin:12px 0 2px; }
+  .tip{ display:inline-flex; align-items:center; gap:5px; font-family:'Inter', sans-serif; font-size:12.5px; color: var(--text); }
+  .tip svg{ width:15px; height:15px; color: var(--red); flex:0 0 15px; }
+  .upload-link{
+    display:flex; align-items:center; justify-content:center; gap:6px; margin:6px auto 0; padding:6px 10px;
+    background:none; color: var(--navy); font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px;
+  }
+  .upload-link span{ text-decoration: underline; text-underline-offset:3px; }
+  .upload-link svg{ width:18px; height:18px; }
+  .upload-link:hover{ color: var(--blue); }
+
+  /* Check summary card */
+  .cc-card{ margin: 6px 0 22px; }
+  .cc-head{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-bottom:12px; }
+  .cc-title{ margin:0; font-family: var(--display); font-style:italic; font-weight:800; font-size:26px; line-height:1; text-transform:uppercase; color: var(--navy); }
+  .cc-title::after{ content:" ///"; color: var(--red); letter-spacing:-2px; }
+  .cc-badge{ display:inline-block; padding:3px 10px; transform: skewX(-12deg); font-family: var(--display); font-style:italic; font-weight:800; font-size:13px; letter-spacing:0.4px; text-transform:uppercase; color:#fff; }
+  .cc-badge.is-ok{ background: var(--good); }
+  .cc-badge.is-part{ background: #d97706; }
+  .cc-thumbs{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .cc-thumbs figure{ margin:0; text-align:center; }
+  .cc-thumbs canvas{
+    width:100%; max-width:150px; aspect-ratio: 5 / 7; height:auto; display:block; margin:0 auto; border-radius:8px;
+    border:3px solid transparent; background: linear-gradient(#fff,#fff) padding-box, var(--foil) border-box;
+    box-shadow: 0 6px 14px rgba(15,29,69,0.14);
+  }
+  .cc-thumbs figcaption{ margin-top:6px; font-family:'Inter', sans-serif; font-weight:600; font-size:14px; color: var(--text); }
+  .cc-side{ position:relative; border:1px solid var(--line); border-radius:10px; padding:26px 12px 8px; margin-top:16px; background:#fff; }
+  .cc-tab{
+    position:absolute; top:-12px; left:-1px; padding:3px 16px 3px 12px;
+    font-family: var(--display); font-style:italic; font-weight:800; font-size:15px; letter-spacing:0.5px; text-transform:uppercase; color:#fff;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%); border-radius:4px 0 0 0;
+  }
+  .cc-side.is-front .cc-tab{ background: var(--blue); }
+  .cc-side.is-back .cc-tab{ background: var(--red); }
+  .cc-row{ display:grid; grid-template-columns: 92px 70px 1fr; align-items:center; gap:8px; padding:4px 0; }
+  .cc-axis{ font-family:'Inter', sans-serif; font-size:13px; color: var(--text); }
+  .cc-val{ font-family: var(--display); font-weight:800; font-size:22px; color: var(--navy); font-variant-numeric: tabular-nums; white-space:nowrap; }
+  .cc-gauge{
+    position:relative; height:16px; border-bottom:1.5px solid var(--navy);
+    background: repeating-linear-gradient(90deg, var(--navy) 0 1px, transparent 1px 10%) bottom / 100% 6px no-repeat,
+                linear-gradient(var(--navy), var(--navy)) 50% 100% / 1.5px 11px no-repeat;
+  }
+  .cc-gauge i{ position:absolute; bottom:-3px; width:4px; height:18px; margin-left:-2px; border-radius:2px; background: var(--blue); box-shadow: 0 0 0 2px #fff; }
+  .cc-side.is-back .cc-gauge i{ background: var(--red); }
+  .cc-word{ margin:4px 0 2px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--muted); }
+  .cc-side.is-missing .cc-word{ font-family:'Inter', sans-serif; font-size:12.5px; color: var(--text); padding-bottom:4px; }
+  .cc-note{ margin:12px 0 12px; font-family:'Inter', sans-serif; font-style:italic; font-size:12px; color: var(--muted); }
+  .cc-actions{ display:flex; flex-direction:column; gap:8px; }
+  .cc-actions .btn-secondary{ width:100%; padding:10px 14px; }
+  .fine-tune-head{ margin: 0 0 6px; padding-top:14px; border-top:1px dashed var(--line); font-family: var(--display); font-style:italic; font-weight:800; font-size:17px; text-transform:uppercase; color: var(--navy); }
+  .centering-readout, #centerSummary, #centeringVerdict{ display:none; }
+
+  /* Collection */
+  .coll-search{ position:relative; margin: 0 0 10px; }
+  .coll-search svg{ position:absolute; left:12px; top:50%; width:18px; height:18px; transform: translateY(-50%); color: var(--muted); pointer-events:none; }
+  .coll-search input{
+    width:100%; box-sizing:border-box; padding:11px 12px 11px 38px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; color: var(--text); font-family:'Inter', sans-serif; font-size:14px;
+  }
+  .coll-search input:focus{ outline:none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,78,216,0.15); }
+  .status-row{ display:flex; align-items:center; gap:10px; margin: 0 0 12px; }
+  .status-filter{ flex:1; display:grid; grid-template-columns: repeat(3, 1fr); }
+  .status-filter button{
+    background:none; border-radius:0; padding:8px 4px; border-bottom:2px solid var(--line) !important;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:14px; color: var(--muted);
+  }
+  .status-filter button.active{ color: var(--red); border-bottom:3px solid var(--red) !important; font-weight:700; }
+  .view-toggle{ display:flex; gap:2px; padding:3px; border-radius:8px; background: var(--panel); border:1px solid var(--line); }
+  .view-toggle button{ width:30px; height:28px; padding:0; border-radius:6px; background:none; color: var(--muted); display:flex; align-items:center; justify-content:center; }
+  .view-toggle button svg{ width:16px; height:16px; }
+  .view-toggle button.active{ background: var(--navy); color:#fff; }
+  .coll-grid{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; }
+  .grid-tile{
+    display:flex; flex-direction:column; align-items:stretch; text-align:left; gap:2px; padding:8px; border-radius:12px;
+    border:2px solid transparent; background: linear-gradient(#fff,#fff) padding-box, var(--foil) border-box;
+    box-shadow: 0 6px 16px rgba(15,29,69,0.08); color: var(--text); min-width:0;
+  }
+  .grid-tile:hover{ transform: translateY(-1px); box-shadow: 0 10px 22px rgba(15,29,69,0.14); }
+  .gt-img{ position:relative; display:block; aspect-ratio: 5 / 7; border-radius:8px; overflow:hidden; background: var(--panel); margin-bottom:6px; }
+  .gt-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .gt-ph{ display:flex; align-items:center; justify-content:center; height:100%; font-family: var(--display); font-weight:800; font-size:34px; color: rgba(15,29,69,0.25); }
+  .gt-dot{ position:absolute; top:6px; left:6px; width:10px; height:10px; border-radius:50%; border:2px solid #fff; }
+  .gt-name{ font-family: var(--display); font-style:italic; font-weight:800; font-size:16px; line-height:1.1; text-transform:uppercase; color: var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .gt-meta{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color: var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .gt-foot{ display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:4px; }
+  .gt-check{ display:inline-flex; align-items:center; gap:4px; font-family:'Inter', sans-serif; font-size:11.5px; color: var(--muted); white-space:nowrap; }
+  .gt-check svg{ width:14px; height:14px; flex:0 0 14px; }
+  .gt-check.is-on{ color: var(--blue); font-weight:600; }
+  .gt-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:11px; color: var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gt-price small{ font-weight:400; color: var(--muted); }
+  .collection-item.is-flash{ box-shadow: 0 0 0 4px rgba(29,78,216,0.35), 0 6px 16px rgba(15,29,69,0.08); transition: box-shadow .3s ease; }
+  .coll-actions{ margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); display:flex; flex-direction:column; align-items:stretch; gap:4px; }
+  .coll-actions .btn-primary{ font-size:18px; padding:13px 18px; }
+  .export-msg{ margin:0; min-height:14px; text-align:center; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--good); }
+  @media (max-width: 360px){ .cc-row{ grid-template-columns: 80px 62px 1fr; } .cc-val{ font-size:19px; } }
+
+  /* Phone fit: the six Collection category tabs and the header buttons must not push the page sideways */
+  .tab{ min-width:0; }
+  .collection-filter-tabs .tab{ font-size:11px; letter-spacing:0; padding-left:1px; padding-right:1px; }
+  .collection-head{ flex-wrap:wrap; row-gap:10px; }
+  .search-row .field input{ min-width:0; flex:1 1 auto; }
+  @media (max-width: 420px){ .collection-head h3{ font-size:23px; } }
+
+  /* ================= Computer layout (screens 960px and wider) =================
+     Phones keep the single column with the bottom tab bar. On a computer the tabs move into a
+     left sidebar and each screen splits into two columns. Switches automatically by window width. */
+  .grade-empty{ display:none; }
+  @media (min-width: 960px){
+    body{ padding: 24px 24px 40px; }
+    .phone{ max-width: 1240px; }
+    #mainApp:not([style*="display: none"]):not([style*="display:none"]){
+      display:grid !important;
+      grid-template-columns: 220px minmax(0, 1fr);
+      grid-template-areas: "head head" "nav main";
+      column-gap: 24px; align-items:start;
+    }
+    #mainApp > header.app-head{ grid-area: head; margin-bottom:20px; padding:16px 24px 19px; }
+    #mainApp > #scannerView, #mainApp > #gradeView, #mainApp > #collectionView{ grid-area: main; min-width:0; }
+    .brand{ font-size:36px; }
+    .brand-logo{ width:46px; height:46px; flex-basis:46px; }
+
+    /* Tabs become a sidebar */
+    .bottom-nav{
+      grid-area: nav; position: sticky; top: 24px; bottom:auto; left:auto; transform:none;
+      width:auto; max-width:none; flex-direction:column; gap:4px; padding:10px; border-radius:16px;
+    }
+    .bottom-nav-btn{ flex: 0 0 auto; flex-direction:row; justify-content:flex-start; gap:12px; padding:13px 16px; border-radius:10px; font-size:17px; position:relative; }
+    .bottom-nav-btn svg{ width:22px; height:22px; }
+    .bottom-nav-btn.active{ background: rgba(227,38,47,0.08); }
+    .bottom-nav-btn.active::after{ left:0; right:auto; top:18%; bottom:18%; width:4px; height:auto; border-radius:0 3px 3px 0; }
+    .bottom-nav-btn:hover:not(.active){ background: var(--panel); }
+    .nav-badge{ position:static; margin-left:auto; transform:none; }
+
+    .desk{ padding: 26px 28px; }
+
+    /* Scan: photo on the left (stays in view), search and results on the right */
+    .scan-cols{ display:grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 28px; align-items:start; }
+    .scan-col-find, .scan-col-find .field{ min-width:0; }
+    .scan-col-find .field input{ min-width:0; flex:1 1 auto; }
+    .scan-col-photo{ position: sticky; top: 24px; }
+    .scan-col-find > .search-row:first-child{ margin-top:0; }
+    .hero-title{ font-size:36px; }
+
+    /* Check: photos and controls on the left, results on the right */
+    .grade-cols{ display:grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 28px; align-items:start; }
+    .grade-col-photo{ position: sticky; top: 24px; }
+    .grade-col-results:has(#gradeResults[style*="none"]) .grade-empty{
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;
+      min-height: 420px; border:2px dashed var(--line); border-radius:16px; background: var(--panel); color: var(--muted);
+      padding: 24px;
+    }
+    .grade-empty svg{ width:48px; height:48px; color: rgba(15,29,69,0.3); margin-bottom:6px; }
+    .grade-empty p{ margin:0; font-family: var(--display); font-style:italic; font-weight:800; font-size:22px; text-transform:uppercase; color: var(--navy); }
+    .grade-empty span{ font-family:'Inter', sans-serif; font-size:14px; }
+    .cc-card{ margin-top:0; }
+    .cc-thumbs{ grid-template-columns: repeat(2, minmax(0, 180px)); justify-content:center; gap:28px; }
+    .cc-thumbs canvas{ max-width:180px; }
+    .cc-row{ grid-template-columns: 110px 84px 1fr; }
+    .cc-gauge{ max-width: 320px; }
+    .cc-actions{ flex-direction:row; }
+    .cc-actions .btn-primary{ flex:2; } .cc-actions .btn-secondary{ flex:1; width:auto; }
+
+    /* Collection: wider grid, tools on one row, list in two columns */
+    .coll-tools{ display:grid; grid-template-columns: minmax(240px, 1fr) minmax(360px, 1.3fr); gap: 20px; align-items:center; margin-bottom:12px; }
+    .coll-tools .coll-search, .coll-tools .status-row{ margin:0; }
+    .coll-grid{ grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap:14px; }
+    #collectionList:not(:has(.coll-grid)):not(:has(.collection-empty)){ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:14px; align-items:start; }
+    #collectionList:not(:has(.coll-grid)) .collection-item{ margin:0; }
+    .coll-actions{ flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; }
+    .coll-actions .btn-primary{ flex: 0 0 auto; min-width:320px; }
+    .coll-actions .upload-link{ margin:0; }
+    .export-msg{ flex-basis:100%; }
+
+    .lightbox-inner{ max-width: 520px; }
+  }
+  @media (min-width: 1280px){
+    .scan-cols, .grade-cols{ grid-template-columns: 400px minmax(0, 1fr); gap: 40px; }
+  }
 </style>
 </head>
 <body>
@@ -1343,15 +1829,14 @@
 <div id="coverPage">
   <div class="cover-card">
     <div class="cover-mark">
-      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-        <rect x="9" y="8" width="15" height="21" rx="2.5" fill="#c79ef2" stroke="#f7f3e8" stroke-width="1" transform="rotate(-16 16.5 18.5)"/>
-        <rect x="16" y="8" width="15" height="21" rx="2.5" fill="#7de0c0" stroke="#f7f3e8" stroke-width="1" transform="rotate(16 23.5 18.5)"/>
-        <rect x="12.5" y="6" width="15" height="21" rx="2.5" fill="#e0a64b" stroke="#f7f3e8" stroke-width="1"/>
-        <circle cx="20" cy="16.5" r="3.4" fill="none" stroke="#f7f3e8" stroke-width="1.4"/>
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="5" y="9" width="17" height="24" rx="3" fill="#e3262f" stroke="#fff" stroke-width="1.4" transform="rotate(-14 13.5 21)"/>
+        <rect x="14" y="6" width="19" height="26" rx="3" fill="#1d4ed8" stroke="#fff" stroke-width="1.6" transform="rotate(8 23.5 19)"/>
+        <path d="M23.5 12.2l1.9 3.9 4.3.6-3.1 3 .7 4.2-3.8-2-3.8 2 .7-4.2-3.1-3 4.3-.6z" fill="#fff" transform="rotate(8 23.5 19)"/>
       </svg>
     </div>
     <div class="cover-brand">Card<span class="shine">Desk</span></div>
-    <div class="cover-tagline">Scan · Identify · Price</div>
+    <div class="cover-tagline">Know your cards. Build your collection.</div>
     <div class="cover-chips">
       <div class="cover-chip"><span class="dot" style="background:var(--pika-500)"></span>Pokémon</div>
       <div class="cover-chip"><span class="dot" style="background:var(--ygo-500)"></span>Yu-Gi-Oh</div>
@@ -1366,10 +1851,18 @@
 
 <div class="phone" id="mainApp" style="display:none;">
   <header class="app-head">
-    <div>
-      <div class="brand">Card<span>Desk</span></div>
-      <div class="brand-sub">Scan · Identify · Price</div>
+    <div class="brand-wrap">
+      <svg class="brand-logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="5" y="9" width="17" height="24" rx="3" fill="#e3262f" stroke="#fff" stroke-width="1.4" transform="rotate(-14 13.5 21)"/>
+        <rect x="14" y="6" width="19" height="26" rx="3" fill="#1d4ed8" stroke="#fff" stroke-width="1.6" transform="rotate(8 23.5 19)"/>
+        <path d="M23.5 12.2l1.9 3.9 4.3.6-3.1 3 .7 4.2-3.8-2-3.8 2 .7-4.2-3.1-3 4.3-.6z" fill="#fff" transform="rotate(8 23.5 19)"/>
+      </svg>
+      <div>
+        <div class="brand">Card<span>Desk</span></div>
+        <div class="brand-sub">Scan · Identify · Price</div>
+      </div>
     </div>
+    <div class="head-stripes" aria-hidden="true"><i></i><i></i><i></i></div>
   </header>
 
   <div id="scannerView">
@@ -1382,6 +1875,12 @@
     </div>
 
     <div class="desk">
+      <div class="scan-cols">
+      <div class="scan-col-photo">
+      <div class="hero-head">
+        <h2 class="hero-title">Next great find?</h2>
+        <p class="hero-sub">Start with a clear photo.</p>
+      </div>
       <div class="scan-zone" id="scanZone">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -1393,12 +1892,20 @@
         <button type="button" class="camera-btn" id="cameraBtn">Open Camera</button>
       </div>
       <input type="file" id="fileInput" accept="image/*" capture="environment">
+      <div class="photo-tips" aria-label="Photo tips">
+        <span class="tip"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 8.2l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Flat surface</span>
+        <span class="tip"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 8.2l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Even light</span>
+        <span class="tip"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 8.2l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>No sleeve glare</span>
+      </div>
+      <button type="button" class="upload-link" id="uploadPhotoBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg><span>Upload photo</span></button>
 
       <div class="row">
         <button class="btn-primary" id="scanBtn" disabled>Read Card</button>
         <button class="btn-secondary" id="clearBtn">Clear</button>
       </div>
+      </div>
 
+      <div class="scan-col-find">
       <div class="search-row">
         <label for="queryInput">Search text (edit if the scan got it wrong)</label>
         <div class="field">
@@ -1414,6 +1921,19 @@
         </div>
       </div>
 
+      <div class="browse-row" id="browseRow">
+        <button type="button" class="browse-btn" id="browseSetsBtn">Browse all cards by set &rarr;</button>
+      </div>
+
+      <div class="find-choice" id="findChoice" style="display:none;" role="group" aria-labelledby="findChoiceQ">
+        <p class="find-choice-q" id="findChoiceQ">What do you want to do with <b id="findChoiceText"></b>?</p>
+        <div class="find-choice-btns">
+          <a class="find-choice-ebay" id="findEbayLink" href="https://www.ebay.com/" target="_blank" rel="noopener noreferrer">Find it on eBay &#8599;</a>
+          <button type="button" class="btn-primary" id="findAddBtn">Add a card</button>
+        </div>
+        <button type="button" class="find-choice-cancel" id="findChoiceCancel">Cancel</button>
+      </div>
+
       <div class="status" id="statusLine" style="display:none;">
         <div class="spinner"></div>
         <span id="statusText">Working…</span>
@@ -1427,7 +1947,10 @@
           <h3 id="resultsTitle">Matches</h3>
           <span id="resultsCount"></span>
         </div>
+        <button type="button" class="browse-back" id="browseBackBtn" style="display:none;">&larr; All sets</button>
         <div id="resultsList"></div>
+      </div>
+      </div>
       </div>
 
       <div class="source-note" id="sourceNote"></div>
@@ -1443,6 +1966,11 @@
         </div>
       </div>
 
+      <div class="grade-cols">
+      <div class="grade-col-photo">
+      <button type="button" class="both-btn" id="gradeBothBtn">Scan front &amp; back</button>
+      <p class="both-step" id="gradeBothStep" style="display:none;"></p>
+
       <div class="side-toggle" id="gradeSideToggle">
         <button type="button" class="active" data-side="front">Front</button>
         <button type="button" data-side="back">Back<span class="side-done" id="backDone"></span></button>
@@ -1455,8 +1983,7 @@
           <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
           <circle cx="12" cy="13" r="3.5"/>
         </svg>
-        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
-        <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>
+        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface. Tap here to upload a photo instead.</div>
       </div>
       <input type="file" id="gradeFileInput" accept="image/*" capture="environment">
 
@@ -1469,8 +1996,17 @@
         <div class="spinner"></div>
         <span>Finding the card and measuring borders…</span>
       </div>
+      </div>
 
+      <div class="grade-col-results">
+      <div class="grade-empty" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 3v18M16 3v18M4 8h16M4 16h16"/></svg>
+        <p>Your centering check shows up here.</p>
+        <span>Tap <b>Scan front &amp; back</b> to start.</span>
+      </div>
       <div id="gradeResults" style="display:none;">
+        <div class="cc-card" id="centerCard"></div>
+        <p class="fine-tune-head">Fine-tune the measurement</p>
         <p class="quality-head" id="qualityHead">Photo quality</p>
         <div class="quality-list" id="qualityList"></div>
 
@@ -1510,7 +2046,7 @@
         <div class="centering-verdict" id="centeringVerdict"></div>
         <div class="center-summary" id="centerSummary"></div>
 
-        <p class="grader-head">What centering alone allows</p>
+        <p class="grader-head">Centering check <span class="grader-limit">Doesn't assess surface, corners, or edges</span></p>
         <p class="grader-sub-head" id="graderSubHead"></p>
         <div class="grader-grid" id="graderGrid"></div>
         <p class="grader-note" id="graderNote"></p>
@@ -1531,7 +2067,7 @@
         </div>
 
         <div class="save-bar" id="gradeSaveBar">
-          <button type="button" class="btn-primary" id="gradeSaveOpen" style="width:100%;">Save result to My Desk</button>
+          <button type="button" class="btn-primary" id="gradeSaveOpen" style="width:100%;">Save to collection</button>
           <div class="save-form" id="gradeSaveForm" style="display:none;">
             <label for="gradeSaveTarget">Save to</label>
             <select id="gradeSaveTarget"></select>
@@ -1555,6 +2091,8 @@
           <p class="save-msg" id="gradeSaveMsg"></p>
         </div>
       </div>
+      </div>
+      </div>
 
       <div class="source-note">
         <b>What this can and can't tell you:</b> the straightened-card centering is a real measurement, good to roughly ±2 points on a clean, sharp photo. The PSA / BGS / CGC rows show the best grade your <i>centering</i> would allow under each company's published (or, for BGS, commonly cited) tolerances — a ceiling, not a predicted grade. Corners, edges and surface decide the rest, and a phone photo can't judge those reliably, so there is deliberately no single "you'll get a 9" number. The corner/edge check is a rough heuristic and is inconclusive on light or white-bordered cards. The grading companies don't all publish exact numbers and sources disagree in places — treat these as guidance and confirm against each company's current standards.
@@ -1566,10 +2104,30 @@
     <div class="desk">
       <div class="collection-head">
         <div>
-          <h3>My Desk</h3>
+          <h3>My Collection</h3>
           <span id="collectionSummary">0 cards</span>
         </div>
-        <button type="button" class="btn-secondary" id="addTestCardBtn" style="flex:0 0 auto; padding:8px 14px; font-size:12px;">+ Test Card</button>
+        <div style="display:flex; gap:8px; flex:0 0 auto;">
+          <button type="button" class="btn-secondary" id="addTestCardBtn" style="display:none; padding:8px 14px; font-size:12px;">+ Test Card</button>
+          <button type="button" class="btn-secondary" id="addCardBtn" style="padding:8px 14px; font-size:12px;">+ Add card</button>
+        </div>
+      </div>
+      <div class="coll-tools">
+      <div class="coll-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
+        <input type="search" id="collectionSearch" placeholder="Search cards" aria-label="Search your collection" autocomplete="off">
+      </div>
+      <div class="status-row">
+        <div class="status-filter" id="statusFilter" role="tablist" aria-label="Filter by condition check">
+          <button type="button" class="active" data-status="all">All</button>
+          <button type="button" data-status="checked">Checked</button>
+          <button type="button" data-status="unchecked">Unchecked</button>
+        </div>
+        <div class="view-toggle" id="viewToggle" aria-label="Layout">
+          <button type="button" data-view="grid" aria-label="Grid view" title="Grid view"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+          <button type="button" data-view="list" aria-label="List view" title="List view"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="4" y="5" width="16" height="3" rx="1.5"/><rect x="4" y="10.5" width="16" height="3" rx="1.5"/><rect x="4" y="16" width="16" height="3" rx="1.5"/></svg></button>
+        </div>
+      </div>
       </div>
       <div class="tabs collection-filter-tabs" id="collectionFilterTabs">
         <div class="tab active" data-filter="all"><span class="dot"></span>All</div>
@@ -1586,6 +2144,11 @@
       </div>
       <div class="calibration-panel" id="calibrationPanel" style="display:none;"></div>
       <div id="collectionList"></div>
+      <div class="coll-actions">
+        <button type="button" class="btn-primary" id="scanAnotherBtn">Scan another card</button>
+        <button type="button" class="upload-link" id="exportCsvBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg><span>Export collection</span></button>
+        <p class="export-msg" id="exportMsg" role="status"></p>
+      </div>
     </div>
   </div>
 
@@ -1602,14 +2165,14 @@
         <circle cx="12" cy="9" r="5.5"/>
         <path d="M8.5 13.5L7 21l5-2.5L17 21l-1.5-7.5"/>
       </svg>
-      Grade
+      Check
     </button>
-    <button type="button" class="bottom-nav-btn" id="navCollectionBtn" aria-label="View my desk">
+    <button type="button" class="bottom-nav-btn" id="navCollectionBtn" aria-label="View my collection">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
         <rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/>
         <rect x="6" y="5" width="12" height="16" rx="2"/>
       </svg>
-      Desk
+      Collection
       <span class="nav-badge" id="collectionCount" data-zero="true">0</span>
     </button>
   </nav>
@@ -1795,6 +2358,7 @@ function updateRefineField(){
   const refineRow = document.getElementById('refineRow');
   const refineLabel = document.getElementById('refineLabel');
   const refineInput = document.getElementById('refineInput');
+  document.getElementById('browseRow').style.display = cfg.show ? 'block' : 'none';
   if(cfg.show){
     refineRow.style.display = 'block';
     refineLabel.textContent = cfg.label;
@@ -2012,6 +2576,8 @@ function hideStatus(){
 function hideResults(){
   results.style.display = 'none';
   resultsList.innerHTML = '';
+  browseToken++;
+  document.getElementById('browseBackBtn').style.display = 'none';
 }
 
 scanBtn.addEventListener('click', async () => {
@@ -2078,11 +2644,41 @@ function bestGuessLine(rawText){
   return lines[0];
 }
 
+/* Find asks first: look the card up on eBay, or find it in the card database to add to My Desk.
+   (Read Card still searches the database directly.) */
+const findChoice = document.getElementById('findChoice');
+
+function ebaySearchUrl(query, refine, game){
+  const tag = game === 'pokemon' ? 'Pokemon' : game === 'yugioh' ? 'Yu-Gi-Oh' : '';
+  const q = [query, tag, refine].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(q);
+}
+
+function hideFindChoice(){ findChoice.style.display = 'none'; }
+
 searchBtn.addEventListener('click', () => {
   const q = queryInput.value.trim();
   const refine = document.getElementById('refineInput').value.trim();
+  if(!q){ hideFindChoice(); queryInput.focus(); return; }
+  document.getElementById('findChoiceText').textContent = '"' + q + (refine ? ' ' + refine : '') + '"';
+  document.getElementById('findEbayLink').href = ebaySearchUrl(q, refine, state.game);
+  findChoice.style.display = 'block';
+  // no focus change here: pressing Enter would carry over and "click" Add a card
+});
+document.getElementById('findAddBtn').addEventListener('click', () => {
+  const q = queryInput.value.trim();
+  const refine = document.getElementById('refineInput').value.trim();
+  hideFindChoice();
   if(q) runSearch(q, refine);
 });
+document.getElementById('findEbayLink').addEventListener('click', (e) => {
+  // rebuild the link at click time in case the game tab changed while the choice was open
+  e.currentTarget.href = ebaySearchUrl(queryInput.value.trim(), document.getElementById('refineInput').value.trim(), state.game);
+  hideFindChoice();
+});
+document.getElementById('findChoiceCancel').addEventListener('click', () => { hideFindChoice(); queryInput.focus(); });
+queryInput.addEventListener('input', hideFindChoice);
+document.getElementById('refineInput').addEventListener('input', hideFindChoice);
 queryInput.addEventListener('keydown', (e) => {
   if(e.key === 'Enter'){ searchBtn.click(); }
 });
@@ -2235,6 +2831,158 @@ async function searchYugioh(query, refine){
   renderResults(yugiohCardsToItems(cards), cards.length);
 }
 
+/* ================= Browse all cards by set (Pokémon, Yu-Gi-Oh) ================= */
+let browseToken = 0;            // bumps when results are cleared, so slow loads don't land on the wrong screen
+const setCache = {};            // game -> list of sets, loaded once per visit
+let browseGame = null, browseFilter = '';
+const SET_LIST_LIMIT = 80;      // Yu-Gi-Oh has 1,000+ sets; show the newest until the user filters
+
+const byNumber = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
+const yearOf = (d) => (String(d || '').match(/\d{4}/) || [''])[0];
+
+async function loadSets(game){
+  if(setCache[game]) return setCache[game];
+  let sets;
+  if(game === 'pokemon'){
+    const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=250');
+    if(!res.ok) throw new Error('set list failed (' + res.status + ')');
+    const json = await res.json();
+    sets = (json.data || []).map(s => ({
+      key: s.id, name: s.name, icon: s.images && s.images.symbol,
+      meta: [s.series, yearOf(s.releaseDate), (s.total || s.printedTotal || 0) + ' cards'].filter(Boolean).join(' · '),
+      search: (s.name + ' ' + s.series + ' ' + s.id).toLowerCase(),
+    }));
+  } else {
+    const res = await fetch('https://db.ygoprodeck.com/api/v7/cardsets.php');
+    if(!res.ok) throw new Error('set list failed (' + res.status + ')');
+    const json = await res.json();
+    sets = (Array.isArray(json) ? json : []).filter(s => s.num_of_cards > 0)
+      .sort((a, b) => String(b.tcg_date || '').localeCompare(String(a.tcg_date || '')))
+      .map(s => ({
+        key: s.set_name, name: s.set_name, icon: s.set_image || null,
+        meta: [s.set_code, yearOf(s.tcg_date), s.num_of_cards + ' cards'].filter(Boolean).join(' · '),
+        search: (s.set_name + ' ' + s.set_code).toLowerCase(),
+      }));
+  }
+  sets.forEach((s, i) => { s.idx = i; });
+  setCache[game] = sets;
+  return sets;
+}
+
+async function fetchSetItems(game, set){
+  if(game === 'pokemon'){
+    const all = [];
+    for(let page = 1; page <= 8; page++){
+      const url = 'https://api.pokemontcg.io/v2/cards?q=' + encodeURIComponent('set.id:' + set.key) +
+        '&orderBy=number&pageSize=250&page=' + page + '&select=id,name,number,rarity,set,images,tcgplayer';
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('card list failed (' + res.status + ')');
+      const json = await res.json();
+      const data = json.data || [];
+      all.push(...data);
+      if(data.length < 250 || all.length >= (json.totalCount || 0)) break;
+    }
+    all.sort((a, b) => byNumber(a.number, b.number));
+    return pokemonCardsToItems(all);
+  }
+  const res = await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=' + encodeURIComponent(set.key));
+  if(!res.ok) return [];   // YGOPRODeck answers 400 when a set has no cards
+  const json = await res.json();
+  return (json.data || []).map(c => {
+    const here = (c.card_sets || []).filter(s => s.set_name === set.key);
+    const code = here[0] ? here[0].set_code : '';
+    const rarities = [...new Set(here.map(s => s.set_rarity).filter(Boolean))].join(' / ');
+    const setPrice = here.map(s => parseFloat(s.set_price)).find(p => p > 0);
+    const base = yugiohCardsToItems([c])[0];
+    return Object.assign(base, {
+      meta: [code, rarities, set.name].filter(Boolean).join(' · '),
+      price: setPrice ? setPrice.toFixed(2) : base.price,
+      _code: code,
+    });
+  }).sort((a, b) => byNumber(a._code, b._code));
+}
+
+function renderSetList(){
+  const sets = setCache[browseGame] || [];
+  const f = browseFilter.trim().toLowerCase();
+  const matches = f ? sets.filter(s => s.search.includes(f)) : sets;
+  const shown = matches.slice(0, f ? 300 : SET_LIST_LIMIT);
+  resultsCount.textContent = matches.length + ' set' + (matches.length === 1 ? '' : 's');
+  const list = document.getElementById('setList');
+  list.innerHTML = shown.length ? shown.map(s => `
+    <button type="button" class="set-row" data-set="${s.idx}">
+      ${s.icon ? `<img class="set-icon" src="${escapeHtml(String(s.icon).replace(/"/g, '%22'))}" alt="" loading="lazy">` : `<span class="set-icon">${escapeHtml(s.name.charAt(0))}</span>`}
+      <span class="set-text"><span class="set-name">${escapeHtml(s.name)}</span><span class="set-meta">${escapeHtml(s.meta)}</span></span>
+    </button>`).join('')
+    : `<div class="empty-note">No set matches "${escapeHtml(browseFilter)}".</div>`;
+  document.getElementById('setMore').textContent = matches.length > shown.length
+    ? 'Showing the newest ' + shown.length + ' of ' + matches.length + '. Type a set name or code to find older ones.' : '';
+}
+
+async function openSetPicker(game){
+  hideFindChoice();
+  hideResults();
+  const token = browseToken;
+  browseGame = game;
+  showStatus('Loading ' + gameLabel(game) + ' sets…');
+  showSkeleton();
+  try{
+    await loadSets(game);
+    if(token !== browseToken) return;
+    results.style.display = 'block';
+    resultsTitle.textContent = 'Pick a set';
+    resultsList.innerHTML = `
+      <input type="search" class="set-filter" id="setFilter" placeholder="Filter sets, e.g. Base Set" aria-label="Filter sets" autocomplete="off">
+      <div class="set-list" id="setList"></div>
+      <p class="set-more" id="setMore"></p>`;
+    const input = document.getElementById('setFilter');
+    input.value = browseFilter;
+    input.addEventListener('input', () => { browseFilter = input.value; renderSetList(); });
+    renderSetList();
+  } catch(err){
+    if(token === browseToken) showEmpty('Couldn\'t load the ' + gameLabel(game) + ' set list (' + (err.message || 'network error') + '). Check your connection and try again.', 'error');
+  } finally {
+    hideStatus();
+  }
+}
+
+async function openSet(set){
+  const game = browseGame;
+  const token = ++browseToken;
+  showStatus('Loading every card in ' + set.name + '…');
+  showSkeleton();
+  try{
+    const items = await fetchSetItems(game, set);
+    if(token !== browseToken) return;
+    if(!items.length){
+      showEmpty('No cards were found for ' + set.name + '.');
+    } else {
+      renderResults(items, items.length, false, 'Every card in ' + set.name + ', in set order. Tap + to add a card to your collection.', set.name);
+    }
+    document.getElementById('browseBackBtn').style.display = '';
+    results.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  } catch(err){
+    if(token === browseToken){
+      showEmpty('Couldn\'t load ' + set.name + ' (' + (err.message || 'network error') + '). Check your connection and try again.', 'error');
+      document.getElementById('browseBackBtn').style.display = '';
+    }
+  } finally {
+    hideStatus();
+  }
+}
+
+document.getElementById('browseSetsBtn').addEventListener('click', () => {
+  if(browseGame !== state.game) browseFilter = '';
+  openSetPicker(state.game);
+});
+document.getElementById('browseBackBtn').addEventListener('click', () => openSetPicker(browseGame));
+resultsList.addEventListener('click', (e) => {
+  const row = e.target.closest('.set-row');
+  if(!row) return;
+  const set = (setCache[browseGame] || [])[parseInt(row.dataset.set, 10)];
+  if(set) openSet(set);
+});
+
 async function tryLiveEbaySearch(query){
   if(!PRICING_BACKEND_URL) return null;
 
@@ -2299,7 +3047,7 @@ function showEmpty(msg, type){
   resultsTitle.textContent = type === 'error' ? 'Something went wrong' : 'No match';
   resultsCount.textContent = '';
   const icon = emptyIcons[type === 'error' ? 'error' : 'search'];
-  const tint = type === 'error' ? '#ff9382' : 'rgba(247,243,232,0.6)';
+  const tint = type === 'error' ? '#b81c24' : 'var(--muted)';
   resultsList.innerHTML = `<div class="empty-state" style="color:${tint}">${icon}<p>${escapeHtml(msg)}</p></div>`;
 }
 
@@ -2325,23 +3073,27 @@ function isInCollection(item){
   return state.collection.some(c => c.game === state.game && c.name === item.name && c.meta === (item.meta || ''));
 }
 
-function renderResults(items, count, isDemo, note){
+let lastRenderArgs = { isDemo: false, note: null, title: null };
+
+function renderResults(items, count, isDemo, note, title){
   lastRenderedItems = items;
+  lastRenderArgs = { isDemo: !!isDemo, note: note || null, title: title || null };
+  if(!title) document.getElementById('browseBackBtn').style.display = 'none';
   results.style.display = 'block';
-  resultsTitle.textContent = isDemo ? 'Closest matches' : 'Matches found';
+  resultsTitle.textContent = title || (isDemo ? 'Closest matches' : 'Matches found');
   resultsCount.textContent = count + ' result' + (count === 1 ? '' : 's');
   const noteHtml = note ? `<div class="empty-note" style="margin-bottom:8px;">${escapeHtml(note)}</div>` : '';
   resultsList.innerHTML = noteHtml + items.map((item, i) => {
     const added = isInCollection(item);
     return `
     <div class="card-result">
-      <button type="button" class="add-btn ${added ? 'is-added' : ''}" data-idx="${i}" aria-label="${added ? 'Remove from My Desk' : 'Add to My Desk'}">
+      <button type="button" class="add-btn ${added ? 'is-added' : ''}" data-idx="${i}" aria-label="${added ? 'Remove from my collection' : 'Add to my collection'}">
         ${added
           ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
           : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'}
       </button>
       ${item.img
-        ? `<img class="card-thumb" src="${item.img}" alt="${escapeHtml(item.name)}">`
+        ? `<img class="card-thumb" src="${item.img}" alt="${escapeHtml(item.name)}" loading="lazy">`
         : `<div class="card-thumb placeholder">${escapeHtml(item.name.charAt(0))}</div>`}
       <div class="card-info">
         <p class="card-name">${escapeHtml(item.name)}</p>
@@ -2381,7 +3133,7 @@ resultsList.addEventListener('click', (e) => {
   }
   saveCollection();
   updateCollectionBadge();
-  renderResults(lastRenderedItems, lastRenderedItems.length, resultsTitle.textContent === 'Closest matches');
+  renderResults(lastRenderedItems, lastRenderedItems.length, lastRenderArgs.isDemo, lastRenderArgs.note, lastRenderArgs.title);
 });
 
 function updateCollectionBadge(){
@@ -2418,30 +3170,44 @@ function renderCollectionView(){
     list.innerHTML = `
       <div class="collection-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/><rect x="6" y="5" width="12" height="16" rx="2"/></svg>
-        <p>Nothing saved yet — tap the + button on a scan result to start filling your desk.</p>
+        <p>Nothing saved yet — tap the + button on a scan result to start your collection.</p>
       </div>`;
     updateCollectionSummary([]);
     return;
   }
 
-  const filtered = state.collectionFilter === 'all'
+  const byGame = state.collectionFilter === 'all'
     ? state.collection
     : state.collection.filter(c => c.game === state.collectionFilter);
+  const q = (state.collectionQuery || '').trim().toLowerCase();
+  const filtered = byGame.filter(c => {
+    if(state.collectionStatus === 'checked' && !isChecked(c)) return false;
+    if(state.collectionStatus === 'unchecked' && isChecked(c)) return false;
+    return !q || (c.name + ' ' + (c.meta || '')).toLowerCase().includes(q);
+  });
 
   updateCollectionSummary(filtered);
 
   if(filtered.length === 0){
+    const why = byGame.length === 0
+      ? 'No ' + (gameNames[state.collectionFilter] || state.collectionFilter) + ' cards saved yet.'
+      : 'No cards match' + (q ? ' "' + state.collectionQuery.trim() + '"' : '') +
+        (state.collectionStatus !== 'all' ? ' in ' + state.collectionStatus : '') + '.';
     list.innerHTML = `
       <div class="collection-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6.5" y="3" width="12" height="16" rx="2" transform="rotate(-9 12.5 11)"/><rect x="6" y="5" width="12" height="16" rx="2"/></svg>
-        <p>No ${escapeHtml(gameNames[state.collectionFilter] || state.collectionFilter)} cards saved yet.</p>
+        <p>${escapeHtml(why)}</p>
       </div>`;
     return;
   }
 
   const sorted = sortDeskItems(filtered);
+  if(state.collectionView === 'grid'){
+    list.innerHTML = '<div class="coll-grid">' + sorted.map(gridTileMarkup).join('') + '</div>';
+    return;
+  }
   list.innerHTML = sorted.map(c => `
-    <div class="collection-item">
+    <div class="collection-item" data-card-id="${escapeHtml(c.id)}">
       <span class="game-dot" style="background:${gameDotColors[c.game] || 'var(--amber-500)'}"></span>
       ${confirmDeleteId === c.id ? `
       <div class="delete-confirm">
@@ -2451,7 +3217,7 @@ function renderCollectionView(){
           <button type="button" class="btn-confirm-delete" data-id="${c.id}" data-action="confirm">Delete</button>
         </div>
       </div>` : `
-      <button type="button" class="remove-btn" data-id="${c.id}" data-action="ask" aria-label="Delete from My Desk">
+      <button type="button" class="remove-btn" data-id="${c.id}" data-action="ask" aria-label="Delete from my collection">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6m2 0v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10z"/></svg>
         Delete
       </button>`}
@@ -2480,6 +3246,7 @@ document.getElementById('collectionList') && document.getElementById('collection
   const id = btn.dataset.id;
   const action = btn.dataset.action;
   if(action === 'zoom'){ openLightbox(id); return; }
+  if(action === 'open'){ openInList(id); return; }
   if(action === 'grade'){ setView('grade'); return; }
   if(action === 'log-open'){ gradeLogId = id; gradeLogDraft = { grader: 'psa', grade: GRADE_OPTIONS.psa[0] }; renderCollectionView(); return; }
   if(action === 'log-cancel'){ gradeLogId = null; gradeLogDraft = null; renderCollectionView(); return; }
@@ -2540,6 +3307,20 @@ const testCardSamples = [
   { game: 'football', name: 'Tom Brady (Test)', meta: '2000 Playoff Contenders · Sample entry', img: null, price: '3,000 – 3.1M', source: null, demo: true },
 ];
 let testCardIdx = 0;
+
+/* "+ Add card": go to the Scan tab and open the camera to photograph a real card.
+   If the camera can't open, the Scan tab shows why and the photo box still takes an upload. */
+document.getElementById('addCardBtn').addEventListener('click', () => {
+  setView('scanner');
+  stopCameraStream();
+  openCamera();
+});
+
+/* The sample "+ Test Card" button is for testing only: it shows when the page address
+   ends in ?test or #test. Normal users never see it. */
+if(/(^|[?#&])test\b/.test(location.search + location.hash)){
+  document.getElementById('addTestCardBtn').style.display = '';
+}
 
 document.getElementById('addTestCardBtn').addEventListener('click', () => {
   const sample = testCardSamples[testCardIdx % testCardSamples.length];
@@ -3069,8 +3850,7 @@ const GRADE_IDLE_MARKUP = `
       <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
       <circle cx="12" cy="13" r="3.5"/>
     </svg>
-    <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
-    <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>`;
+    <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface. Tap here to upload a photo instead.</div>`;
 
 function newGradeSide(){
   return {
@@ -3090,7 +3870,6 @@ function sideWord(){ return currentGradeSide === 'front' ? 'Front' : 'Back'; }
 
 gradeZone.addEventListener('click', (e) => {
   if(e.target.closest('#gradeRotateBtn')){ e.stopPropagation(); gradeRotateCurrentImage(); return; }
-  if(e.target.closest('#gradeCameraBtn')){ e.stopPropagation(); gradeOpenCamera(); return; }
   if(e.target.closest('#gradeCameraCancelBtn')){ e.stopPropagation(); gradeCloseCameraToIdle(); return; }
   if(e.target.closest('#gradeCaptureBtn')){ e.stopPropagation(); gradeCaptureFromCamera(); return; }
   if(e.target.closest('#gradeCameraSwitchBtn')){ e.stopPropagation(); gradeSwitchCamera(); return; }
@@ -3103,6 +3882,7 @@ gradeFileInput.addEventListener('change', (e) => {
   if(!file) return;
   gradeSetImageFile(file);
   gradeFileInput.value = '';
+  bothFlowAfterPhoto();
 });
 
 /* Redraws the photo zone + results for whichever side is selected. */
@@ -3146,6 +3926,7 @@ function gradeSetImageFile(file){
 document.getElementById('gradeSideToggle').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-side]');
   if(!btn || btn.dataset.side === currentGradeSide) return;
+  endBothFlow();
   gradeStopCameraStream();
   currentGradeSide = btn.dataset.side;
   hideSaveForm();
@@ -3190,11 +3971,13 @@ function gradeStopCameraStream(){
 }
 
 function gradeCloseCameraToIdle(){
+  endBothFlow();
   gradeStopCameraStream();
   gradeShowZone();
 }
 
 function gradeShowCameraError(err){
+  bothFlowCamera = false;
   gradeStopCameraStream();
   gradeZone.classList.remove('has-camera', 'has-image');
   gradeZone.innerHTML = GRADE_IDLE_MARKUP;
@@ -3204,20 +3987,17 @@ function gradeShowCameraError(err){
   const isInUse = name === 'NotReadableError' || name === 'TrackStartError';
   let msg;
   if(isPermission){
-    msg = 'Camera access is turned off for this page. Allow it in your browser settings, then tap "Allow Camera" to try again.';
+    msg = 'Camera access is turned off for this page. Allow it in your browser settings, then tap "Scan front & back" to try again.';
   } else if(isNoCamera){
     msg = 'No camera was found on this device. You can still upload a photo instead.';
   } else if(isInUse){
-    msg = 'Your camera seems to be in use elsewhere. Close it and tap "Allow Camera" to try again.';
+    msg = 'Your camera seems to be in use elsewhere. Close it and tap "Scan front & back" to try again.';
   } else {
     msg = 'Camera unavailable (' + (err && err.message ? err.message : 'unknown error') + '). You can upload a photo instead.';
   }
+  if(bothFlow) msg += ' Tap here to upload the ' + bothFlow + ' photo instead.';
   const hint = gradeZone.querySelector('.scan-hint');
   if(hint) hint.textContent = msg;
-  if(isPermission || isInUse){
-    const camBtn = document.getElementById('gradeCameraBtn');
-    if(camBtn) camBtn.textContent = 'Allow Camera';
-  }
 }
 
 function gradeCaptureFromCamera(){
@@ -3231,6 +4011,7 @@ function gradeCaptureFromCamera(){
     if(!blob) return;
     gradeStopCameraStream();
     gradeSetImageFile(new File([blob], 'grade-capture.jpg', { type: 'image/jpeg' }));
+    bothFlowAfterPhoto();
   }, 'image/jpeg', 0.95);
 }
 
@@ -3256,6 +4037,7 @@ async function gradeRotateCurrentImage(){
 }
 
 gradeClearBtn.addEventListener('click', () => {
+  endBothFlow();
   const s = curSide();
   if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
   Object.assign(s, newGradeSide());
@@ -3374,6 +4156,81 @@ analyzeBtn.addEventListener('click', async () => {
     analyzeBtn.disabled = !curSide().file;
   }
 });
+
+/* ---------------- One button: front, then back, then analyze both ---------------- */
+
+let bothFlow = null;        // null, 'front' or 'back': which photo the flow is waiting for
+let bothFlowCamera = false; // true while the live camera works; false means uploads
+const gradeBothStep = document.getElementById('gradeBothStep');
+
+function setBothStep(text){
+  gradeBothStep.textContent = text || '';
+  gradeBothStep.style.display = text ? 'block' : 'none';
+}
+
+function endBothFlow(){
+  if(!bothFlow) return;
+  bothFlow = null;
+  setBothStep('');
+}
+
+document.getElementById('gradeBothBtn').addEventListener('click', () => {
+  gradeStopCameraStream();
+  hideSaveForm();
+  ['front', 'back'].forEach(k => {
+    const s = gradeSides[k];
+    if(s.url){ try{ URL.revokeObjectURL(s.url); }catch(e){} }
+    Object.assign(s, newGradeSide());
+  });
+  bothFlow = 'front';
+  bothFlowCamera = true;
+  currentGradeSide = 'front';
+  gradeShowZone();
+  setBothStep('Step 1 of 2 \u00b7 Front of the card');
+  gradeOpenCamera();
+});
+
+/* Called after each photo (camera or upload) while the flow is running. */
+function bothFlowAfterPhoto(){
+  if(!bothFlow) return;
+  if(bothFlow === 'front'){
+    bothFlow = 'back';
+    currentGradeSide = 'back';
+    gradeShowZone();
+    if(bothFlowCamera){
+      setBothStep('Step 2 of 2 \u00b7 Flip the card over and take the back');
+      gradeOpenCamera();
+    } else {
+      setBothStep('Step 2 of 2 \u00b7 Tap the box to add the back photo');
+    }
+    return;
+  }
+  bothFlow = null;
+  runBothAnalysis();
+}
+
+async function runBothAnalysis(){
+  analyzeBtn.disabled = true;
+  gradeResults.style.display = 'none';
+  gradeStatusLine.style.display = 'flex';
+  setBothStep('Measuring front and back\u2026');
+  try{
+    await analyzeSide(gradeSides.front);
+    await analyzeSide(gradeSides.back);
+    currentGradeSide = 'front';
+    hideSaveForm();
+    gradeShowZone();
+    setBothStep('Front and back checked. Use the Front / Back switch to adjust either side.');
+  } catch(err){
+    setBothStep('');
+    gradeResults.style.display = 'block';
+    document.getElementById('qualityHead').textContent = 'Could not analyze these photos';
+    document.getElementById('qualityList').innerHTML = `<div class="quality-row is-bad"><span class="status-dot bad"></span><span>${escapeHtml(err.message || 'unknown error')}. Try clearer, straight-on shots with all four corners visible.</span></div>`;
+  } finally {
+    gradeStatusLine.style.display = 'none';
+    analyzeBtn.disabled = !curSide().file;
+  }
+}
 
 /* ---------------- Rendering ---------------- */
 
@@ -3633,7 +4490,81 @@ function renderMeasurements(){
 
   renderGraders(f, b);
   renderWear(s);
+  renderCenterCard(f, b);
 }
+
+/* Summary card at the top of the Check results: both photos, the four numbers with gauges,
+   the "centering only" note, and Save / Retake. The detailed editors stay below it. */
+function centeringWord(worst){
+  if(worst <= 55) return 'Excellent — close to dead-center';
+  if(worst <= 60) return 'Very good centering';
+  if(worst <= 65) return 'Good centering';
+  if(worst <= 70) return 'Fair — noticeably off-center';
+  if(worst <= 80) return 'Off-center';
+  return 'Significantly off-center';
+}
+function gaugeMarkup(label, pair){
+  const pos = Math.max(0, Math.min(100, (pair[0] - 25) * 2));   // 25/75 → left end, 50/50 → middle, 75/25 → right end
+  return `<div class="cc-row">
+      <span class="cc-axis">${label}</span>
+      <b class="cc-val">${r0(pair[0])} / ${r0(pair[1])}</b>
+      <span class="cc-gauge" aria-hidden="true"><i style="left:${pos.toFixed(1)}%"></i></span>
+    </div>`;
+}
+function renderCenterCard(f, b){
+  const card = document.getElementById('centerCard');
+  if(!card) return;
+  const both = f && b;
+  const badge = both
+    ? '<span class="cc-badge is-ok">&#10003; Front + back captured</span>'
+    : `<span class="cc-badge is-part">${f ? 'Front only · add the back' : 'Back only · add the front'}</span>`;
+  const block = (label, cls, c) => c ? `
+    <div class="cc-side ${cls}">
+      <span class="cc-tab">${label}</span>
+      ${gaugeMarkup('Left / right', c.lr)}
+      ${gaugeMarkup('Top / bottom', c.tb)}
+      <p class="cc-word">${escapeHtml(centeringWord(c.worst))}</p>
+    </div>` : `
+    <div class="cc-side ${cls} is-missing">
+      <span class="cc-tab">${label}</span>
+      <p class="cc-word">Not checked yet. Tap <b>Retake</b> to scan front and back, or use the Front / Back switch above.</p>
+    </div>`;
+  card.innerHTML = `
+    <div class="cc-head"><h3 class="cc-title">Centering check</h3>${badge}</div>
+    <div class="cc-thumbs">
+      <figure><canvas id="ccThumbFront" width="150" height="210"></canvas><figcaption>Front</figcaption></figure>
+      <figure><canvas id="ccThumbBack" width="150" height="210"></canvas><figcaption>Back</figcaption></figure>
+    </div>
+    <div class="cc-sides-row">
+    ${block('Front', 'is-front', f)}
+    ${block('Back', 'is-back', b)}
+    </div>
+    <p class="cc-note"><span aria-hidden="true">&#9432;</span> Centering only. Surface, corners and edges aren't assessed.</p>
+    <div class="cc-actions">
+      <button type="button" class="btn-primary" data-cc="save">Save to collection</button>
+      <button type="button" class="btn-secondary" data-cc="retake">Retake</button>
+    </div>`;
+  [['ccThumbFront', gradeSides.front], ['ccThumbBack', gradeSides.back]].forEach(([id, s]) => {
+    const cv = document.getElementById(id), g = cv.getContext('2d');
+    if(s && s.flat){ g.drawImage(s.flat, 0, 0, cv.width, cv.height); }
+    else {
+      g.fillStyle = '#eef2f9'; g.fillRect(0, 0, cv.width, cv.height);
+      g.fillStyle = '#56607a'; g.font = '600 13px Inter, sans-serif'; g.textAlign = 'center';
+      g.fillText('Not checked', cv.width / 2, cv.height / 2);
+    }
+  });
+}
+document.getElementById('centerCard').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cc]');
+  if(!btn) return;
+  if(btn.dataset.cc === 'save'){
+    document.getElementById('gradeSaveOpen').click();
+    document.getElementById('gradeSaveBar').scrollIntoView({ block: 'center', behavior: 'smooth' });
+  } else {
+    document.getElementById('gradeBothBtn').click();
+    document.getElementById('gradeView').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+});
 
 function renderGraders(f, b){
   const grid = document.getElementById('graderGrid');
@@ -3840,7 +4771,7 @@ document.getElementById('gradeSaveConfirm').addEventListener('click', () => {
   saveForm.style.display = 'none';
   document.getElementById('gradeSaveName').value = '';
   saveMsg.classList.remove('is-error');
-  saveMsg.textContent = 'Saved — find it on the Desk tab.';
+  saveMsg.textContent = 'Saved — find it on the Collection tab.';
 });
 
 function gradeBoxMarkup(c){
@@ -3855,7 +4786,7 @@ function gradeBoxMarkup(c){
   const side = (label, s) => s ? `${label} ${s.lr[0]}/${s.lr[1]} &middot; ${s.tb[0]}/${s.tb[1]}` : '';
   const detail = [side('Front', g.front), side('Back', g.back)].filter(Boolean).join(' &nbsp;|&nbsp; ') + (g.frontOnly ? ' &middot; front only' : '');
   return `<div class="desk-grade" title="Best grade the centering allows &mdash; not a predicted grade">
-    <p class="dg-label">Possible grade <span>centering ceiling</span></p>
+    <p class="dg-label">Centering check <span>doesn't assess surface, corners, or edges</span></p>
     <div class="grade-slabs">${slab('PSA', g.ceilings.psa)}${slab('BGS', g.ceilings.bgs)}${slab('CGC', g.ceilings.cgc)}</div>
     <p class="dg-detail">${detail}</p>
   </div>`;
@@ -3887,6 +4818,113 @@ function openLightbox(id){
 }
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape'){ const b = document.getElementById('lightbox'); if(b){ b.style.display = 'none'; b.innerHTML = ''; } }
+});
+
+
+/* ================= Collection: grid, search, checked filter, export ================= */
+const VIEW_KEY = 'carddesk_view_v1';
+state.collectionView = (() => { try{ return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'grid'; } catch(e){ return 'grid'; } })();
+state.collectionStatus = 'all';
+state.collectionQuery = '';
+
+function isChecked(c){ return !!(c.grading && (c.grading.front || c.grading.back)); }
+
+function gridTileMarkup(c){
+  const img = c.img || c.gradeThumb;
+  const checked = isChecked(c);
+  const price = c.price ? '$' + c.price : '';
+  return `<button type="button" class="grid-tile" data-action="open" data-id="${escapeHtml(c.id)}" aria-label="${escapeHtml(c.name)}: open details">
+    <span class="gt-img">${img ? `<img src="${img}" alt="" loading="lazy">` : `<span class="gt-ph">${escapeHtml(c.name.charAt(0))}</span>`}
+      <span class="gt-dot" style="background:${gameDotColors[c.game] || 'var(--amber-500)'}"></span></span>
+    <span class="gt-name">${escapeHtml(c.name)}</span>
+    <span class="gt-meta">${escapeHtml(c.meta || '')}</span>
+    <span class="gt-foot">
+      <span class="gt-check ${checked ? 'is-on' : ''}">${checked
+        ? '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="3" fill="currentColor"/><path d="M4.4 8.3l2.3 2.3 4.9-5.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Checked'
+        : '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Not checked'}</span>
+      ${price ? `<span class="gt-price">${escapeHtml(price)}${c.demo ? '<small> est.</small>' : ''}</span>` : ''}
+    </span>
+  </button>`;
+}
+
+function setCollectionView(v){
+  state.collectionView = v;
+  try{ localStorage.setItem(VIEW_KEY, v); } catch(e){}
+  document.querySelectorAll('#viewToggle button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  renderCollectionView();
+}
+function openInList(id){
+  setCollectionView('list');
+  const el = document.querySelector('.collection-item[data-card-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+  if(el){
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.classList.add('is-flash');
+    setTimeout(() => el.classList.remove('is-flash'), 1600);
+  }
+}
+document.querySelectorAll('#viewToggle button').forEach(b => {
+  b.classList.toggle('active', b.dataset.view === state.collectionView);
+  b.addEventListener('click', () => setCollectionView(b.dataset.view));
+});
+document.getElementById('statusFilter').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-status]');
+  if(!b) return;
+  document.querySelectorAll('#statusFilter button').forEach(x => x.classList.toggle('active', x === b));
+  state.collectionStatus = b.dataset.status;
+  confirmDeleteId = null;
+  renderCollectionView();
+});
+document.getElementById('collectionSearch').addEventListener('input', (e) => {
+  state.collectionQuery = e.target.value;
+  renderCollectionView();
+});
+document.getElementById('scanAnotherBtn').addEventListener('click', () => document.getElementById('addCardBtn').click());
+
+/* CSV export: one row per saved card, opens in Excel, Numbers or Google Sheets. */
+function localDay(d){
+  const z = (n) => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+}
+function csvCell(v){
+  if(v === null || v === undefined) return '';
+  const s = String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function collectionCsv(items){
+  const pair = (side, k) => side && side[k] ? side[k][0] + '/' + side[k][1] : '';
+  const head = ['Name', 'Category', 'Details', 'Price (USD)', 'Price source', 'Demo price', 'Added',
+    'Front L/R', 'Front T/B', 'Back L/R', 'Back T/B', 'PSA centering ceiling', 'BGS centering ceiling', 'CGC centering ceiling', 'Real grades logged'];
+  const rows = items.map(c => {
+    const g = c.grading || {};
+    const ceil = g.ceilings || {};
+    const logged = (c.gradeResults || []).map(r => r.grader.toUpperCase() + ' ' + r.grade).join('; ');
+    return [c.name, gameNames[c.game] || c.game, c.meta || '', c.price || '', c.source || '', c.demo ? 'yes' : 'no',
+      c.addedAt ? localDay(new Date(c.addedAt)) : '',
+      pair(g.front, 'lr'), pair(g.front, 'tb'), pair(g.back, 'lr'), pair(g.back, 'tb'),
+      ceil.psa || '', ceil.bgs || '', ceil.cgc || '', logged];
+  });
+  return [head].concat(rows).map(r => r.map(csvCell).join(',')).join('\r\n');
+}
+document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  const msg = document.getElementById('exportMsg');
+  if(!state.collection.length){ msg.textContent = 'Nothing to export yet. Add a card first.'; return; }
+  const items = [...state.collection].sort((a, b) => a.addedAt - b.addedAt);
+  const name = 'carddesk-collection-' + localDay(new Date()) + '.csv';
+  const blob = new Blob(['﻿' + collectionCsv(items)], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  msg.textContent = 'Downloaded ' + name + ' (' + items.length + ' card' + (items.length === 1 ? '' : 's') + ').';
+});
+
+/* Scan tab: explicit upload link under the photo box */
+document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
+  if(scanZone.classList.contains('has-camera')) closeCameraToIdle();
+  fileInput.click();
 });
 
 /* ================= Desk: sorting + calibration ================= */
@@ -3978,7 +5016,7 @@ function renderCalibrationPanel(){
   const rows = calibrationRows();
   if(!rows.length){
     panel.innerHTML = `<h4>Calibration</h4>
-      <p>Once a card comes back from grading, open it on the Desk and tap <b>+ Log real grade</b>. This panel then checks whether your photos' centering ceilings held up against what the grader actually gave.</p>
+      <p>Once a card comes back from grading, open it in your Collection and tap <b>+ Log real grade</b>. This panel then checks whether your photos' centering ceilings held up against what the grader actually gave.</p>
       <p>It never changes any numbers on its own &mdash; it just shows whether they hold up. Log about 10 or more before trusting a pattern.</p>`;
     return;
   }
@@ -4067,7 +5105,7 @@ function setView(view){
   navCollectionBtn.classList.toggle('active', view === 'collection');
 
   if(view !== 'scanner') stopCameraStream();
-  if(view !== 'grade') gradeStopCameraStream();
+  if(view !== 'grade'){ gradeStopCameraStream(); endBothFlow(); }
   if(view === 'collection'){
     renderCollectionView();
   } else {

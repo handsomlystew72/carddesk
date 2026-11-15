@@ -7,7 +7,8 @@ const path = require('path');
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if(m.type() === 'error' && !/net::|Failed to load resource|tesseract|fonts/i.test(m.text())) errors.push('console: ' + m.text()); });
-  await page.goto('file://' + path.resolve(__dirname, '../index.html'));
+  await page.addInitScript(() => { try{ localStorage.setItem('carddesk_view_v1', 'list'); }catch(e){} }); // these checks read the full list entries
+  await page.goto('file://' + path.resolve(__dirname, '../../index.html') + '?test');
   await page.waitForTimeout(500);
   await page.click('#enterBtn');
   await page.click('#navGradeBtn');

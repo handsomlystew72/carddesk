@@ -7,6 +7,9 @@
         </div>
       </div>
 
+      <button type="button" class="both-btn" id="gradeBothBtn">Scan front &amp; back</button>
+      <p class="both-step" id="gradeBothStep" style="display:none;"></p>
+
       <div class="side-toggle" id="gradeSideToggle">
         <button type="button" class="active" data-side="front">Front</button>
         <button type="button" data-side="back">Back<span class="side-done" id="backDone"></span></button>
@@ -19,8 +22,7 @@
           <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.9-1.2a2 2 0 0 1 1.6-.8h1.4a2 2 0 0 1 1.6.8l.9 1.2a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
           <circle cx="12" cy="13" r="3.5"/>
         </svg>
-        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface.</div>
-        <button type="button" class="camera-btn" id="gradeCameraBtn">Open Camera</button>
+        <div class="scan-hint">Photograph the card flat, straight-on, all four corners in frame, on a plain contrasting surface. Tap here to upload a photo instead.</div>
       </div>
       <input type="file" id="gradeFileInput" accept="image/*" capture="environment">
 
@@ -74,7 +76,7 @@
         <div class="centering-verdict" id="centeringVerdict"></div>
         <div class="center-summary" id="centerSummary"></div>
 
-        <p class="grader-head">What centering alone allows</p>
+        <p class="grader-head">Centering check <span class="grader-limit">Doesn't assess surface, corners, or edges</span></p>
         <p class="grader-sub-head" id="graderSubHead"></p>
         <div class="grader-grid" id="graderGrid"></div>
         <p class="grader-note" id="graderNote"></p>
